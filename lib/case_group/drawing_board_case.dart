@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_drawing_board/flutter_drawing_board.dart';
+import 'package:flutter_drawing_board/helper/color_pic.dart';
 import 'package:stack_board/helper/safe_state.dart';
+import 'package:stack_board/helper/safe_value_notifier.dart';
 import 'package:stack_board/item_group/stack_drawing.dart';
 
 import 'item_case.dart';
@@ -26,6 +28,9 @@ class DrawingBoardCase extends StatefulWidget {
 class _DrawingBoardCaseState extends State<DrawingBoardCase> with SafeState<DrawingBoardCase> {
   late DrawingController _drawingController;
 
+  ///线条粗细进度
+  late SafeValueNotifier<double> _indicator;
+
   bool _isEditing = false;
   bool _isDrawing = true;
 
@@ -33,18 +38,44 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase> with SafeState<Draw
   void initState() {
     super.initState();
     _drawingController = DrawingController(config: DrawConfig.def());
+    _indicator = SafeValueNotifier<double>(1);
   }
 
   @override
   void dispose() {
     _drawingController.dispose();
+    _indicator.dispose();
     super.dispose();
+  }
+
+  ///选择颜色
+  Future<void> _pickColor() async {
+    final Color? newColor = await showModalBottomSheet<Color?>(
+        context: context, builder: (_) => ColorPic(nowColor: _drawingController.getColor));
+    if (newColor == null) {
+      return;
+    }
+
+    if (newColor != _drawingController.getColor) {
+      _drawingController.setColor = newColor;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return ItemCase(
       isCenter: false,
+      isOperating: widget.isOperating,
+      tools: _isEditing && !_isDrawing
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                _toolBar,
+                // _buildActions,
+              ],
+            )
+          : null,
       child: FittedBox(
         child: SizedBox.fromSize(
           size: widget.stackDrawing.size,
@@ -66,7 +97,6 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase> with SafeState<Draw
                 ),
               ),
               if (!_isEditing) _mask,
-              // if (_isEditing && !_isDrawing) _toolBar,
             ],
           ),
         ),
@@ -78,11 +108,10 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase> with SafeState<Draw
           safeSetState(() => _isEditing = isEditing);
         }
       },
-      isOperating: widget.isOperating,
     );
   }
 
-  ///绘制拦截
+  ///绘制拦截图层
   Widget get _mask {
     return Positioned(
       top: 0,
@@ -95,23 +124,26 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase> with SafeState<Draw
 
   ///工具栏
   Widget get _toolBar {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: Container(
-          width: 40,
-          color: Colors.white,
-          child: Column(
-            children: <Widget>[
-              _buildToolItem(
-                  PaintType.simpleLine, CupertinoIcons.pencil, () => _drawingController.setType = PaintType.simpleLine),
-              _buildToolItem(
-                  PaintType.straightLine, Icons.show_chart, () => _drawingController.setType = PaintType.straightLine),
-              _buildToolItem(
-                  PaintType.rectangle, CupertinoIcons.stop, () => _drawingController.setType = PaintType.rectangle),
-              _buildToolItem(
-                  PaintType.eraser, CupertinoIcons.bandage, () => _drawingController.setType = PaintType.eraser),
-            ],
-          )),
+    return FittedBox(
+      fit: BoxFit.none,
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: Container(
+            width: 40,
+            color: Colors.white,
+            child: Column(
+              children: <Widget>[
+                _buildToolItem(PaintType.simpleLine, CupertinoIcons.pencil,
+                    () => _drawingController.setType = PaintType.simpleLine),
+                _buildToolItem(PaintType.straightLine, Icons.show_chart,
+                    () => _drawingController.setType = PaintType.straightLine),
+                _buildToolItem(
+                    PaintType.rectangle, CupertinoIcons.stop, () => _drawingController.setType = PaintType.rectangle),
+                _buildToolItem(
+                    PaintType.eraser, CupertinoIcons.bandage, () => _drawingController.setType = PaintType.eraser),
+              ],
+            )),
+      ),
     );
   }
 
@@ -129,6 +161,60 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase> with SafeState<Draw
           onPressed: onTap,
         );
       },
+    );
+  }
+
+  ///构建操作栏
+  Widget get _buildActions {
+    return Container(
+      height: 40,
+      color: Colors.white,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.zero,
+        child: Row(
+          children: <Widget>[
+            SizedBox(
+              height: 24,
+              width: 80,
+              child: ExValueBuilder<double>(
+                valueListenable: _indicator,
+                builder: (_, double? ind, ___) {
+                  return Slider(
+                    value: ind!,
+                    max: 50,
+                    min: 1,
+                    onChanged: (double v) => _indicator.value = v,
+                    onChangeEnd: (double v) => _drawingController.setThickness = v,
+                  );
+                },
+              ),
+            ),
+            SizedBox(
+              width: 24,
+              height: 24,
+              child: ExValueBuilder<DrawConfig?>(
+                valueListenable: _drawingController.drawConfig,
+                shouldRebuild: (DrawConfig? p, DrawConfig? n) => p!.color != n!.color,
+                builder: (_, DrawConfig? dc, ___) {
+                  return TextButton(
+                    onPressed: _pickColor,
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all(EdgeInsets.zero),
+                    ),
+                    child: Container(color: dc!.color),
+                  );
+                },
+              ),
+            ),
+            IconButton(icon: const Icon(CupertinoIcons.arrow_turn_up_left), onPressed: () => _drawingController.undo()),
+            IconButton(
+                icon: const Icon(CupertinoIcons.arrow_turn_up_right), onPressed: () => _drawingController.redo()),
+            IconButton(icon: const Icon(CupertinoIcons.rotate_right), onPressed: () => _drawingController.turn()),
+            IconButton(icon: const Icon(CupertinoIcons.trash), onPressed: () => _drawingController.clear()),
+          ],
+        ),
+      ),
     );
   }
 }

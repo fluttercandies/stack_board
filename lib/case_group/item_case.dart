@@ -31,6 +31,7 @@ class ItemCase extends StatefulWidget {
     this.onSizeChange,
     this.caseStyle = const CaseStyle(),
     this.isOperating = true,
+    this.tools,
   }) : super(key: key);
 
   @override
@@ -45,6 +46,8 @@ class ItemCase extends StatefulWidget {
   final CaseStyle? caseStyle;
 
   final bool isOperating;
+
+  final Widget? tools;
 }
 
 class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
@@ -127,6 +130,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
         child: Stack(children: <Widget>[
           _border,
           _child,
+          if (widget.tools != null) Padding(padding: EdgeInsets.all(_caseStyle.iconSize / 2), child: widget.tools),
           if (widget.onEdit != null && _isOperating) _edit,
           if (_isOperating) _check,
           if (widget.onDel != null && _isOperating) _del,
