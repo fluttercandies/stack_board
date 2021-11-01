@@ -28,32 +28,39 @@ class ItemCase extends StatefulWidget {
     this.isCenter = true,
     this.onEdit,
     this.onDel,
-    this.onSizeChange,
-    this.caseStyle = const CaseStyle(),
-    this.isOperating = true,
+    this.onSizeChanged,
     this.tools,
+    this.onOffsetChanged,
+    this.caseStyle = const CaseStyle(),
+    this.isOperating,
+    this.isEditing,
   }) : super(key: key);
 
   @override
   _ItemCaseState createState() => _ItemCaseState();
 
   final Widget child;
+  final Widget? tools;
+
   final bool isCenter;
-  final Function(bool isEditing)? onEdit;
+  final bool? isOperating;
+  final bool? isEditing;
+
+  final void Function(bool isEditing)? onEdit;
   final void Function()? onDel;
-  final void Function(Size size)? onSizeChange;
+
+  ///尺寸变化回调
+  ///返回值可控制是否继续进行
+  final bool? Function(Size size)? onSizeChanged;
+  final bool? Function(Offset offset)? onOffsetChanged;
 
   final CaseStyle? caseStyle;
-
-  final bool isOperating;
-
-  final Widget? tools;
 }
 
 class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
   late SafeValueNotifier<_Config> _config;
-  bool _isEditing = false;
-  bool _isOperating = true;
+  late bool _isEditing = widget.isEditing ?? false;
+  late bool _isOperating = widget.isOperating ?? true;
 
   CaseStyle get _caseStyle => widget.caseStyle ?? const CaseStyle();
 
@@ -65,9 +72,9 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
 
   @override
   void didUpdateWidget(covariant ItemCase oldWidget) {
-    if (widget.isOperating != _isOperating) {
+    if (widget.isOperating != null && widget.isOperating != _isOperating) {
       safeSetState(() {
-        _isOperating = widget.isOperating;
+        _isOperating = widget.isOperating!;
       });
     }
 
@@ -86,13 +93,19 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
       _isEditing = false;
       widget.onEdit?.call(false);
     }
+
     if (!_isOperating) {
       safeSetState(() => _isOperating = true);
     }
 
     final Offset d = dud.delta;
-    _config.value.offset = _config.value.offset.translate(d.dx, d.dy);
+    final Offset changeToOffset = _config.value.offset.translate(d.dx, d.dy);
+    if (!(widget.onOffsetChanged?.call(changeToOffset) ?? true)) return;
+
+    _config.value.offset = changeToOffset;
     _config.value = _config.value.copy;
+
+    widget.onOffsetChanged?.call(_config.value.offset);
   }
 
   ///拖放
@@ -101,6 +114,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
       _isEditing = false;
       widget.onEdit?.call(false);
     }
+
     if (_config.value.size == null) return;
 
     final Offset d = dud.delta;
@@ -111,10 +125,12 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
       if (s.width - _caseStyle.iconSize * 2 <= 0 || s.height - _caseStyle.iconSize * 2 <= 0) return;
     }
 
-    _config.value.size = Size(_config.value.size!.width + d.dx, _config.value.size!.height + d.dy);
-    _config.value = _config.value.copy;
+    final Size changeToSize = Size(_config.value.size!.width + d.dx, _config.value.size!.height + d.dy);
 
-    widget.onSizeChange?.call(_config.value.size!);
+    if (!(widget.onSizeChanged?.call(_config.value.size!) ?? true)) return;
+
+    _config.value.size = changeToSize;
+    _config.value = _config.value.copy;
   }
 
   @override
@@ -130,7 +146,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
         child: Stack(children: <Widget>[
           _border,
           _child,
-          if (widget.tools != null) Padding(padding: EdgeInsets.all(_caseStyle.iconSize / 2), child: widget.tools),
+          if (widget.tools != null) _tools,
           if (widget.onEdit != null && _isOperating) _edit,
           if (_isOperating) _check,
           if (widget.onDel != null && _isOperating) _del,
@@ -271,6 +287,17 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
         shape: BoxShape.circle,
         color: _caseStyle.borderColor,
       ),
+    );
+  }
+
+  ///工具栏
+  Widget get _tools {
+    return Positioned(
+      left: _caseStyle.iconSize / 2,
+      top: _caseStyle.iconSize / 2,
+      right: _caseStyle.iconSize / 2,
+      bottom: _caseStyle.iconSize / 2,
+      child: widget.tools!,
     );
   }
 }

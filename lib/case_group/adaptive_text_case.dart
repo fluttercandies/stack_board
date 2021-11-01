@@ -31,8 +31,9 @@ class _AdaptiveTextCaseState extends State<AdaptiveTextCase> with SafeState<Adap
   TextStyle get _style => widget.adaptiveText.style ?? _defaultStyle;
 
   Size _textSize(String text, TextStyle style) {
-    final TextPainter textPainter = TextPainter(text: TextSpan(text: text, style: style), maxLines: 1, textDirection: TextDirection.ltr)
-      ..layout(minWidth: 0, maxWidth: double.infinity);
+    final TextPainter textPainter =
+        TextPainter(text: TextSpan(text: text, style: style), maxLines: 1, textDirection: TextDirection.ltr)
+          ..layout(minWidth: 0, maxWidth: double.infinity);
     return textPainter.size;
   }
 
@@ -48,7 +49,7 @@ class _AdaptiveTextCaseState extends State<AdaptiveTextCase> with SafeState<Adap
           safeSetState(() => _isEditing = isEditing);
         }
       },
-      onSizeChange: (Size s) {
+      onSizeChanged: (Size s) {
         final Size size = _textSize(_text, _style);
         _textFieldWidth = size.width + 8;
       },

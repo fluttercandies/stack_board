@@ -1,39 +1,112 @@
-<!-- 
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# stack_board
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages). 
+A Flutter package of custom stack board.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages). 
--->
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
-
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
-
+## 1.使用 StackBoardController
 ```dart
-const like = 'sample';
+import 'package:stack_board/stack_board.dart';
+
+StackBoard(
+    controller: _boardController,
+    ///添加背景
+    background: const ColoredBox(color: Colors.grey),
+),
+```
+添加自适应图片
+```dart
+_boardController.add(
+    const AdaptiveImage(
+        'https://flutter.dev/assets/images/shared/brand/flutter/logo/flutter-lockup.png',
+    ),
+);
 ```
 
-## Additional information
+添加自适应文本
+```dart
+_boardController.add(const AdaptiveText('自适应文本'));
+```
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
+添加画板
+```dart
+_boardController.add(const StackDrawing());
+```
+
+添加自定义Widget
+```dart
+_boardController.add(
+    StackBoardItem(
+        child: const Text('Custom Widget', style: TextStyle(color: Colors.white)),
+    ),
+);
+```
+
+### 添加自定义item
+1.继承自StackBoardItem
+```dart
+///自定义类型 Custom item type
+class CustomItem extends StackBoardItem {
+  const CustomItem({
+    Future<bool> Function()? onDel,
+    int? id, // <==== must
+  }) : super(
+          child: const Text('CustomItem'),
+          onDel: onDel,
+          id: id, // <==== must
+        );
+
+  @override // <==== must
+  CustomItem copyWith({
+    CaseStyle? caseStyle,
+    Widget? child,
+    int? id,
+    Future<bool> Function()? onDel,
+    dynamic Function(bool)? onEdit,
+  }) =>
+      CustomItem(onDel: onDel, id: id);
+}
+```
+2.使用controller添加
+```dart
+_boardController.add<CustomItem>(const CustomItem());
+```
+3.使用customBuilder构建
+```dart
+StackBoard(
+    controller: _boardController,
+    ///如果使用了继承于StackBoardItem的自定义item
+    ///使用这个接口进行重构
+    customBuilder: (StackBoardItem t) {
+        if (t is CustomItem) {
+            return ItemCase(
+                key: Key('CustomStackItem${t.id}'), // <==== must
+                isCenter: false,
+                onDel: () async => _boardController.remove(t.id),
+                child: Container(width: 100, height: 100, color: Colors.blue),
+            );
+        }
+    },
+)
+```
+## 2.使用ItemCase进行完全自定义
+```dart
+Stack(
+    children: <Widget>[
+        ItemCase(
+            isCenter: false,
+            child: const Text('Custom case'),
+            onDel: () async {},
+            onEdit: (bool isEditing) {},
+            onOffsetChanged: (Offset offset) {},
+            onSizeChanged: (Size size) {},
+        ),
+    ],
+)
+```
+
+## 效果预览
+
+预览网址:[https://stack.liugl.cn](https://stack.liugl.cn)
+
+<img src="preview/pre.png" height=400>
+

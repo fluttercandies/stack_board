@@ -12,9 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # flutter_drawing_board: ^0.1.7
-  flutter_drawing_board:
-    path: ../flutter_drawing_board
+  flutter_drawing_board: ^0.1.9
 
 dev_dependencies:
   flutter_test:

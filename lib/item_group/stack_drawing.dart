@@ -6,7 +6,7 @@ import 'stack_board_item.dart';
 ///画板
 class StackDrawing extends StackBoardItem {
   const StackDrawing({
-    this.size = const Size(120, 120),
+    this.size = const Size(200, 200),
     Widget background = const SizedBox(width: 200, height: 200),
     final int? id,
     final Future<bool> Function()? onDel,
@@ -15,9 +15,10 @@ class StackDrawing extends StackBoardItem {
           id: id,
           onDel: onDel,
           child: background,
-          caseStyle: caseStyle,
+          caseStyle: caseStyle ?? const CaseStyle(),
         );
 
+  ///画布初始大小
   final Size size;
 
   @override

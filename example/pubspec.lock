@@ -72,10 +72,10 @@ packages:
   flutter_drawing_board:
     dependency: transitive
     description:
-      path: "../../flutter_drawing_board"
-      relative: true
-    source: path
-    version: "0.1.8"
+      name: flutter_drawing_board
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.9"
   flutter_lints:
     dependency: "direct dev"
     description:

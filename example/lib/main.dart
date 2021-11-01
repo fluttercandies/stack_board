@@ -1,9 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:stack_board/case_group/item_case.dart';
+
 import 'package:stack_board/stack_board.dart';
 
-void main() {
-  runApp(const MyApp());
+///自定义类型 Custom item type
+class CustomItem extends StackBoardItem {
+  const CustomItem({
+    Future<bool> Function()? onDel,
+    int? id, // <==== must
+  }) : super(
+          child: const Text('CustomItem'),
+          onDel: onDel,
+          id: id, // <==== must
+        );
+
+  @override // <==== must
+  CustomItem copyWith({
+    CaseStyle? caseStyle,
+    Widget? child,
+    int? id,
+    Future<bool> Function()? onDel,
+    dynamic Function(bool)? onEdit,
+  }) =>
+      CustomItem(onDel: onDel, id: id);
 }
+
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -76,22 +98,37 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
-      appBar: AppBar(title: const Text('Package example app')),
+      appBar: AppBar(title: const Text('Stack Board Demo')),
+      backgroundColor: Colors.blueGrey,
       body: StackBoard(
         controller: _boardController,
+
+        ///背景
         background: const ColoredBox(color: Colors.grey),
+
+        ///如果使用了继承于StackBoardItem的自定义item
+        ///使用这个接口进行重构
+        customBuilder: (StackBoardItem t) {
+          if (t is CustomItem) {
+            return ItemCase(
+              key: Key('CustomStackItem${t.id}'), // <==== must
+              isCenter: false,
+              onDel: () async => _boardController.remove(t.id),
+              child: Container(width: 100, height: 100, color: Colors.blue),
+            );
+          }
+        },
       ),
       floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
+          const SizedBox(width: 25),
           FloatingActionButton(
             onPressed: () {
               _boardController.add(const AdaptiveText('自适应文本'));
             },
             child: const Icon(Icons.border_color),
           ),
-          const SizedBox(width: 10),
+          _spacer,
           FloatingActionButton(
             onPressed: () {
               _boardController.add(
@@ -100,27 +137,70 @@ class _HomePageState extends State<HomePage> {
             },
             child: const Icon(Icons.image),
           ),
-          const SizedBox(width: 10),
+          _spacer,
           FloatingActionButton(
             onPressed: () {
               _boardController.add(const StackDrawing());
             },
             child: const Icon(Icons.color_lens),
           ),
-          const SizedBox(width: 10),
+          _spacer,
           FloatingActionButton(
             onPressed: () {
               _boardController.add(
                 StackBoardItem(
-                  child: const Text('XXXXXXXX XXXXX Test1', style: TextStyle(color: Colors.white)),
+                  child: const Text('Custom Widget', style: TextStyle(color: Colors.white)),
                   onDel: _onDel,
                 ),
               );
             },
-            child: const Icon(Icons.text_format),
+            child: const Icon(Icons.add_box),
+          ),
+          _spacer,
+          FloatingActionButton(
+            onPressed: () {
+              _boardController.add<CustomItem>(
+                CustomItem(
+                  onDel: () async => true,
+                ),
+              );
+            },
+            child: const Icon(Icons.add),
+          ),
+          const Spacer(),
+          FloatingActionButton(
+            onPressed: () => _boardController.clear(),
+            child: const Icon(Icons.close),
           ),
         ],
       ),
+    );
+  }
+
+  Widget get _spacer => const SizedBox(width: 5);
+}
+
+class ItemCaseDemo extends StatefulWidget {
+  const ItemCaseDemo({Key? key}) : super(key: key);
+
+  @override
+  _ItemCaseDemoState createState() => _ItemCaseDemoState();
+}
+
+class _ItemCaseDemoState extends State<ItemCaseDemo> {
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        ItemCase(
+          isCenter: false,
+          child: const Text('Custom case'),
+          onDel: () async {},
+          onEdit: (bool isEditing) {},
+          onOffsetChanged: (Offset offset) {},
+          onSizeChanged: (Size size) {},
+        ),
+      ],
     );
   }
 }

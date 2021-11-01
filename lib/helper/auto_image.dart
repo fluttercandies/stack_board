@@ -55,7 +55,7 @@ class AutoImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (url.trim().isEmpty) return const Text('Empty url');
+    if (url.trim().isEmpty) return const Center(child: Text('Empty url'));
 
     late ImageProvider<Object> _image;
 

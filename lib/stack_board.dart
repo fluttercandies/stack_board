@@ -13,6 +13,8 @@ import 'item_group/adaptive_text.dart';
 import 'item_group/stack_board_item.dart';
 import 'item_group/stack_drawing.dart';
 
+export 'package:stack_board/helper/case_style.dart';
+
 export 'item_group/adaptive_image.dart';
 export 'item_group/adaptive_text.dart';
 export 'item_group/stack_board_item.dart';
@@ -25,20 +27,30 @@ class StackBoard extends StatefulWidget {
     this.controller,
     this.background,
     this.caseStyle,
+    this.customBuilder,
   }) : super(key: key);
 
   @override
   _StackBoardState createState() => _StackBoardState();
 
+  ///层叠版控制器
   final StackBoardController? controller;
+
+  ///背景
   final Widget? background;
+
+  ///操作框样式
   final CaseStyle? caseStyle;
+
+  ///自定义类型控件构建器
+  final Widget? Function(StackBoardItem item)? customBuilder;
 }
 
 class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
   late List<StackBoardItem> _children;
   int _lastId = 0;
 
+  ///生成唯一Key
   Key _getKey(int? id) => Key('StackBoardItem$id');
 
   @override
@@ -54,7 +66,7 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
   }
 
   ///添加一个
-  void _add(StackBoardItem item) {
+  void _add<T extends StackBoardItem>(StackBoardItem item) {
     if (_children.contains(item)) throw 'duplicate id';
 
     switch (item.runtimeType) {
@@ -77,10 +89,17 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
         ));
         break;
       default:
-        _children.add(item.copyWith(
-          id: item.id ?? _lastId,
-          caseStyle: item.caseStyle ?? widget.caseStyle,
-        ));
+        if (item.runtimeType != StackBoardItem) {
+          _children.add((item as T).copyWith(
+            id: item.id ?? _lastId,
+            caseStyle: item.caseStyle ?? widget.caseStyle,
+          ));
+        } else {
+          _children.add(item.copyWith(
+            id: item.id ?? _lastId,
+            caseStyle: item.caseStyle ?? widget.caseStyle,
+          ));
+        }
     }
 
     _lastId++;
@@ -88,7 +107,7 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
   }
 
   ///移除指定id item
-  void _remove(int id) {
+  void _remove(int? id) {
     _children.removeWhere((StackBoardItem b) => b.id == id);
     safeSetState(() {});
   }
@@ -102,57 +121,78 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
   ///删除动作
   Future<void> _onDel(StackBoardItem box) async {
     final bool del = (await box.onDel?.call()) ?? true;
-    if (del) _remove(box.id!);
+    if (del) _remove(box.id);
   }
 
   @override
   Widget build(BuildContext context) {
     Widget _child;
+
     if (widget.background == null)
       _child = Stack(
         fit: StackFit.expand,
         children: _children.map((StackBoardItem box) => _buildItem(box)).toList(),
       );
-
-    _child = Stack(
-      fit: StackFit.expand,
-      children: <Widget>[
-        widget.background!,
-        ..._children.map((StackBoardItem box) => _buildItem(box)).toList(),
-      ],
-    );
+    else
+      _child = Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          widget.background!,
+          ..._children.map((StackBoardItem box) => _buildItem(box)).toList(),
+        ],
+      );
 
     return _child;
   }
 
   ///构建项
-  Widget _buildItem(StackBoardItem box) {
-    switch (box.runtimeType) {
+  Widget _buildItem(StackBoardItem item) {
+    switch (item.runtimeType) {
       case AdaptiveText:
         return AdaptiveTextCase(
-          key: _getKey(box.id),
-          adaptiveText: box as AdaptiveText,
-          onDel: () => _onDel(box),
+          key: _getKey(item.id),
+          adaptiveText: item as AdaptiveText,
+          onDel: () => _onDel(item),
         );
       case AdaptiveImage:
         return AdaptiveImageCase(
-          key: _getKey(box.id),
-          adaptiveImage: box as AdaptiveImage,
-          onDel: () => _onDel(box),
+          key: _getKey(item.id),
+          adaptiveImage: item as AdaptiveImage,
+          onDel: () => _onDel(item),
         );
       case StackDrawing:
         return DrawingBoardCase(
-          key: _getKey(box.id),
-          stackDrawing: box as StackDrawing,
-          onDel: () => _onDel(box),
+          key: _getKey(item.id),
+          stackDrawing: item as StackDrawing,
+          onDel: () => _onDel(item),
         );
       default:
+        if (item.runtimeType == StackBoardItem) {
+          return ItemCase(
+            key: _getKey(item.id),
+            child: item.child,
+            onDel: () => _onDel(item),
+            onEdit: item.onEdit,
+            caseStyle: item.caseStyle,
+          );
+        }
+
+        if (widget.customBuilder != null) {
+          final Widget? customWidget = widget.customBuilder!.call(item);
+          if (customWidget != null) return customWidget;
+        }
+
         return ItemCase(
-          key: _getKey(box.id),
-          child: box.child,
-          onDel: () => _onDel(box),
-          onEdit: box.onEdit,
-          caseStyle: box.caseStyle,
+          key: _getKey(item.id),
+          child: Container(
+            width: 150,
+            height: 150,
+            alignment: Alignment.center,
+            child: const Text('unknow item type, please use customBuilder to build it'),
+          ),
+          onDel: () => _onDel(item),
+          onEdit: item.onEdit,
+          caseStyle: item.caseStyle,
         );
     }
   }
@@ -168,13 +208,13 @@ class StackBoardController {
   }
 
   ///添加一个
-  void add(StackBoardItem item) {
+  void add<T extends StackBoardItem>(T item) {
     _check();
-    _stackBoardState?._add(item);
+    _stackBoardState?._add<T>(item);
   }
 
   ///移除
-  void remove(int id) {
+  void remove(int? id) {
     _check();
     _stackBoardState?._remove(id);
   }

@@ -42,7 +42,7 @@ class _AdaptiveImageCaseState extends State<AdaptiveImageCase> with SafeState<Ad
             }
           : null,
       isOperating: widget.isOperating,
-      onSizeChange: (Size size) {
+      onSizeChanged: (Size size) {
         _textFieldWidth = size.width;
       },
     );
