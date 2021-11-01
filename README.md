@@ -108,5 +108,5 @@ Stack(
 
 预览网址:[https://stack.liugl.cn](https://stack.liugl.cn)
 
-<img src="preview/pre.png" height=400>
+<img src="https://raw.githubusercontent.com/fluttercandies/stack_board/master/preview/pre.png" height=400>
 
