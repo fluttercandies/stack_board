@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_drawing_board/flutter_drawing_board.dart';
 import 'package:flutter_drawing_board/helper/color_pic.dart';
-import 'package:stack_board/helper/safe_state.dart';
-import 'package:stack_board/helper/safe_value_notifier.dart';
-import 'package:stack_board/item_group/stack_drawing.dart';
+import 'package:stack_board/src/helper/safe_state.dart';
+import 'package:stack_board/src/helper/safe_value_notifier.dart';
+import 'package:stack_board/src/item_group/stack_drawing.dart';
 
 import 'item_case.dart';
 

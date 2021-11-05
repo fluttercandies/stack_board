@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stack_board/helper/case_style.dart';
+import 'package:stack_board/src/helper/case_style.dart';
 
 ///自定义对象
 @immutable

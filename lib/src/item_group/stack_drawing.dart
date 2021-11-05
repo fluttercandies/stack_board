@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stack_board/helper/case_style.dart';
+import 'package:stack_board/src/helper/case_style.dart';
 
 import 'stack_board_item.dart';
 
@@ -15,7 +15,7 @@ class StackDrawing extends StackBoardItem {
           id: id,
           onDel: onDel,
           child: background,
-          caseStyle: caseStyle ?? const CaseStyle(),
+          caseStyle: caseStyle ?? const CaseStyle(boxAspectRatio: 1),
         );
 
   ///画布初始大小

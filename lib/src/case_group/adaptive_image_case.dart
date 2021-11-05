@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:stack_board/helper/auto_image.dart';
-import 'package:stack_board/helper/safe_state.dart';
-import 'package:stack_board/item_group/adaptive_image.dart';
+import 'package:stack_board/src/helper/auto_image.dart';
+import 'package:stack_board/src/helper/safe_state.dart';
+import 'package:stack_board/src/item_group/adaptive_image.dart';
 
 import 'item_case.dart';
 

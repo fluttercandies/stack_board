@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:stack_board/case_group/item_case.dart';
-
 import 'package:stack_board/stack_board.dart';
 
 ///自定义类型 Custom item type

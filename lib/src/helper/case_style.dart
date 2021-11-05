@@ -7,10 +7,12 @@ class CaseStyle {
     this.borderWidth = 1,
     this.iconColor,
     this.iconSize = 20,
+    this.boxAspectRatio,
   });
 
   final Color borderColor;
   final double borderWidth;
   final Color? iconColor;
   final double iconSize;
+  final double? boxAspectRatio;
 }

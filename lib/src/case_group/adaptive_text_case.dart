@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:stack_board/helper/safe_state.dart';
-import 'package:stack_board/item_group/adaptive_text.dart';
+import 'package:stack_board/src/helper/safe_state.dart';
+import 'package:stack_board/src/item_group/adaptive_text.dart';
 
 import 'item_case.dart';
 

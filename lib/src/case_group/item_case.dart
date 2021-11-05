@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:stack_board/helper/case_style.dart';
-import 'package:stack_board/helper/ex_value_builder.dart';
-import 'package:stack_board/helper/get_size.dart';
-import 'package:stack_board/helper/safe_value_notifier.dart';
-
-import '../helper/safe_state.dart';
+import 'package:stack_board/src/helper/case_style.dart';
+import 'package:stack_board/src/helper/ex_value_builder.dart';
+import 'package:stack_board/src/helper/get_size.dart';
+import 'package:stack_board/src/helper/safe_state.dart';
+import 'package:stack_board/src/helper/safe_value_notifier.dart';
 
 ///配置项
 class _Config {
   _Config(this.size, this.offset);
 
-  _Config.def({
-    this.offset = Offset.zero,
-  });
+  _Config.def({this.offset = Offset.zero});
 
   Size? size;
   late Offset offset;
@@ -100,6 +97,8 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
 
     final Offset d = dud.delta;
     final Offset changeToOffset = _config.value.offset.translate(d.dx, d.dy);
+
+    ///移动拦截
     if (!(widget.onOffsetChanged?.call(changeToOffset) ?? true)) return;
 
     _config.value.offset = changeToOffset;
@@ -108,7 +107,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     widget.onOffsetChanged?.call(_config.value.offset);
   }
 
-  ///拖放
+  ///缩放
   void _scaleHandle(DragUpdateDetails dud) {
     if (_isEditing) {
       _isEditing = false;
@@ -117,19 +116,34 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
 
     if (_config.value.size == null) return;
 
-    final Offset d = dud.delta;
+    final Offset delta = dud.delta;
+    final Offset start = _config.value.offset;
+    final Offset global = dud.globalPosition;
+    final Offset offSize = global - start;
+    final double w = offSize.dx + _caseStyle.iconSize / 2;
+    final double h = offSize.dy - _caseStyle.iconSize * 2.5;
 
-    final Size s = Size(_config.value.size!.width + d.dx, _config.value.size!.height + d.dy);
+    if (w <= 0 || h <= 0) return;
+    final Size s = Size(w, h);
 
-    if (d.dx < 0 || d.dy < 0) {
+    ///达到极小值
+    if (delta.dx < 0 || delta.dy < 0) {
       if (s.width - _caseStyle.iconSize * 2 <= 0 || s.height - _caseStyle.iconSize * 2 <= 0) return;
     }
 
-    final Size changeToSize = Size(_config.value.size!.width + d.dx, _config.value.size!.height + d.dy);
+    ///缩放拦截
+    if (!(widget.onSizeChanged?.call(s) ?? true)) return;
 
-    if (!(widget.onSizeChanged?.call(_config.value.size!) ?? true)) return;
+    if (widget.caseStyle?.boxAspectRatio != null) {
+      if (s.width < s.height) {
+        _config.value.size = Size(s.width, s.width / widget.caseStyle!.boxAspectRatio!);
+      } else {
+        _config.value.size = Size(s.height * widget.caseStyle!.boxAspectRatio!, s.height);
+      }
+    } else {
+      _config.value.size = s;
+    }
 
-    _config.value.size = changeToSize;
     _config.value = _config.value.copy;
   }
 
