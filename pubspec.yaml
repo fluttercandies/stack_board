@@ -1,8 +1,8 @@
 name: stack_board
-description: A new Flutter project.
+description: Components that can be stacked and edited for any Widget
 version: 0.0.1
 homepage: https://github.com/fluttercandies/stack_board
-publish_to: none
+publish_to: 'https://pub.dev'
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
