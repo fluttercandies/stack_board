@@ -12,12 +12,22 @@ class StackBoardItem {
     this.caseStyle = const CaseStyle(),
   });
 
+  ///item id
   final int? id;
+
+  ///子控件
   final Widget child;
+
+  ///编辑回调
   final Function(bool)? onEdit;
+
+  ///移除回调
   final Future<bool> Function()? onDel;
+
+  ///外框样式
   final CaseStyle? caseStyle;
 
+  ///对象拷贝
   StackBoardItem copyWith({
     int? id,
     Widget? child,
@@ -33,6 +43,7 @@ class StackBoardItem {
         caseStyle: caseStyle ?? this.caseStyle,
       );
 
+  ///对象比较
   bool sameWith(StackBoardItem item) => item.id == id;
 
   @override

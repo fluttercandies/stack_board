@@ -9,11 +9,16 @@ import 'package:stack_board/src/helper/safe_value_notifier.dart';
 class _Config {
   _Config(this.size, this.offset);
 
+  ///默认配置
   _Config.def({this.offset = Offset.zero});
 
+  ///尺寸
   Size? size;
+
+  ///位置
   late Offset offset;
 
+  ///拷贝
   _Config get copy => _Config(size, offset);
 }
 
@@ -36,29 +41,49 @@ class ItemCase extends StatefulWidget {
   @override
   _ItemCaseState createState() => _ItemCaseState();
 
+  ///子控件
   final Widget child;
+
+  ///工具层
   final Widget? tools;
 
+  ///是否进行居中对齐(自动包裹Center)
   final bool isCenter;
+
+  ///是否正在操作
   final bool? isOperating;
+
+  ///初始化编辑状态
   final bool? isEditing;
 
+  ///编辑动作回调
   final void Function(bool isEditing)? onEdit;
+
+  ///移除拦截
   final void Function()? onDel;
 
   ///尺寸变化回调
   ///返回值可控制是否继续进行
   final bool? Function(Size size)? onSizeChanged;
+
+  ///位置变化回调
   final bool? Function(Offset offset)? onOffsetChanged;
 
+  ///外框样式
   final CaseStyle? caseStyle;
 }
 
 class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
+  ///基础参数状态
   late SafeValueNotifier<_Config> _config;
+
+  ///编辑状态
   late bool _isEditing = widget.isEditing ?? false;
+
+  ///操作状态
   late bool _isOperating = widget.isOperating ?? true;
 
+  ///外框样式
   CaseStyle get _caseStyle => widget.caseStyle ?? const CaseStyle();
 
   @override
@@ -128,7 +153,8 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
 
     ///达到极小值
     if (delta.dx < 0 || delta.dy < 0) {
-      if (s.width - _caseStyle.iconSize * 2 <= 0 || s.height - _caseStyle.iconSize * 2 <= 0) return;
+      if (s.width - _caseStyle.iconSize * 2 <= 0 ||
+          s.height - _caseStyle.iconSize * 2 <= 0) return;
     }
 
     ///缩放拦截
@@ -136,9 +162,11 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
 
     if (widget.caseStyle?.boxAspectRatio != null) {
       if (s.width < s.height) {
-        _config.value.size = Size(s.width, s.width / widget.caseStyle!.boxAspectRatio!);
+        _config.value.size =
+            Size(s.width, s.width / widget.caseStyle!.boxAspectRatio!);
       } else {
-        _config.value.size = Size(s.height * widget.caseStyle!.boxAspectRatio!, s.height);
+        _config.value.size =
+            Size(s.height * widget.caseStyle!.boxAspectRatio!, s.height);
       }
     } else {
       _config.value.size = s;
@@ -180,7 +208,8 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
       content = GetSize(
         onChange: (Size? size) {
           if (size != null && _config.value.size == null) {
-            _config.value.size = Size(size.width + _caseStyle.iconSize + 40, size.height + _caseStyle.iconSize + 40);
+            _config.value.size = Size(size.width + _caseStyle.iconSize + 40,
+                size.height + _caseStyle.iconSize + 40);
             safeSetState(() {});
           }
         },
@@ -248,7 +277,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     );
   }
 
-  ///缩放
+  ///缩放
   Widget get _scale {
     return Positioned(
       bottom: 0,

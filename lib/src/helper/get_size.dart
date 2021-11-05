@@ -24,6 +24,7 @@ class _MeasureSizeRenderObject extends RenderProxyBox {
   }
 }
 
+///获取child尺寸
 class GetSize extends SingleChildRenderObjectWidget {
   const GetSize({
     Key? key,

@@ -2,13 +2,11 @@ library stack_board;
 
 import 'package:flutter/material.dart';
 
-import 'case_group/adaptive_image_case.dart';
 import 'case_group/adaptive_text_case.dart';
 import 'case_group/drawing_board_case.dart';
 import 'case_group/item_case.dart';
 import 'helper/case_style.dart';
 import 'helper/safe_state.dart';
-import 'item_group/adaptive_image.dart';
 import 'item_group/adaptive_text.dart';
 import 'item_group/stack_board_item.dart';
 import 'item_group/stack_drawing.dart';
@@ -40,7 +38,10 @@ class StackBoard extends StatefulWidget {
 }
 
 class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
+  ///子控件列表
   late List<StackBoardItem> _children;
+
+  ///当前item所用id
   int _lastId = 0;
 
   ///生成唯一Key
@@ -65,12 +66,6 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
     switch (item.runtimeType) {
       case AdaptiveText:
         _children.add((item as AdaptiveText).copyWith(
-          id: item.id ?? _lastId,
-          caseStyle: item.caseStyle ?? widget.caseStyle,
-        ));
-        break;
-      case AdaptiveImage:
-        _children.add((item as AdaptiveImage).copyWith(
           id: item.id ?? _lastId,
           caseStyle: item.caseStyle ?? widget.caseStyle,
         ));
@@ -124,7 +119,8 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
     if (widget.background == null)
       _child = Stack(
         fit: StackFit.expand,
-        children: _children.map((StackBoardItem box) => _buildItem(box)).toList(),
+        children:
+            _children.map((StackBoardItem box) => _buildItem(box)).toList(),
       );
     else
       _child = Stack(
@@ -145,12 +141,6 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
         return AdaptiveTextCase(
           key: _getKey(item.id),
           adaptiveText: item as AdaptiveText,
-          onDel: () => _onDel(item),
-        );
-      case AdaptiveImage:
-        return AdaptiveImageCase(
-          key: _getKey(item.id),
-          adaptiveImage: item as AdaptiveImage,
           onDel: () => _onDel(item),
         );
       case StackDrawing:
@@ -181,7 +171,8 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
             width: 150,
             height: 150,
             alignment: Alignment.center,
-            child: const Text('unknow item type, please use customBuilder to build it'),
+            child: const Text(
+                'unknow item type, please use customBuilder to build it'),
           ),
           onDel: () => _onDel(item),
           onEdit: item.onEdit,

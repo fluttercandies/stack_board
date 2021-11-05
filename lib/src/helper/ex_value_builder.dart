@@ -6,7 +6,8 @@ import 'package:flutter/widgets.dart';
 
 import 'safe_state.dart';
 
-typedef ValueWidgetBuilder<T> = Widget Function(BuildContext context, T value, Widget? child);
+typedef ValueWidgetBuilder<T> = Widget Function(
+    BuildContext context, T value, Widget? child);
 
 class ExValueBuilder<T> extends StatefulWidget {
   const ExValueBuilder({
@@ -17,10 +18,13 @@ class ExValueBuilder<T> extends StatefulWidget {
     this.shouldRebuild,
   }) : super(key: key);
 
+  ///ValueListenable
   final ValueListenable<T> valueListenable;
 
+  ///构建器
   final ValueWidgetBuilder<T> builder;
 
+  ///子控件
   final Widget? child;
 
   ///是否进行重建
@@ -30,7 +34,8 @@ class ExValueBuilder<T> extends StatefulWidget {
   State<StatefulWidget> createState() => _ExValueBuilderState<T>();
 }
 
-class _ExValueBuilderState<T> extends State<ExValueBuilder<T>> with SafeState<ExValueBuilder<T>> {
+class _ExValueBuilderState<T> extends State<ExValueBuilder<T>>
+    with SafeState<ExValueBuilder<T>> {
   late T value;
 
   @override
@@ -58,7 +63,8 @@ class _ExValueBuilderState<T> extends State<ExValueBuilder<T>> with SafeState<Ex
 
   void _valueChanged() {
     ///条件判断
-    if (widget.shouldRebuild?.call(value, widget.valueListenable.value) ?? true) {
+    if (widget.shouldRebuild?.call(value, widget.valueListenable.value) ??
+        true) {
       safeSetState(() {
         value = widget.valueListenable.value;
       });

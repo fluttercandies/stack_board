@@ -16,8 +16,10 @@ StackBoard(
 添加自适应图片
 ```dart
 _boardController.add(
-    const AdaptiveImage(
-        'https://flutter.dev/assets/images/shared/brand/flutter/logo/flutter-lockup.png',
+    StackBoardItem(
+        child: Image.network(
+            'https://flutter.dev/assets/images/shared/brand/flutter/logo/flutter-lockup.png',
+        ),
     ),
 );
 ```

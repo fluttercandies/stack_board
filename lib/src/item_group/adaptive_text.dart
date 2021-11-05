@@ -26,15 +26,34 @@ class AdaptiveText extends StackBoardItem {
           caseStyle: caseStyle,
         );
 
+  ///文本内容
   final String data;
+
+  ///文本样式
   final TextStyle? style;
+
+  ///文本对齐方式
   final TextAlign? textAlign;
+
+  ///textDirection
   final TextDirection? textDirection;
+
+  ///locale
   final Locale? locale;
+
+  ///softWrap
   final bool? softWrap;
+
+  ///overflow
   final TextOverflow? overflow;
+
+  ///textScaleFactor
   final double? textScaleFactor;
+
+  ///maxLines
   final int? maxLines;
+
+  ///semanticsLabel
   final String? semanticsLabel;
 
   @override

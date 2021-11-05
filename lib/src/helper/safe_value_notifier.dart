@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class SafeValueNotifier<T> extends ValueNotifier<T> {
   SafeValueNotifier(T value) : super(value);
 
+  ///是否被销毁
   bool _mounted = true;
 
   @override

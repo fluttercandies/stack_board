@@ -4,6 +4,7 @@ import 'package:stack_board/src/item_group/adaptive_text.dart';
 
 import 'item_case.dart';
 
+///默认文本样式
 const TextStyle _defaultStyle = TextStyle(fontSize: 20);
 
 ///自适应文本外壳
@@ -18,22 +19,37 @@ class AdaptiveTextCase extends StatefulWidget {
   @override
   _AdaptiveTextCaseState createState() => _AdaptiveTextCaseState();
 
+  ///自适应文本对象
   final AdaptiveText adaptiveText;
+
+  ///移除拦截
   final void Function()? onDel;
+
+  ///是否正在操作(是否显示控制外框)
   final bool isOperating;
 }
 
-class _AdaptiveTextCaseState extends State<AdaptiveTextCase> with SafeState<AdaptiveTextCase> {
+class _AdaptiveTextCaseState extends State<AdaptiveTextCase>
+    with SafeState<AdaptiveTextCase> {
+  ///是否正在编辑
   bool _isEditing = false;
+
+  ///文本内容
   late String _text = widget.adaptiveText.data;
+
+  ///输入框宽度
   double _textFieldWidth = 100;
 
+  ///文本样式
   TextStyle get _style => widget.adaptiveText.style ?? _defaultStyle;
 
+  ///计算文本大小
   Size _textSize(String text, TextStyle style) {
-    final TextPainter textPainter =
-        TextPainter(text: TextSpan(text: text, style: style), maxLines: 1, textDirection: TextDirection.ltr)
-          ..layout(minWidth: 0, maxWidth: double.infinity);
+    final TextPainter textPainter = TextPainter(
+        text: TextSpan(text: text, style: style),
+        maxLines: 1,
+        textDirection: TextDirection.ltr)
+      ..layout(minWidth: 0, maxWidth: double.infinity);
     return textPainter.size;
   }
 

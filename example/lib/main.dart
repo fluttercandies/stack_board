@@ -77,8 +77,12 @@ class _HomePageState extends State<HomePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        IconButton(onPressed: () => Navigator.pop(context, true), icon: const Icon(Icons.check)),
-                        IconButton(onPressed: () => Navigator.pop(context, false), icon: const Icon(Icons.clear)),
+                        IconButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            icon: const Icon(Icons.check)),
+                        IconButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            icon: const Icon(Icons.clear)),
                       ],
                     ),
                   ],
@@ -96,6 +100,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(title: const Text('Stack Board Demo')),
       backgroundColor: Colors.blueGrey,
       body: StackBoard(
@@ -130,7 +135,11 @@ class _HomePageState extends State<HomePage> {
           FloatingActionButton(
             onPressed: () {
               _boardController.add(
-                const AdaptiveImage('https://flutter.dev/assets/images/shared/brand/flutter/logo/flutter-lockup.png'),
+                StackBoardItem(
+                  child: Image.network(
+                    'https://flutter.dev/assets/images/shared/brand/flutter/logo/flutter-lockup.png',
+                  ),
+                ),
               );
             },
             child: const Icon(Icons.image),
@@ -147,7 +156,8 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               _boardController.add(
                 StackBoardItem(
-                  child: const Text('Custom Widget', style: TextStyle(color: Colors.white)),
+                  child: const Text('Custom Widget',
+                      style: TextStyle(color: Colors.white)),
                   onDel: _onDel,
                 ),
               );
