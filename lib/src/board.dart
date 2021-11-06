@@ -1,6 +1,7 @@
 library stack_board;
 
 import 'package:flutter/material.dart';
+import 'package:stack_board/src/helper/operat_state.dart';
 
 import 'case_group/adaptive_text_case.dart';
 import 'case_group/drawing_board_case.dart';
@@ -19,6 +20,7 @@ class StackBoard extends StatefulWidget {
     this.background,
     this.caseStyle,
     this.customBuilder,
+    this.tapToCancelAllItem = false,
   }) : super(key: key);
 
   @override
@@ -35,6 +37,9 @@ class StackBoard extends StatefulWidget {
 
   ///自定义类型控件构建器
   final Widget? Function(StackBoardItem item)? customBuilder;
+
+  ///点击空白处取消全部选择（比较消耗性能，默认关闭）
+  final bool tapToCancelAllItem;
 }
 
 class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
@@ -43,6 +48,9 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
 
   ///当前item所用id
   int _lastId = 0;
+
+  ///所有item的操作状态
+  OperatState? _operatState;
 
   ///生成唯一Key
   Key _getKey(int? id) => Key('StackBoardItem$id');
@@ -103,7 +111,18 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
   ///清理
   void _clear() {
     _children.clear();
+    _lastId = 0;
     safeSetState(() {});
+  }
+
+  ///取消全部选中
+  void _unFocus() {
+    _operatState = OperatState.complate;
+    safeSetState(() {});
+    Future<void>.delayed(const Duration(milliseconds: 500), () {
+      _operatState = null;
+      safeSetState(() {});
+    });
   }
 
   ///删除动作
@@ -131,6 +150,13 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
         ],
       );
 
+    if (widget.tapToCancelAllItem) {
+      _child = GestureDetector(
+        onTap: _unFocus,
+        child: _child,
+      );
+    }
+
     return _child;
   }
 
@@ -142,12 +168,14 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
           key: _getKey(item.id),
           adaptiveText: item as AdaptiveText,
           onDel: () => _onDel(item),
+          operatState: _operatState,
         );
       case StackDrawing:
         return DrawingBoardCase(
           key: _getKey(item.id),
           stackDrawing: item as StackDrawing,
           onDel: () => _onDel(item),
+          operatState: _operatState,
         );
       default:
         if (item.runtimeType == StackBoardItem) {
@@ -155,8 +183,8 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
             key: _getKey(item.id),
             child: item.child,
             onDel: () => _onDel(item),
-            onEdit: item.onEdit,
             caseStyle: item.caseStyle,
+            operatState: _operatState,
           );
         }
 
@@ -175,8 +203,8 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
                 'unknow item type, please use customBuilder to build it'),
           ),
           onDel: () => _onDel(item),
-          onEdit: item.onEdit,
           caseStyle: item.caseStyle,
+          operatState: _operatState,
         );
     }
   }

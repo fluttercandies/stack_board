@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_drawing_board/flutter_drawing_board.dart';
 import 'package:flutter_drawing_board/helper/color_pic.dart';
+import 'package:stack_board/src/helper/operat_state.dart';
 import 'package:stack_board/src/helper/safe_state.dart';
 import 'package:stack_board/src/helper/safe_value_notifier.dart';
 import 'package:stack_board/src/item_group/stack_drawing.dart';
@@ -14,7 +15,7 @@ class DrawingBoardCase extends StatefulWidget {
     Key? key,
     required this.stackDrawing,
     this.onDel,
-    this.isOperating,
+    this.operatState = OperatState.editing,
   }) : super(key: key);
 
   @override
@@ -26,8 +27,8 @@ class DrawingBoardCase extends StatefulWidget {
   ///移除拦截
   final void Function()? onDel;
 
-  ///是否正在操作(是否显示控制外框)
-  final bool? isOperating;
+  ///操作状态
+  final OperatState? operatState;
 }
 
 class _DrawingBoardCaseState extends State<DrawingBoardCase>
@@ -38,23 +39,25 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
   ///绘制线条粗细进度
   late SafeValueNotifier<double> _indicator;
 
+  ///是否正在绘制
+  late SafeValueNotifier<bool> _isDrawing;
+
   ///是否正在编辑
   bool _isEditing = true;
-
-  ///是否正在绘制
-  bool _isDrawing = false;
 
   @override
   void initState() {
     super.initState();
     _drawingController = DrawingController(config: DrawConfig.def());
     _indicator = SafeValueNotifier<double>(1);
+    _isDrawing = SafeValueNotifier<bool>(false);
   }
 
   @override
   void dispose() {
     _drawingController.dispose();
     _indicator.dispose();
+    _isDrawing.dispose();
     super.dispose();
   }
 
@@ -76,9 +79,10 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
   Widget build(BuildContext context) {
     return ItemCase(
       isCenter: false,
-      isEditing: true,
-      isOperating: widget.isOperating,
+      canEdit: true,
+      tapToEdit: widget.stackDrawing.tapToEdit,
       tools: _tools,
+      operatState: widget.operatState,
       child: FittedBox(
         child: SizedBox.fromSize(
           size: widget.stackDrawing.size,
@@ -91,9 +95,8 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
                     controller: _drawingController,
                     background: widget.stackDrawing.child,
                     drawingCallback: (bool isDrawing) {
-                      if (_isDrawing != isDrawing) {
-                        _isDrawing = isDrawing;
-                        safeSetState(() {});
+                      if (_isDrawing.value != isDrawing) {
+                        _isDrawing.value = isDrawing;
                       }
                     },
                   ),
@@ -106,12 +109,12 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
       ),
       onDel: widget.onDel,
       caseStyle: widget.stackDrawing.caseStyle,
-      onEdit: (bool isEditing) {
-        if (isEditing != _isEditing) {
-          if (!isEditing) {
-            _isDrawing = false;
-          }
-          _isEditing = isEditing;
+      onOperatStateChanged: (OperatState os) {
+        if (os == OperatState.editing && !_isEditing) {
+          _isEditing = true;
+          safeSetState(() {});
+        } else if (os != OperatState.editing && _isEditing) {
+          _isEditing = false;
           safeSetState(() {});
         }
       },
@@ -131,13 +134,19 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
 
   ///工具层
   Widget? get _tools {
-    if (!_isEditing || _isDrawing) return const SizedBox.shrink();
-
-    return Stack(
-      children: <Widget>[
-        _toolBar,
-        Align(alignment: Alignment.bottomRight, child: _buildActions),
-      ],
+    return ExValueBuilder<bool>(
+      valueListenable: _isDrawing,
+      builder: (_, bool? drawing, __) {
+        return Offstage(
+          offstage: !_isEditing || drawing!,
+          child: Stack(
+            children: <Widget>[
+              _toolBar,
+              Align(alignment: Alignment.bottomRight, child: _buildActions),
+            ],
+          ),
+        );
+      },
     );
   }
 

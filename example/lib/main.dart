@@ -19,6 +19,7 @@ class CustomItem extends StackBoardItem {
     int? id,
     Future<bool> Function()? onDel,
     dynamic Function(bool)? onEdit,
+    bool? tapToEdit,
   }) =>
       CustomItem(onDel: onDel, id: id);
 }
@@ -109,6 +110,9 @@ class _HomePageState extends State<HomePage> {
         ///背景
         background: const ColoredBox(color: Colors.grey),
 
+        ///点击取消全部选中状态
+        ///tapToCancelAllItem: true,
+
         ///如果使用了继承于StackBoardItem的自定义item
         ///使用这个接口进行重构
         customBuilder: (StackBoardItem t) {
@@ -127,7 +131,9 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(width: 25),
           FloatingActionButton(
             onPressed: () {
-              _boardController.add(const AdaptiveText('自适应文本'));
+              _boardController.add(
+                const AdaptiveText('自适应文本', tapToEdit: true),
+              );
             },
             child: const Icon(Icons.border_color),
           ),
@@ -204,7 +210,7 @@ class _ItemCaseDemoState extends State<ItemCaseDemo> {
           isCenter: false,
           child: const Text('Custom case'),
           onDel: () async {},
-          onEdit: (bool isEditing) {},
+          onOperatStateChanged: (OperatState operatState) {},
           onOffsetChanged: (Offset offset) {},
           onSizeChanged: (Size size) {},
         ),

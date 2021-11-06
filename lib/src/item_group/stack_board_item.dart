@@ -7,9 +7,9 @@ class StackBoardItem {
   const StackBoardItem({
     required this.child,
     this.id,
-    this.onEdit,
     this.onDel,
     this.caseStyle = const CaseStyle(),
+    this.tapToEdit = false,
   });
 
   ///item id
@@ -18,29 +18,29 @@ class StackBoardItem {
   ///子控件
   final Widget child;
 
-  ///编辑回调
-  final Function(bool)? onEdit;
-
   ///移除回调
   final Future<bool> Function()? onDel;
 
   ///外框样式
   final CaseStyle? caseStyle;
 
+  ///点击进行编辑
+  final bool tapToEdit;
+
   ///对象拷贝
   StackBoardItem copyWith({
     int? id,
     Widget? child,
-    Function(bool)? onEdit,
     Future<bool> Function()? onDel,
     CaseStyle? caseStyle,
+    bool? tapToEdit,
   }) =>
       StackBoardItem(
         id: id ?? this.id,
         child: child ?? this.child,
         onDel: onDel ?? this.onDel,
-        onEdit: onEdit ?? this.onEdit,
         caseStyle: caseStyle ?? this.caseStyle,
+        tapToEdit: tapToEdit ?? this.tapToEdit,
       );
 
   ///对象比较

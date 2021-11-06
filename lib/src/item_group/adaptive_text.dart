@@ -19,11 +19,13 @@ class AdaptiveText extends StackBoardItem {
     final int? id,
     final Future<bool> Function()? onDel,
     CaseStyle? caseStyle,
+    bool? tapToEdit,
   }) : super(
           id: id,
           onDel: onDel,
           child: const SizedBox.shrink(),
           caseStyle: caseStyle,
+          tapToEdit: tapToEdit ?? false,
         );
 
   ///文本内容
@@ -73,6 +75,7 @@ class AdaptiveText extends StackBoardItem {
     int? maxLines,
     String? semanticsLabel,
     CaseStyle? caseStyle,
+    bool? tapToEdit,
   }) {
     return AdaptiveText(
       data ?? this.data,
@@ -88,6 +91,7 @@ class AdaptiveText extends StackBoardItem {
       maxLines: maxLines ?? this.maxLines,
       semanticsLabel: semanticsLabel ?? this.semanticsLabel,
       caseStyle: caseStyle ?? this.caseStyle,
+      tapToEdit: tapToEdit ?? this.tapToEdit,
     );
   }
 }

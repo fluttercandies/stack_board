@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stack_board/src/helper/operat_state.dart';
 import 'package:stack_board/src/helper/safe_state.dart';
 import 'package:stack_board/src/item_group/adaptive_text.dart';
 
@@ -13,7 +14,7 @@ class AdaptiveTextCase extends StatefulWidget {
     Key? key,
     required this.adaptiveText,
     this.onDel,
-    this.isOperating = true,
+    this.operatState,
   }) : super(key: key);
 
   @override
@@ -25,8 +26,7 @@ class AdaptiveTextCase extends StatefulWidget {
   ///移除拦截
   final void Function()? onDel;
 
-  ///是否正在操作(是否显示控制外框)
-  final bool isOperating;
+  final OperatState? operatState;
 }
 
 class _AdaptiveTextCaseState extends State<AdaptiveTextCase>
@@ -57,19 +57,23 @@ class _AdaptiveTextCaseState extends State<AdaptiveTextCase>
   Widget build(BuildContext context) {
     return ItemCase(
       isCenter: false,
+      canEdit: true,
+      tapToEdit: widget.adaptiveText.tapToEdit,
       child: _isEditing ? _buildEditingBox : _buildTextBox,
       onDel: widget.onDel,
+      operatState: widget.operatState,
       caseStyle: widget.adaptiveText.caseStyle,
-      onEdit: (bool isEditing) {
-        if (isEditing != _isEditing) {
-          safeSetState(() => _isEditing = isEditing);
+      onOperatStateChanged: (OperatState s) {
+        if (s != OperatState.editing && _isEditing) {
+          safeSetState(() => _isEditing = false);
+        } else if (s == OperatState.editing && !_isEditing) {
+          safeSetState(() => _isEditing = true);
         }
       },
       onSizeChanged: (Size s) {
         final Size size = _textSize(_text, _style);
         _textFieldWidth = size.width + 8;
       },
-      isOperating: widget.isOperating,
     );
   }
 
@@ -102,6 +106,7 @@ class _AdaptiveTextCaseState extends State<AdaptiveTextCase>
         child: SizedBox(
           width: _textFieldWidth,
           child: TextFormField(
+            autofocus: true,
             initialValue: _text,
             onChanged: (String v) => _text = v,
             style: _style,

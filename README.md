@@ -63,7 +63,6 @@ class CustomItem extends StackBoardItem {
     Widget? child,
     int? id,
     Future<bool> Function()? onDel,
-    dynamic Function(bool)? onEdit,
   }) =>
       CustomItem(onDel: onDel, id: id);
 }
@@ -98,7 +97,6 @@ Stack(
             isCenter: false,
             child: const Text('Custom case'),
             onDel: () async {},
-            onEdit: (bool isEditing) {},
             onOffsetChanged: (Offset offset) {},
             onSizeChanged: (Size size) {},
         ),
