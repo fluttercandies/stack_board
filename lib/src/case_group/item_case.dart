@@ -114,7 +114,8 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
 
   @override
   void didUpdateWidget(covariant ItemCase oldWidget) {
-    if (widget.operatState != null && widget.operatState != oldWidget.operatState) {
+    if (widget.operatState != null &&
+        widget.operatState != oldWidget.operatState) {
       _operatState = widget.operatState!;
       safeSetState(() {});
       widget.onOperatStateChanged?.call(_operatState);
@@ -159,7 +160,8 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
   ///移动操作
   void _moveHandle(DragUpdateDetails dud) {
     if (_operatState != OperatState.moving) {
-      if (_operatState == OperatState.scaling || _operatState == OperatState.roating) {
+      if (_operatState == OperatState.scaling ||
+          _operatState == OperatState.roating) {
         _operatState = OperatState.moving;
       } else {
         _operatState = OperatState.moving;
@@ -173,7 +175,8 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     final double sina = math.sin(-angle);
     final double cosa = math.cos(-angle);
     Offset d = dud.delta;
-    final Offset changeTo = _config.value.offset?.translate(d.dx, d.dy) ?? Offset.zero;
+    final Offset changeTo =
+        _config.value.offset?.translate(d.dx, d.dy) ?? Offset.zero;
 
     ///向量旋转
     d = Offset(sina * d.dy + cosa * d.dx, cosa * d.dy - sina * d.dx);
@@ -194,7 +197,8 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
   ///缩放操作
   void _scaleHandle(DragUpdateDetails dud) {
     if (_operatState != OperatState.scaling) {
-      if (_operatState == OperatState.moving || _operatState == OperatState.roating) {
+      if (_operatState == OperatState.moving ||
+          _operatState == OperatState.roating) {
         _operatState = OperatState.scaling;
       } else {
         _operatState = OperatState.scaling;
@@ -236,9 +240,11 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
 
     if (widget.caseStyle?.boxAspectRatio != null) {
       if (s.width < s.height) {
-        _config.value.size = Size(s.width, s.width / widget.caseStyle!.boxAspectRatio!);
+        _config.value.size =
+            Size(s.width, s.width / widget.caseStyle!.boxAspectRatio!);
       } else {
-        _config.value.size = Size(s.height * widget.caseStyle!.boxAspectRatio!, s.height);
+        _config.value.size =
+            Size(s.height * widget.caseStyle!.boxAspectRatio!, s.height);
       }
     } else {
       _config.value.size = s;
@@ -250,7 +256,8 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
   ///旋转操作
   void _roateHandle(DragUpdateDetails dud) {
     if (_operatState != OperatState.roating) {
-      if (_operatState == OperatState.moving || _operatState == OperatState.scaling) {
+      if (_operatState == OperatState.moving ||
+          _operatState == OperatState.scaling) {
         _operatState = OperatState.roating;
       } else {
         _operatState = OperatState.roating;
@@ -269,7 +276,8 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
       -_caseStyle.iconSize * 2.5,
     );
     final Size size = _config.value.size!;
-    final Offset center = Offset(start.dx + size.width / 2, start.dy + size.height / 2);
+    final Offset center =
+        Offset(start.dx + size.width / 2, start.dy + size.height / 2);
     final double l = (global - center).distance;
     final double s = (global.dy - center.dy).abs();
 
@@ -306,7 +314,8 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
   @override
   Widget build(BuildContext context) {
     return ExValueBuilder<_Config>(
-      shouldRebuild: (_Config p, _Config n) => p.offset != n.offset || p.angle != n.angle,
+      shouldRebuild: (_Config p, _Config n) =>
+          p.offset != n.offset || p.angle != n.angle,
       valueListenable: _config,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -320,7 +329,8 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
           if (widget.canEdit && _operatState != OperatState.complate) _edit,
           if (_operatState != OperatState.complate) _roate,
           if (_operatState != OperatState.complate) _check,
-          if (widget.onDel != null && _operatState != OperatState.complate) _del,
+          if (widget.onDel != null && _operatState != OperatState.complate)
+            _del,
           if (_operatState != OperatState.complate) _scale,
         ]),
       ),
@@ -344,7 +354,8 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
       content = GetSize(
         onChange: (Size? size) {
           if (size != null && _config.value.size == null) {
-            _config.value.size = Size(size.width + _caseStyle.iconSize + 40, size.height + _caseStyle.iconSize + 40);
+            _config.value.size = Size(size.width + _caseStyle.iconSize + 40,
+                size.height + _caseStyle.iconSize + 40);
             safeSetState(() {});
           }
         },
@@ -380,7 +391,9 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: _operatState == OperatState.complate ? Colors.transparent : _caseStyle.borderColor,
+            color: _operatState == OperatState.complate
+                ? Colors.transparent
+                : _caseStyle.borderColor,
             width: _caseStyle.borderWidth,
           ),
         ),
@@ -401,7 +414,9 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
         widget.onOperatStateChanged?.call(_operatState);
       },
       child: _toolCase(
-        Icon(_operatState == OperatState.editing ? Icons.border_color : Icons.edit),
+        Icon(_operatState == OperatState.editing
+            ? Icons.border_color
+            : Icons.edit),
       ),
     );
   }

@@ -9,3 +9,7 @@
 ## 0.0.3
 
 * Fix some problems
+
+## 0.0.4
+
+* Add rotate operation
