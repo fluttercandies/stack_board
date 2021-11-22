@@ -1,13 +1,13 @@
 library stack_board;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_drawing_board/flutter_drawing_board.dart';
 import 'package:stack_board/src/helper/operat_state.dart';
 
 import 'case_group/adaptive_text_case.dart';
 import 'case_group/drawing_board_case.dart';
 import 'case_group/item_case.dart';
 import 'helper/case_style.dart';
-import 'helper/safe_state.dart';
 import 'item_group/adaptive_text.dart';
 import 'item_group/stack_board_item.dart';
 import 'item_group/stack_drawing.dart';

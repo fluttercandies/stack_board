@@ -13,3 +13,7 @@
 ## 0.0.4
 
 * Add rotate operation
+
+## 0.0.5
+
+* Update dependencies

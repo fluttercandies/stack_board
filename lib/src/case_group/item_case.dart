@@ -1,12 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_drawing_board/flutter_drawing_board.dart';
 import 'package:stack_board/src/helper/case_style.dart';
-import 'package:stack_board/src/helper/ex_value_builder.dart';
-import 'package:stack_board/src/helper/get_size.dart';
 import 'package:stack_board/src/helper/operat_state.dart';
-import 'package:stack_board/src/helper/safe_state.dart';
-import 'package:stack_board/src/helper/safe_value_notifier.dart';
 
 ///配置项
 class _Config {
@@ -314,8 +311,8 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
   @override
   Widget build(BuildContext context) {
     return ExValueBuilder<_Config>(
-      shouldRebuild: (_Config p, _Config n) =>
-          p.offset != n.offset || p.angle != n.angle,
+      shouldRebuild: (_Config? p, _Config? n) =>
+          p?.offset != n?.offset || p?.angle != n?.angle,
       valueListenable: _config,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -334,12 +331,12 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
           if (_operatState != OperatState.complate) _scale,
         ]),
       ),
-      builder: (_, _Config c, Widget? child) {
+      builder: (_, _Config? c, Widget? child) {
         return Positioned(
-          top: c.offset?.dy,
-          left: c.offset?.dx,
+          top: c?.offset?.dy,
+          left: c?.offset?.dx,
           child: Transform.rotate(
-            angle: c.angle ?? 0,
+            angle: c?.angle ?? 0,
             child: child,
           ),
         );
@@ -366,15 +363,15 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     if (widget.isCenter) content = Center(child: content);
 
     return ExValueBuilder<_Config>(
-      shouldRebuild: (_Config p, _Config n) => p.size != n.size,
+      shouldRebuild: (_Config? p, _Config? n) => p?.size != n?.size,
       valueListenable: _config,
       child: Padding(
         padding: EdgeInsets.all(_caseStyle.iconSize / 2),
         child: content,
       ),
-      builder: (_, _Config c, Widget? child) {
+      builder: (_, _Config? c, Widget? child) {
         return SizedBox.fromSize(
-          size: c.size,
+          size: c?.size,
           child: child,
         );
       },

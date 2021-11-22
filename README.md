@@ -18,7 +18,7 @@ StackBoard(
 _boardController.add(
     StackBoardItem(
         child: Image.network(
-            'https://flutter.dev/assets/images/shared/brand/flutter/logo/flutter-lockup.png',
+            'https://files.flutter-io.cn/images/branding/flutterlogo/flutter-cn-logo.png',
         ),
     ),
 );

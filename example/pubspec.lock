@@ -68,14 +68,14 @@ packages:
       name: flutter_colorpicker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.2"
   flutter_drawing_board:
     dependency: transitive
     description:
       name: flutter_drawing_board
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.0"
+    version: "0.2.2"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -134,7 +134,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.4"
+    version: "0.0.5"
   stack_trace:
     dependency: transitive
     description:
