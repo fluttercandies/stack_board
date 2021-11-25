@@ -1,6 +1,12 @@
-# stack_board
+# Stack Board
 
-A Flutter package of custom stack board.
+A Flutter package of custom stack board. 
+
+[![pub package](https://img.shields.io/pub/v/stack_board?logo=dart&label=stable&style=flat-square)](https://pub.dev/packages/stack_board)
+[![GitHub stars](https://img.shields.io/github/stars/fluttercandies/stack_board?logo=github&style=flat-square)](https://github.com/fluttercandies/stack_board/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/fluttercandies/stack_board?logo=github&style=flat-square)](https://github.com/fluttercandies/stack_board/network/members)
+[![CodeFactor](https://img.shields.io/codefactor/grade/github/fluttercandies/stack_board?logo=codefactor&logoColor=%23ffffff&style=flat-square)](https://www.codefactor.io/repository/github/fluttercandies/stack_board)
+<a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5bcc0gy"><img border="0" src="https://pub.idqqimg.com/wpa/images/group.png" alt="FlutterCandies" title="FlutterCandies"></a>
 
 
 ## 1.使用 StackBoardController
