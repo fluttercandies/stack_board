@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 import 'package:stack_board/src/helper/case_style.dart';
 
 ///自定义对象
