@@ -3,7 +3,7 @@ import 'package:stack_board/src/helper/case_style.dart';
 
 import 'stack_board_item.dart';
 
-///自适应文本
+/// 自适应文本
 class AdaptiveText extends StackBoardItem {
   const AdaptiveText(
     this.data, {
@@ -28,34 +28,34 @@ class AdaptiveText extends StackBoardItem {
           tapToEdit: tapToEdit ?? false,
         );
 
-  ///文本内容
+  /// 文本内容
   final String data;
 
-  ///文本样式
+  /// 文本样式
   final TextStyle? style;
 
-  ///文本对齐方式
+  /// 文本对齐方式
   final TextAlign? textAlign;
 
-  ///textDirection
+  /// textDirection
   final TextDirection? textDirection;
 
-  ///locale
+  /// locale
   final Locale? locale;
 
-  ///softWrap
+  /// softWrap
   final bool? softWrap;
 
-  ///overflow
+  /// overflow
   final TextOverflow? overflow;
 
-  ///textScaleFactor
+  /// textScaleFactor
   final double? textScaleFactor;
 
-  ///maxLines
+  /// maxLines
   final int? maxLines;
 
-  ///semanticsLabel
+  /// semanticsLabel
   final String? semanticsLabel;
 
   @override

@@ -3,7 +3,7 @@ import 'package:stack_board/src/helper/case_style.dart';
 
 import 'stack_board_item.dart';
 
-///画板
+/// 画板
 class StackDrawing extends StackBoardItem {
   const StackDrawing({
     this.size = const Size(260, 260),
@@ -20,7 +20,7 @@ class StackDrawing extends StackBoardItem {
           tapToEdit: tapToEdit ?? false,
         );
 
-  ///画布初始大小
+  /// 画布初始大小
   final Size size;
 
   @override

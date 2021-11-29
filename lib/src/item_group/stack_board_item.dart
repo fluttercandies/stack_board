@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:stack_board/src/helper/case_style.dart';
 
-///自定义对象
+/// 自定义对象
 @immutable
 class StackBoardItem {
   const StackBoardItem({
@@ -13,22 +13,22 @@ class StackBoardItem {
     this.tapToEdit = false,
   });
 
-  ///item id
+  /// item id
   final int? id;
 
-  ///子控件
+  /// 子控件
   final Widget child;
 
-  ///移除回调
+  /// 移除回调
   final Future<bool> Function()? onDel;
 
-  ///外框样式
+  /// 外框样式
   final CaseStyle? caseStyle;
 
-  ///点击进行编辑
+  /// 点击进行编辑
   final bool tapToEdit;
 
-  ///对象拷贝
+  /// 对象拷贝
   StackBoardItem copyWith({
     int? id,
     Widget? child,
@@ -44,7 +44,7 @@ class StackBoardItem {
         tapToEdit: tapToEdit ?? this.tapToEdit,
       );
 
-  ///对象比较
+  /// 对象比较
   bool sameWith(StackBoardItem item) => item.id == id;
 
   @override

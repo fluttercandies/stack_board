@@ -57,14 +57,14 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  ///删除拦截
+  /// 删除拦截
   Future<bool> _onDel() async {
     final bool? r = await showDialog<bool>(
       context: context,
       builder: (_) {
         return Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 100),
+          child: SizedBox(
+            width: 400,
             child: Material(
               child: Padding(
                 padding: const EdgeInsets.all(20),
@@ -107,14 +107,14 @@ class _HomePageState extends State<HomePage> {
       body: StackBoard(
         controller: _boardController,
 
-        ///背景
+        /// 背景
         background: const ColoredBox(color: Colors.grey),
 
-        ///点击取消全部选中状态
-        ///tapToCancelAllItem: true,
+        /// 点击取消全部选中状态
+        /// tapToCancelAllItem: true,
 
-        ///如果使用了继承于StackBoardItem的自定义item
-        ///使用这个接口进行重构
+        /// 如果使用了继承于StackBoardItem的自定义item
+        /// 使用这个接口进行重构
         customBuilder: (StackBoardItem t) {
           if (t is CustomItem) {
             return ItemCase(
@@ -165,6 +165,7 @@ class _HomePageState extends State<HomePage> {
                   child: const Text('Custom Widget',
                       style: TextStyle(color: Colors.white)),
                   onDel: _onDel,
+                  caseStyle: const CaseStyle(initOffset: Offset(100, 100)),
                 ),
               );
             },
@@ -174,9 +175,7 @@ class _HomePageState extends State<HomePage> {
           FloatingActionButton(
             onPressed: () {
               _boardController.add<CustomItem>(
-                CustomItem(
-                  onDel: () async => true,
-                ),
+                CustomItem(onDel: () async => true),
               );
             },
             child: const Icon(Icons.add),

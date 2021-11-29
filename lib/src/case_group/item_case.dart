@@ -5,23 +5,23 @@ import 'package:flutter_drawing_board/flutter_drawing_board.dart';
 import 'package:stack_board/src/helper/case_style.dart';
 import 'package:stack_board/src/helper/operat_state.dart';
 
-///配置项
+/// 配置项
 class _Config {
   _Config({this.size, this.offset, this.angle});
 
-  ///默认配置
+  /// 默认配置
   _Config.def({this.offset = Offset.zero, this.angle = 0});
 
-  ///尺寸
+  /// 尺寸
   Size? size;
 
-  ///位置
+  /// 位置
   Offset? offset;
 
-  ///角度
+  /// 角度
   double? angle;
 
-  ///拷贝
+  /// 拷贝
   _Config copy({
     Size? size,
     Offset? offset,
@@ -34,79 +34,80 @@ class _Config {
       );
 }
 
-///操作外壳
+/// 操作外壳
 class ItemCase extends StatefulWidget {
   const ItemCase({
     Key? key,
     required this.child,
     this.isCenter = true,
-    this.onDel,
-    this.onSizeChanged,
     this.tools,
-    this.onOffsetChanged,
     this.caseStyle = const CaseStyle(),
     this.tapToEdit = false,
     this.operatState = OperatState.idle,
-    this.onOperatStateChanged,
     this.canEdit = false,
+    this.onDel,
+    this.onSizeChanged,
+    this.onOperatStateChanged,
+    this.onOffsetChanged,
     this.onAngleChanged,
   }) : super(key: key);
 
   @override
   _ItemCaseState createState() => _ItemCaseState();
 
-  ///子控件
+  /// 子控件
   final Widget child;
 
-  ///工具层
+  /// 工具层
   final Widget? tools;
 
-  ///是否进行居中对齐(自动包裹Center)
+  /// 是否进行居中对齐(自动包裹Center)
   final bool isCenter;
 
-  ///能否编辑
+  /// 能否编辑
   final bool canEdit;
 
-  ///移除拦截
+  /// 外框样式
+  final CaseStyle? caseStyle;
+
+  /// 点击进行编辑，默认false
+  final bool tapToEdit;
+
+  /// 操作状态
+  final OperatState? operatState;
+
+  /// 移除拦截
   final void Function()? onDel;
 
-  ///尺寸变化回调
-  ///返回值可控制是否继续进行
+  /// 尺寸变化回调
+  /// 返回值可控制是否继续进行
   final bool? Function(Size size)? onSizeChanged;
 
   ///位置变化回调
   final bool? Function(Offset offset)? onOffsetChanged;
 
-  ///角度变化回调
+  /// 角度变化回调
   final bool? Function(double offset)? onAngleChanged;
 
-  ///操作状态回调
+  /// 操作状态回调
   final bool? Function(OperatState)? onOperatStateChanged;
-
-  ///外框样式
-  final CaseStyle? caseStyle;
-
-  ///点击进行编辑，默认false
-  final bool tapToEdit;
-
-  ///操作状态
-  final OperatState? operatState;
 }
 
 class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
-  ///基础参数状态
+  /// 基础参数状态
   late SafeValueNotifier<_Config> _config;
 
-  ///操作状态
+  /// 操作状态
   late OperatState _operatState = widget.operatState ?? OperatState.idle;
 
-  ///外框样式
+  /// 外框样式
   CaseStyle get _caseStyle => widget.caseStyle ?? const CaseStyle();
 
   @override
   void initState() {
     super.initState();
     _config = SafeValueNotifier<_Config>(_Config.def());
+    _config.value.offset = widget.caseStyle?.initOffset;
   }
 
   @override
@@ -127,7 +128,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     super.dispose();
   }
 
-  ///点击
+  /// 点击
   void _onTap() {
     if (widget.tapToEdit) {
       if (_operatState != OperatState.editing) {
@@ -146,7 +147,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     widget.onOperatStateChanged?.call(_operatState);
   }
 
-  ///切回常规状态
+  /// 切回常规状态
   void _changeToIdle() {
     if (_operatState != OperatState.idle) {
       _operatState = OperatState.idle;
@@ -154,7 +155,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     }
   }
 
-  ///移动操作
+  /// 移动操作
   void _moveHandle(DragUpdateDetails dud) {
     if (_operatState != OperatState.moving) {
       if (_operatState == OperatState.scaling ||
@@ -175,7 +176,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     final Offset changeTo =
         _config.value.offset?.translate(d.dx, d.dy) ?? Offset.zero;
 
-    ///向量旋转
+    //向量旋转
     d = Offset(sina * d.dy + cosa * d.dx, cosa * d.dy - sina * d.dx);
 
     // print('detail:$d');
@@ -183,7 +184,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     final Offset? realOffset = _config.value.offset?.translate(d.dx, d.dy);
     if (realOffset == null) return;
 
-    ///移动拦截
+    //移动拦截
     if (!(widget.onOffsetChanged?.call(realOffset) ?? true)) return;
 
     _config.value = _config.value.copy(offset: realOffset);
@@ -191,7 +192,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     widget.onOffsetChanged?.call(changeTo);
   }
 
-  ///缩放操作
+  /// 缩放操作
   void _scaleHandle(DragUpdateDetails dud) {
     if (_operatState != OperatState.scaling) {
       if (_operatState == OperatState.moving ||
@@ -223,7 +224,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
 
     final double min = _caseStyle.iconSize * 3;
 
-    ///达到极小值
+    //达到极小值
     if (w < min) w = min;
     if (h < min) h = min;
 
@@ -232,7 +233,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     if (d.dx < 0 && s.width < min) s = Size(min, h);
     if (d.dy < 0 && s.height < min) s = Size(w, min);
 
-    ///缩放拦截
+    //缩放拦截
     if (!(widget.onSizeChanged?.call(s) ?? true)) return;
 
     if (widget.caseStyle?.boxAspectRatio != null) {
@@ -250,7 +251,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     _config.value = _config.value.copy();
   }
 
-  ///旋转操作
+  /// 旋转操作
   void _roateHandle(DragUpdateDetails dud) {
     if (_operatState != OperatState.roating) {
       if (_operatState == OperatState.moving ||
@@ -295,13 +296,13 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
       }
     }
 
-    ///旋转拦截
+    //旋转拦截
     if (!(widget.onAngleChanged?.call(angle) ?? true)) return;
 
     _config.value = _config.value.copy(angle: angle);
   }
 
-  ///旋转回0度
+  /// 旋转回0度
   void _turnBack() {
     if (_config.value.angle != 0) {
       _config.value = _config.value.copy(angle: 0);
@@ -344,7 +345,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     );
   }
 
-  ///子控件
+  /// 子控件
   Widget get _child {
     Widget content = widget.child;
     if (_config.value.size == null) {
@@ -378,7 +379,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     );
   }
 
-  ///边框
+  /// 边框
   Widget get _border {
     return Positioned(
       top: _caseStyle.iconSize / 2,
@@ -398,7 +399,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     );
   }
 
-  ///编辑手柄
+  /// 编辑手柄
   Widget get _edit {
     return GestureDetector(
       onTap: () {
@@ -418,7 +419,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     );
   }
 
-  ///删除手柄
+  /// 删除手柄
   Widget get _del {
     return Positioned(
       top: 0,
@@ -430,7 +431,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     );
   }
 
-  ///缩放手柄
+  /// 缩放手柄
   Widget get _scale {
     return Positioned(
       bottom: 0,
@@ -448,7 +449,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     );
   }
 
-  ///旋转手柄
+  /// 旋转手柄
   Widget get _roate {
     return Positioned(
       top: 0,
@@ -468,7 +469,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     );
   }
 
-  ///完成操作
+  /// 完成操作
   Widget get _check {
     return Positioned(
       bottom: 0,
@@ -486,7 +487,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     );
   }
 
-  ///操作手柄壳
+  /// 操作手柄壳
   Widget _toolCase(Widget child) {
     return Container(
       width: _caseStyle.iconSize,
@@ -505,7 +506,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
     );
   }
 
-  ///工具栏
+  /// 工具栏
   Widget get _tools {
     return Positioned(
       left: _caseStyle.iconSize / 2,

@@ -18,6 +18,10 @@
 
 * Update dependencies
 
-## 0.0.5
+## 0.0.6
 
 * Update dependencies, improve code quality
+
+## 0.0.7
+
+* Add init offset config

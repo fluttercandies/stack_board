@@ -12,7 +12,7 @@ import 'item_group/adaptive_text.dart';
 import 'item_group/stack_board_item.dart';
 import 'item_group/stack_drawing.dart';
 
-///层叠板
+/// 层叠板
 class StackBoard extends StatefulWidget {
   const StackBoard({
     Key? key,
@@ -26,33 +26,33 @@ class StackBoard extends StatefulWidget {
   @override
   _StackBoardState createState() => _StackBoardState();
 
-  ///层叠版控制器
+  /// 层叠版控制器
   final StackBoardController? controller;
 
-  ///背景
+  /// 背景
   final Widget? background;
 
-  ///操作框样式
+  /// 操作框样式
   final CaseStyle? caseStyle;
 
-  ///自定义类型控件构建器
+  /// 自定义类型控件构建器
   final Widget? Function(StackBoardItem item)? customBuilder;
 
-  ///点击空白处取消全部选择（比较消耗性能，默认关闭）
+  /// 点击空白处取消全部选择（比较消耗性能，默认关闭）
   final bool tapToCancelAllItem;
 }
 
 class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
-  ///子控件列表
+  /// 子控件列表
   late List<StackBoardItem> _children;
 
-  ///当前item所用id
+  /// 当前item所用id
   int _lastId = 0;
 
-  ///所有item的操作状态
+  /// 所有item的操作状态
   OperatState? _operatState;
 
-  ///生成唯一Key
+  /// 生成唯一Key
   Key _getKey(int? id) => Key('StackBoardItem$id');
 
   @override
@@ -67,7 +67,7 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
     widget.controller?._stackBoardState = this;
   }
 
-  ///添加一个
+  /// 添加一个
   void _add<T extends StackBoardItem>(StackBoardItem item) {
     if (_children.contains(item)) throw 'duplicate id';
 
@@ -102,20 +102,20 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
     safeSetState(() {});
   }
 
-  ///移除指定id item
+  /// 移除指定id item
   void _remove(int? id) {
     _children.removeWhere((StackBoardItem b) => b.id == id);
     safeSetState(() {});
   }
 
-  ///清理
+  /// 清理
   void _clear() {
     _children.clear();
     _lastId = 0;
     safeSetState(() {});
   }
 
-  ///取消全部选中
+  /// 取消全部选中
   void _unFocus() {
     _operatState = OperatState.complate;
     safeSetState(() {});
@@ -125,7 +125,7 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
     });
   }
 
-  ///删除动作
+  /// 删除动作
   Future<void> _onDel(StackBoardItem box) async {
     final bool del = (await box.onDel?.call()) ?? true;
     if (del) _remove(box.id);
@@ -160,7 +160,7 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
     return _child;
   }
 
-  ///构建项
+  /// 构建项
   Widget _buildItem(StackBoardItem item) {
     switch (item.runtimeType) {
       case AdaptiveText:
@@ -210,40 +210,40 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
   }
 }
 
-///控制器
+/// 控制器
 class StackBoardController {
   _StackBoardState? _stackBoardState;
 
-  ///检查是否加载
+  /// 检查是否加载
   void _check() {
     if (_stackBoardState == null) throw '_stackBoardState is empty';
   }
 
-  ///添加一个
+  /// 添加一个
   void add<T extends StackBoardItem>(T item) {
     _check();
     _stackBoardState?._add<T>(item);
   }
 
-  ///移除
+  /// 移除
   void remove(int? id) {
     _check();
     _stackBoardState?._remove(id);
   }
 
-  ///清理全部
+  /// 清理全部
   void clear() {
     _check();
     _stackBoardState?._clear();
   }
 
-  ///刷新
+  /// 刷新
   void refresh() {
     _check();
     _stackBoardState?.safeSetState(() {});
   }
 
-  ///销毁
+  /// 销毁
   void dispose() {
     _stackBoardState = null;
   }

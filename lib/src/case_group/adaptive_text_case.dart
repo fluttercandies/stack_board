@@ -5,10 +5,10 @@ import 'package:stack_board/src/item_group/adaptive_text.dart';
 
 import 'item_case.dart';
 
-///默认文本样式
+/// 默认文本样式
 const TextStyle _defaultStyle = TextStyle(fontSize: 20);
 
-///自适应文本外壳
+/// 自适应文本外壳
 class AdaptiveTextCase extends StatefulWidget {
   const AdaptiveTextCase({
     Key? key,
@@ -20,10 +20,10 @@ class AdaptiveTextCase extends StatefulWidget {
   @override
   _AdaptiveTextCaseState createState() => _AdaptiveTextCaseState();
 
-  ///自适应文本对象
+  /// 自适应文本对象
   final AdaptiveText adaptiveText;
 
-  ///移除拦截
+  /// 移除拦截
   final void Function()? onDel;
 
   final OperatState? operatState;
@@ -31,19 +31,19 @@ class AdaptiveTextCase extends StatefulWidget {
 
 class _AdaptiveTextCaseState extends State<AdaptiveTextCase>
     with SafeState<AdaptiveTextCase> {
-  ///是否正在编辑
+  /// 是否正在编辑
   bool _isEditing = false;
 
-  ///文本内容
+  /// 文本内容
   late String _text = widget.adaptiveText.data;
 
-  ///输入框宽度
+  /// 输入框宽度
   double _textFieldWidth = 100;
 
-  ///文本样式
+  /// 文本样式
   TextStyle get _style => widget.adaptiveText.style ?? _defaultStyle;
 
-  ///计算文本大小
+  /// 计算文本大小
   Size _textSize(String text, TextStyle style) {
     final TextPainter textPainter = TextPainter(
         text: TextSpan(text: text, style: style),
@@ -77,7 +77,7 @@ class _AdaptiveTextCaseState extends State<AdaptiveTextCase>
     );
   }
 
-  ///仅文本
+  /// 仅文本
   Widget get _buildTextBox {
     return FittedBox(
       child: Padding(
@@ -98,7 +98,7 @@ class _AdaptiveTextCaseState extends State<AdaptiveTextCase>
     );
   }
 
-  ///正在编辑
+  /// 正在编辑
   Widget get _buildEditingBox {
     return FittedBox(
       child: Padding(

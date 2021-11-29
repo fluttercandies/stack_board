@@ -6,7 +6,7 @@ import 'package:stack_board/src/item_group/stack_drawing.dart';
 
 import 'item_case.dart';
 
-///画板外壳
+/// 画板外壳
 class DrawingBoardCase extends StatefulWidget {
   const DrawingBoardCase({
     Key? key,
@@ -18,28 +18,28 @@ class DrawingBoardCase extends StatefulWidget {
   @override
   _DrawingBoardCaseState createState() => _DrawingBoardCaseState();
 
-  ///画板配置对象
+  /// 画板配置对象
   final StackDrawing stackDrawing;
 
-  ///移除拦截
+  /// 移除拦截
   final void Function()? onDel;
 
-  ///操作状态
+  /// 操作状态
   final OperatState? operatState;
 }
 
 class _DrawingBoardCaseState extends State<DrawingBoardCase>
     with SafeState<DrawingBoardCase> {
-  ///绘制控制器
+  /// 绘制控制器
   late DrawingController _drawingController;
 
-  ///绘制线条粗细进度
+  /// 绘制线条粗细进度
   late SafeValueNotifier<double> _indicator;
 
-  ///是否正在绘制
+  /// 是否正在绘制
   late SafeValueNotifier<bool> _isDrawing;
 
-  ///是否正在编辑
+  /// 是否正在编辑
   bool _isEditing = true;
 
   @override
@@ -58,7 +58,7 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
     super.dispose();
   }
 
-  ///选择颜色
+  /// 选择颜色
   Future<void> _pickColor() async {
     final Color? newColor = await showModalBottomSheet<Color?>(
         context: context,
@@ -118,7 +118,7 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
     );
   }
 
-  ///绘制拦截图层
+  /// 绘制拦截图层
   Widget get _mask {
     return Positioned(
       top: 0,
@@ -129,7 +129,7 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
     );
   }
 
-  ///工具层
+  /// 工具层
   Widget? get _tools {
     return ExValueBuilder<bool>(
       valueListenable: _isDrawing,
@@ -147,7 +147,7 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
     );
   }
 
-  ///工具栏
+  /// 工具栏
   Widget get _toolBar {
     return FittedBox(
       fit: BoxFit.none,
@@ -172,7 +172,7 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
     );
   }
 
-  ///构建工具项
+  /// 构建工具项
   Widget _buildToolItem(PaintType type, IconData icon, Function() onTap) {
     return GestureDetector(
       onTap: onTap,
@@ -196,7 +196,7 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
     );
   }
 
-  ///构建操作栏
+  /// 构建操作栏
   Widget get _buildActions {
     final double iconSize = widget.stackDrawing.caseStyle!.iconSize;
 
