@@ -143,8 +143,7 @@ class _HomePageState extends State<HomePage> {
               _boardController.add(
                 StackBoardItem(
                   child: Image.network(
-                    'https://files.flutter-io.cn/images/branding/flutterlogo/flutter-cn-logo.png',
-                  ),
+                      'https://avatars.githubusercontent.com/u/47586449?s=200&v=4'),
                 ),
               );
             },
