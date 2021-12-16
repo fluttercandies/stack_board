@@ -13,6 +13,7 @@ class DrawingBoardCase extends StatefulWidget {
     required this.stackDrawing,
     this.onDel,
     this.operatState = OperatState.editing,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -23,6 +24,9 @@ class DrawingBoardCase extends StatefulWidget {
 
   /// 移除拦截
   final void Function()? onDel;
+
+  /// 点击回调
+  final void Function()? onTap;
 
   /// 操作状态
   final OperatState? operatState;
@@ -77,6 +81,7 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
     return ItemCase(
       isCenter: false,
       canEdit: true,
+      onTap: widget.onTap,
       tapToEdit: widget.stackDrawing.tapToEdit,
       tools: _tools,
       operatState: widget.operatState,
@@ -158,8 +163,10 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
             color: Colors.white,
             child: Column(
               children: <Widget>[
-                _buildToolItem(PaintType.simpleLine, Icons.brush,
+                _buildToolItem(PaintType.simpleLine, Icons.edit,
                     () => _drawingController.setType = PaintType.simpleLine),
+                _buildToolItem(PaintType.smoothLine, Icons.brush,
+                    () => _drawingController.setType = PaintType.smoothLine),
                 _buildToolItem(PaintType.straightLine, Icons.show_chart,
                     () => _drawingController.setType = PaintType.straightLine),
                 _buildToolItem(PaintType.rectangle, Icons.crop_din,

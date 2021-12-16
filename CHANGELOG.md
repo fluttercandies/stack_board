@@ -25,3 +25,7 @@
 ## 0.0.7
 
 * Add init offset config
+
+## 0.0.8
+
+* Fix bug, add click to top and update dependencies

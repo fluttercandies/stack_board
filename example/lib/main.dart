@@ -1,9 +1,12 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:stack_board/stack_board.dart';
 
 ///自定义类型 Custom item type
 class CustomItem extends StackBoardItem {
   const CustomItem({
+    required this.color,
     Future<bool> Function()? onDel,
     int? id, // <==== must
   }) : super(
@@ -11,6 +14,8 @@ class CustomItem extends StackBoardItem {
           onDel: onDel,
           id: id, // <==== must
         );
+
+  final Color? color;
 
   @override // <==== must
   CustomItem copyWith({
@@ -20,8 +25,13 @@ class CustomItem extends StackBoardItem {
     Future<bool> Function()? onDel,
     dynamic Function(bool)? onEdit,
     bool? tapToEdit,
+    Color? color,
   }) =>
-      CustomItem(onDel: onDel, id: id);
+      CustomItem(
+        onDel: onDel,
+        id: id,
+        color: color ?? this.color,
+      );
 }
 
 void main() => runApp(const MyApp());
@@ -118,10 +128,17 @@ class _HomePageState extends State<HomePage> {
         customBuilder: (StackBoardItem t) {
           if (t is CustomItem) {
             return ItemCase(
-              key: Key('CustomStackItem${t.id}'), // <==== must
+              key: Key('StackBoardItem${t.id}'), // <==== must
               isCenter: false,
               onDel: () async => _boardController.remove(t.id),
-              child: Container(width: 100, height: 100, color: Colors.blue),
+              onTap: () => _boardController.moveItemToTop(t.id),
+              child: Container(
+                width: 100,
+                height: 100,
+                color: t.color,
+                alignment: Alignment.center,
+                child: const Text('Custom item'),
+              ),
             );
           }
         },
@@ -161,8 +178,10 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               _boardController.add(
                 StackBoardItem(
-                  child: const Text('Custom Widget',
-                      style: TextStyle(color: Colors.white)),
+                  child: const Text(
+                    'Custom Widget',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   onDel: _onDel,
                   caseStyle: const CaseStyle(initOffset: Offset(100, 100)),
                 ),
@@ -174,7 +193,11 @@ class _HomePageState extends State<HomePage> {
           FloatingActionButton(
             onPressed: () {
               _boardController.add<CustomItem>(
-                CustomItem(onDel: () async => true),
+                CustomItem(
+                  color: Color((math.Random().nextDouble() * 0xFFFFFF).toInt())
+                      .withOpacity(1.0),
+                  onDel: () async => true,
+                ),
               );
             },
             child: const Icon(Icons.add),

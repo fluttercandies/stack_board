@@ -50,6 +50,7 @@ class ItemCase extends StatefulWidget {
     this.onOperatStateChanged,
     this.onOffsetChanged,
     this.onAngleChanged,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -78,6 +79,9 @@ class ItemCase extends StatefulWidget {
 
   /// 移除拦截
   final void Function()? onDel;
+
+  /// 点击回调
+  final void Function()? onTap;
 
   /// 尺寸变化回调
   /// 返回值可控制是否继续进行
@@ -144,6 +148,7 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
       }
     }
 
+    widget.onTap?.call();
     widget.onOperatStateChanged?.call(_operatState);
   }
 
@@ -178,8 +183,6 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
 
     //向量旋转
     d = Offset(sina * d.dy + cosa * d.dx, cosa * d.dy - sina * d.dx);
-
-    // print('detail:$d');
 
     final Offset? realOffset = _config.value.offset?.translate(d.dx, d.dy);
     if (realOffset == null) return;
@@ -334,12 +337,9 @@ class _ItemCaseState extends State<ItemCase> with SafeState<ItemCase> {
       ),
       builder: (_, _Config? c, Widget? child) {
         return Positioned(
-          top: c?.offset?.dy,
-          left: c?.offset?.dx,
-          child: Transform.rotate(
-            angle: c?.angle ?? 0,
-            child: child,
-          ),
+          top: c?.offset?.dy ?? 0,
+          left: c?.offset?.dx ?? 0,
+          child: Transform.rotate(angle: c?.angle ?? 0, child: child),
         );
       },
     );

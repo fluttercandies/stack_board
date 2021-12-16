@@ -21,6 +21,7 @@ class StackBoard extends StatefulWidget {
     this.caseStyle,
     this.customBuilder,
     this.tapToCancelAllItem = false,
+    this.tapItemToMoveTop = true,
   }) : super(key: key);
 
   @override
@@ -40,6 +41,9 @@ class StackBoard extends StatefulWidget {
 
   /// 点击空白处取消全部选择（比较消耗性能，默认关闭）
   final bool tapToCancelAllItem;
+
+  /// 点击item移至顶层
+  final bool tapItemToMoveTop;
 }
 
 class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
@@ -108,6 +112,18 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
     safeSetState(() {});
   }
 
+  /// 将item移至顶层
+  void _moveItemToTop(int? id) {
+    if (id == null) return;
+
+    final StackBoardItem item =
+        _children.firstWhere((StackBoardItem i) => i.id == id);
+    _children.removeWhere((StackBoardItem i) => i.id == id);
+    _children.add(item);
+
+    safeSetState(() {});
+  }
+
   /// 清理
   void _clear() {
     _children.clear();
@@ -162,51 +178,61 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
 
   /// 构建项
   Widget _buildItem(StackBoardItem item) {
+    Widget child = ItemCase(
+      key: _getKey(item.id),
+      child: Container(
+        width: 150,
+        height: 150,
+        alignment: Alignment.center,
+        child: const Text(
+            'unknow item type, please use customBuilder to build it'),
+      ),
+      onDel: () => _onDel(item),
+      onTap: () => _moveItemToTop(item.id),
+      caseStyle: item.caseStyle,
+      operatState: _operatState,
+    );
+
     switch (item.runtimeType) {
       case AdaptiveText:
-        return AdaptiveTextCase(
+        child = AdaptiveTextCase(
           key: _getKey(item.id),
           adaptiveText: item as AdaptiveText,
           onDel: () => _onDel(item),
+          onTap: () => _moveItemToTop(item.id),
           operatState: _operatState,
         );
+        break;
       case StackDrawing:
-        return DrawingBoardCase(
+        child = DrawingBoardCase(
           key: _getKey(item.id),
           stackDrawing: item as StackDrawing,
           onDel: () => _onDel(item),
+          onTap: () => _moveItemToTop(item.id),
           operatState: _operatState,
         );
+        break;
       default:
         if (item.runtimeType == StackBoardItem) {
-          return ItemCase(
+          child = ItemCase(
             key: _getKey(item.id),
             child: item.child,
             onDel: () => _onDel(item),
+            onTap: () => _moveItemToTop(item.id),
             caseStyle: item.caseStyle,
             operatState: _operatState,
           );
+
+          break;
         }
 
         if (widget.customBuilder != null) {
           final Widget? customWidget = widget.customBuilder!.call(item);
-          if (customWidget != null) return customWidget;
+          if (customWidget != null) return child = customWidget;
         }
-
-        return ItemCase(
-          key: _getKey(item.id),
-          child: Container(
-            width: 150,
-            height: 150,
-            alignment: Alignment.center,
-            child: const Text(
-                'unknow item type, please use customBuilder to build it'),
-          ),
-          onDel: () => _onDel(item),
-          caseStyle: item.caseStyle,
-          operatState: _operatState,
-        );
     }
+
+    return child;
   }
 }
 
@@ -229,6 +255,11 @@ class StackBoardController {
   void remove(int? id) {
     _check();
     _stackBoardState?._remove(id);
+  }
+
+  void moveItemToTop(int? id) {
+    _check();
+    _stackBoardState?._moveItemToTop(id);
   }
 
   /// 清理全部

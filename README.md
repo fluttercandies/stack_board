@@ -86,7 +86,7 @@ StackBoard(
     customBuilder: (StackBoardItem t) {
         if (t is CustomItem) {
             return ItemCase(
-                key: Key('CustomStackItem${t.id}'), // <==== must
+                key: Key('StackBoardItem${t.id}'), // <==== must
                 isCenter: false,
                 onDel: () async => _boardController.remove(t.id),
                 child: Container(width: 100, height: 100, color: Colors.blue),
