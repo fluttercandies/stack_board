@@ -9,7 +9,7 @@ class StackBoardItem {
     required this.child,
     this.id,
     this.onDel,
-    this.caseStyle = const CaseStyle(),
+    this.caseStyle,
     this.tapToEdit = false,
   });
 

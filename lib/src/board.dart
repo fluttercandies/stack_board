@@ -18,7 +18,7 @@ class StackBoard extends StatefulWidget {
     Key? key,
     this.controller,
     this.background,
-    this.caseStyle,
+    this.caseStyle = const CaseStyle(),
     this.customBuilder,
     this.tapToCancelAllItem = false,
     this.tapItemToMoveTop = true,
@@ -116,8 +116,7 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
   void _moveItemToTop(int? id) {
     if (id == null) return;
 
-    final StackBoardItem item =
-        _children.firstWhere((StackBoardItem i) => i.id == id);
+    final StackBoardItem item = _children.firstWhere((StackBoardItem i) => i.id == id);
     _children.removeWhere((StackBoardItem i) => i.id == id);
     _children.add(item);
 
@@ -154,8 +153,7 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
     if (widget.background == null)
       _child = Stack(
         fit: StackFit.expand,
-        children:
-            _children.map((StackBoardItem box) => _buildItem(box)).toList(),
+        children: _children.map((StackBoardItem box) => _buildItem(box)).toList(),
       );
     else
       _child = Stack(
@@ -184,8 +182,7 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
         width: 150,
         height: 150,
         alignment: Alignment.center,
-        child: const Text(
-            'unknow item type, please use customBuilder to build it'),
+        child: const Text('unknow item type, please use customBuilder to build it'),
       ),
       onDel: () => _onDel(item),
       onTap: () => _moveItemToTop(item.id),

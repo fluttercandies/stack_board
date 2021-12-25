@@ -29,3 +29,7 @@
 ## 0.0.8
 
 * Fix bug, add click to top and update dependencies
+
+## 0.0.9
+
+* Fix bug, new example

@@ -88,12 +88,8 @@ class _HomePageState extends State<HomePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        IconButton(
-                            onPressed: () => Navigator.pop(context, true),
-                            icon: const Icon(Icons.check)),
-                        IconButton(
-                            onPressed: () => Navigator.pop(context, false),
-                            icon: const Icon(Icons.clear)),
+                        IconButton(onPressed: () => Navigator.pop(context, true), icon: const Icon(Icons.check)),
+                        IconButton(onPressed: () => Navigator.pop(context, false), icon: const Icon(Icons.clear)),
                       ],
                     ),
                   ],
@@ -112,13 +108,20 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: const Text('Stack Board Demo')),
-      backgroundColor: Colors.blueGrey,
+      appBar: AppBar(
+        title: const Text('Stack Board Demo'),
+        elevation: 0,
+      ),
       body: StackBoard(
         controller: _boardController,
 
+        caseStyle: const CaseStyle(
+          borderColor: Colors.grey,
+          iconColor: Colors.white,
+        ),
+
         /// 背景
-        background: const ColoredBox(color: Colors.grey),
+        background: ColoredBox(color: Colors.grey[100]!),
 
         /// 点击取消全部选中状态
         /// tapToCancelAllItem: true,
@@ -132,77 +135,103 @@ class _HomePageState extends State<HomePage> {
               isCenter: false,
               onDel: () async => _boardController.remove(t.id),
               onTap: () => _boardController.moveItemToTop(t.id),
+              caseStyle: const CaseStyle(
+                borderColor: Colors.grey,
+                iconColor: Colors.white,
+              ),
               child: Container(
                 width: 100,
                 height: 100,
                 color: t.color,
                 alignment: Alignment.center,
-                child: const Text('Custom item'),
+                child: const Text(
+                  'Custom item',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             );
           }
         },
       ),
       floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          const SizedBox(width: 25),
-          FloatingActionButton(
-            onPressed: () {
-              _boardController.add(
-                const AdaptiveText('自适应文本', tapToEdit: true),
-              );
-            },
-            child: const Icon(Icons.border_color),
-          ),
-          _spacer,
-          FloatingActionButton(
-            onPressed: () {
-              _boardController.add(
-                StackBoardItem(
-                  child: Image.network(
-                      'https://avatars.githubusercontent.com/u/47586449?s=200&v=4'),
-                ),
-              );
-            },
-            child: const Icon(Icons.image),
-          ),
-          _spacer,
-          FloatingActionButton(
-            onPressed: () {
-              _boardController.add(const StackDrawing());
-            },
-            child: const Icon(Icons.color_lens),
-          ),
-          _spacer,
-          FloatingActionButton(
-            onPressed: () {
-              _boardController.add(
-                StackBoardItem(
-                  child: const Text(
-                    'Custom Widget',
-                    style: TextStyle(color: Colors.white),
+          Flexible(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: <Widget>[
+                  const SizedBox(width: 25),
+                  FloatingActionButton(
+                    onPressed: () {
+                      _boardController.add(
+                        const AdaptiveText(
+                          'Flutter Candies',
+                          tapToEdit: true,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      );
+                    },
+                    child: const Icon(Icons.border_color),
                   ),
-                  onDel: _onDel,
-                  caseStyle: const CaseStyle(initOffset: Offset(100, 100)),
-                ),
-              );
-            },
-            child: const Icon(Icons.add_box),
+                  _spacer,
+                  FloatingActionButton(
+                    onPressed: () {
+                      _boardController.add(
+                        StackBoardItem(
+                          child: Image.network('https://avatars.githubusercontent.com/u/47586449?s=200&v=4'),
+                        ),
+                      );
+                    },
+                    child: const Icon(Icons.image),
+                  ),
+                  _spacer,
+                  FloatingActionButton(
+                    onPressed: () {
+                      _boardController.add(
+                        const StackDrawing(
+                          caseStyle: CaseStyle(
+                            borderColor: Colors.grey,
+                            iconColor: Colors.white,
+                            boxAspectRatio: 1,
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Icon(Icons.color_lens),
+                  ),
+                  _spacer,
+                  FloatingActionButton(
+                    onPressed: () {
+                      _boardController.add(
+                        StackBoardItem(
+                          child: const Text(
+                            'Custom Widget',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          onDel: _onDel,
+                          // caseStyle: const CaseStyle(initOffset: Offset(100, 100)),
+                        ),
+                      );
+                    },
+                    child: const Icon(Icons.add_box),
+                  ),
+                  _spacer,
+                  FloatingActionButton(
+                    onPressed: () {
+                      _boardController.add<CustomItem>(
+                        CustomItem(
+                          color: Color((math.Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
+                          onDel: () async => true,
+                        ),
+                      );
+                    },
+                    child: const Icon(Icons.add),
+                  ),
+                ],
+              ),
+            ),
           ),
-          _spacer,
-          FloatingActionButton(
-            onPressed: () {
-              _boardController.add<CustomItem>(
-                CustomItem(
-                  color: Color((math.Random().nextDouble() * 0xFFFFFF).toInt())
-                      .withOpacity(1.0),
-                  onDel: () async => true,
-                ),
-              );
-            },
-            child: const Icon(Icons.add),
-          ),
-          const Spacer(),
           FloatingActionButton(
             onPressed: () => _boardController.clear(),
             child: const Icon(Icons.close),

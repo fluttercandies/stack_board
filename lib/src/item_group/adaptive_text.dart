@@ -18,7 +18,7 @@ class AdaptiveText extends StackBoardItem {
     this.semanticsLabel,
     final int? id,
     final Future<bool> Function()? onDel,
-    CaseStyle? caseStyle = const CaseStyle(),
+    CaseStyle? caseStyle,
     bool? tapToEdit,
   }) : super(
           id: id,

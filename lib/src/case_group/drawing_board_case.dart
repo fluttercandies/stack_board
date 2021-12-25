@@ -32,8 +32,7 @@ class DrawingBoardCase extends StatefulWidget {
   final OperatState? operatState;
 }
 
-class _DrawingBoardCaseState extends State<DrawingBoardCase>
-    with SafeState<DrawingBoardCase> {
+class _DrawingBoardCaseState extends State<DrawingBoardCase> with SafeState<DrawingBoardCase> {
   /// 绘制控制器
   late DrawingController _drawingController;
 
@@ -43,15 +42,27 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
   /// 是否正在绘制
   late SafeValueNotifier<bool> _isDrawing;
 
+  /// 操作状态
+  OperatState? _operatState;
+
   /// 是否正在编辑
   bool _isEditing = true;
 
   @override
   void initState() {
     super.initState();
+    _operatState = widget.operatState ?? OperatState.editing;
     _drawingController = DrawingController(config: DrawConfig.def());
     _indicator = SafeValueNotifier<double>(1);
     _isDrawing = SafeValueNotifier<bool>(false);
+  }
+
+  @override
+  void didUpdateWidget(covariant DrawingBoardCase oldWidget) {
+    if (widget.operatState != oldWidget.operatState) {
+      safeSetState(() => _operatState = widget.operatState);
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -65,8 +76,7 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
   /// 选择颜色
   Future<void> _pickColor() async {
     final Color? newColor = await showModalBottomSheet<Color?>(
-        context: context,
-        builder: (_) => ColorPic(nowColor: _drawingController.getColor));
+        context: context, builder: (_) => ColorPic(nowColor: _drawingController.getColor));
     if (newColor == null) {
       return;
     }
@@ -84,7 +94,7 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
       onTap: widget.onTap,
       tapToEdit: widget.stackDrawing.tapToEdit,
       tools: _tools,
-      operatState: widget.operatState,
+      operatState: _operatState,
       child: FittedBox(
         child: SizedBox.fromSize(
           size: widget.stackDrawing.size,
@@ -163,16 +173,16 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
             color: Colors.white,
             child: Column(
               children: <Widget>[
-                _buildToolItem(PaintType.simpleLine, Icons.edit,
-                    () => _drawingController.setType = PaintType.simpleLine),
-                _buildToolItem(PaintType.smoothLine, Icons.brush,
-                    () => _drawingController.setType = PaintType.smoothLine),
+                _buildToolItem(
+                    PaintType.simpleLine, Icons.edit, () => _drawingController.setType = PaintType.simpleLine),
+                _buildToolItem(
+                    PaintType.smoothLine, Icons.brush, () => _drawingController.setType = PaintType.smoothLine),
                 _buildToolItem(PaintType.straightLine, Icons.show_chart,
                     () => _drawingController.setType = PaintType.straightLine),
-                _buildToolItem(PaintType.rectangle, Icons.crop_din,
-                    () => _drawingController.setType = PaintType.rectangle),
-                _buildToolItem(PaintType.eraser, Icons.auto_fix_normal,
-                    () => _drawingController.setType = PaintType.eraser),
+                _buildToolItem(
+                    PaintType.rectangle, Icons.crop_din, () => _drawingController.setType = PaintType.rectangle),
+                _buildToolItem(
+                    PaintType.eraser, Icons.auto_fix_normal, () => _drawingController.setType = PaintType.eraser),
               ],
             )),
       ),
@@ -188,13 +198,11 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
         height: widget.stackDrawing.caseStyle!.iconSize * 1.6,
         child: ExValueBuilder<DrawConfig>(
           valueListenable: _drawingController.drawConfig,
-          shouldRebuild: (DrawConfig? p, DrawConfig? n) =>
-              p!.paintType == type || n!.paintType == type,
+          shouldRebuild: (DrawConfig? p, DrawConfig? n) => p!.paintType == type || n!.paintType == type,
           builder: (_, DrawConfig? dc, __) {
             return Icon(
               icon,
-              color:
-                  dc?.paintType == type ? Theme.of(context).primaryColor : null,
+              color: dc?.paintType == type ? Theme.of(context).primaryColor : null,
               size: widget.stackDrawing.caseStyle?.iconSize,
             );
           },
@@ -237,8 +245,7 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
                       divisions: 50,
                       label: ind?.floor().toString(),
                       onChanged: (double v) => _indicator.value = v,
-                      onChangeEnd: (double v) =>
-                          _drawingController.setThickness = v,
+                      onChangeEnd: (double v) => _drawingController.setThickness = v,
                     );
                   },
                 ),
@@ -249,8 +256,7 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
               height: iconSize,
               child: ExValueBuilder<DrawConfig?>(
                 valueListenable: _drawingController.drawConfig,
-                shouldRebuild: (DrawConfig? p, DrawConfig? n) =>
-                    p!.color != n!.color,
+                shouldRebuild: (DrawConfig? p, DrawConfig? n) => p!.color != n!.color,
                 builder: (_, DrawConfig? dc, ___) {
                   return TextButton(
                     onPressed: _pickColor,

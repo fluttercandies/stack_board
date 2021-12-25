@@ -16,7 +16,7 @@ class StackDrawing extends StackBoardItem {
           id: id,
           onDel: onDel,
           child: background,
-          caseStyle: caseStyle ?? const CaseStyle(boxAspectRatio: 1),
+          caseStyle: caseStyle,
           tapToEdit: tapToEdit ?? false,
         );
 
