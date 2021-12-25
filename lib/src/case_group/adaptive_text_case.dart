@@ -34,7 +34,8 @@ class AdaptiveTextCase extends StatefulWidget {
   final OperatState? operatState;
 }
 
-class _AdaptiveTextCaseState extends State<AdaptiveTextCase> with SafeState<AdaptiveTextCase> {
+class _AdaptiveTextCaseState extends State<AdaptiveTextCase>
+    with SafeState<AdaptiveTextCase> {
   /// 是否正在编辑
   bool _isEditing = false;
 
@@ -49,9 +50,11 @@ class _AdaptiveTextCaseState extends State<AdaptiveTextCase> with SafeState<Adap
 
   /// 计算文本大小
   Size _textSize(String text, TextStyle style) {
-    final TextPainter textPainter =
-        TextPainter(text: TextSpan(text: text, style: style), maxLines: 1, textDirection: TextDirection.ltr)
-          ..layout(minWidth: 0, maxWidth: double.infinity);
+    final TextPainter textPainter = TextPainter(
+        text: TextSpan(text: text, style: style),
+        maxLines: 1,
+        textDirection: TextDirection.ltr)
+      ..layout(minWidth: 0, maxWidth: double.infinity);
     return textPainter.size;
   }
 

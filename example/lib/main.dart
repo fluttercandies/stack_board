@@ -88,8 +88,12 @@ class _HomePageState extends State<HomePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        IconButton(onPressed: () => Navigator.pop(context, true), icon: const Icon(Icons.check)),
-                        IconButton(onPressed: () => Navigator.pop(context, false), icon: const Icon(Icons.clear)),
+                        IconButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            icon: const Icon(Icons.check)),
+                        IconButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            icon: const Icon(Icons.clear)),
                       ],
                     ),
                   ],
@@ -179,7 +183,8 @@ class _HomePageState extends State<HomePage> {
                     onPressed: () {
                       _boardController.add(
                         StackBoardItem(
-                          child: Image.network('https://avatars.githubusercontent.com/u/47586449?s=200&v=4'),
+                          child: Image.network(
+                              'https://avatars.githubusercontent.com/u/47586449?s=200&v=4'),
                         ),
                       );
                     },
@@ -221,7 +226,9 @@ class _HomePageState extends State<HomePage> {
                     onPressed: () {
                       _boardController.add<CustomItem>(
                         CustomItem(
-                          color: Color((math.Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
+                          color: Color((math.Random().nextDouble() * 0xFFFFFF)
+                                  .toInt())
+                              .withOpacity(1.0),
                           onDel: () async => true,
                         ),
                       );
