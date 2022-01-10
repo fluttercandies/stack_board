@@ -33,3 +33,7 @@
 ## 0.0.9
 
 * Fix bug, new example
+
+## 0.1.0
+
+* Update dependencies
