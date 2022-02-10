@@ -155,6 +155,8 @@ class _HomePageState extends State<HomePage> {
               ),
             );
           }
+
+          return null;
         },
       ),
       floatingActionButton: Row(
@@ -267,9 +269,9 @@ class _ItemCaseDemoState extends State<ItemCaseDemo> {
           isCenter: false,
           child: const Text('Custom case'),
           onDel: () async {},
-          onOperatStateChanged: (OperatState operatState) {},
-          onOffsetChanged: (Offset offset) {},
-          onSizeChanged: (Size size) {},
+          onOperatStateChanged: (OperatState operatState) => null,
+          onOffsetChanged: (Offset offset) => null,
+          onSizeChanged: (Size size) => null,
         ),
       ],
     );

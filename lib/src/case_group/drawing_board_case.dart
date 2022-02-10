@@ -131,6 +131,8 @@ class _DrawingBoardCaseState extends State<DrawingBoardCase>
           _isEditing = false;
           safeSetState(() {});
         }
+
+        return;
       },
     );
   }

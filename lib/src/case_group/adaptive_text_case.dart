@@ -75,10 +75,14 @@ class _AdaptiveTextCaseState extends State<AdaptiveTextCase>
         } else if (s == OperatState.editing && !_isEditing) {
           safeSetState(() => _isEditing = true);
         }
+
+        return;
       },
       onSizeChanged: (Size s) {
         final Size size = _textSize(_text, _style);
         _textFieldWidth = size.width + 8;
+
+        return;
       },
     );
   }
