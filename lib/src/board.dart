@@ -75,32 +75,10 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
   void _add<T extends StackBoardItem>(StackBoardItem item) {
     if (_children.contains(item)) throw 'duplicate id';
 
-    switch (item.runtimeType) {
-      case AdaptiveText:
-        _children.add((item as AdaptiveText).copyWith(
-          id: item.id ?? _lastId,
-          caseStyle: item.caseStyle ?? widget.caseStyle,
-        ));
-        break;
-      case StackDrawing:
-        _children.add((item as StackDrawing).copyWith(
-          id: item.id ?? _lastId,
-          caseStyle: item.caseStyle ?? widget.caseStyle,
-        ));
-        break;
-      default:
-        if (item.runtimeType != StackBoardItem) {
-          _children.add((item as T).copyWith(
-            id: item.id ?? _lastId,
-            caseStyle: item.caseStyle ?? widget.caseStyle,
-          ));
-        } else {
-          _children.add(item.copyWith(
-            id: item.id ?? _lastId,
-            caseStyle: item.caseStyle ?? widget.caseStyle,
-          ));
-        }
-    }
+    _children.add(item.copyWith(
+      id: item.id ?? _lastId,
+      caseStyle: item.caseStyle ?? widget.caseStyle,
+    ));
 
     _lastId++;
     safeSetState(() {});
@@ -116,8 +94,7 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
   void _moveItemToTop(int? id) {
     if (id == null) return;
 
-    final StackBoardItem item =
-        _children.firstWhere((StackBoardItem i) => i.id == id);
+    final StackBoardItem item = _children.firstWhere((StackBoardItem i) => i.id == id);
     _children.removeWhere((StackBoardItem i) => i.id == id);
     _children.add(item);
 
@@ -154,8 +131,7 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
     if (widget.background == null)
       _child = Stack(
         fit: StackFit.expand,
-        children:
-            _children.map((StackBoardItem box) => _buildItem(box)).toList(),
+        children: _children.map((StackBoardItem box) => _buildItem(box)).toList(),
       );
     else
       _child = Stack(
@@ -184,8 +160,7 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
         width: 150,
         height: 150,
         alignment: Alignment.center,
-        child: const Text(
-            'unknow item type, please use customBuilder to build it'),
+        child: const Text('unknow item type, please use customBuilder to build it'),
       ),
       onDel: () => _onDel(item),
       onTap: () => _moveItemToTop(item.id),
@@ -193,43 +168,36 @@ class _StackBoardState extends State<StackBoard> with SafeState<StackBoard> {
       operatState: _operatState,
     );
 
-    switch (item.runtimeType) {
-      case AdaptiveText:
-        child = AdaptiveTextCase(
-          key: _getKey(item.id),
-          adaptiveText: item as AdaptiveText,
-          onDel: () => _onDel(item),
-          onTap: () => _moveItemToTop(item.id),
-          operatState: _operatState,
-        );
-        break;
-      case StackDrawing:
-        child = DrawingBoardCase(
-          key: _getKey(item.id),
-          stackDrawing: item as StackDrawing,
-          onDel: () => _onDel(item),
-          onTap: () => _moveItemToTop(item.id),
-          operatState: _operatState,
-        );
-        break;
-      default:
-        if (item.runtimeType == StackBoardItem) {
-          child = ItemCase(
-            key: _getKey(item.id),
-            child: item.child,
-            onDel: () => _onDel(item),
-            onTap: () => _moveItemToTop(item.id),
-            caseStyle: item.caseStyle,
-            operatState: _operatState,
-          );
+    if (item is AdaptiveText) {
+      child = AdaptiveTextCase(
+        key: _getKey(item.id),
+        adaptiveText: item,
+        onDel: () => _onDel(item),
+        onTap: () => _moveItemToTop(item.id),
+        operatState: _operatState,
+      );
+    } else if (item is StackDrawing) {
+      child = DrawingBoardCase(
+        key: _getKey(item.id),
+        stackDrawing: item,
+        onDel: () => _onDel(item),
+        onTap: () => _moveItemToTop(item.id),
+        operatState: _operatState,
+      );
+    } else {
+      child = ItemCase(
+        key: _getKey(item.id),
+        child: item.child,
+        onDel: () => _onDel(item),
+        onTap: () => _moveItemToTop(item.id),
+        caseStyle: item.caseStyle,
+        operatState: _operatState,
+      );
 
-          break;
-        }
-
-        if (widget.customBuilder != null) {
-          final Widget? customWidget = widget.customBuilder!.call(item);
-          if (customWidget != null) return child = customWidget;
-        }
+      if (widget.customBuilder != null) {
+        final Widget? customWidget = widget.customBuilder!.call(item);
+        if (customWidget != null) return child = customWidget;
+      }
     }
 
     return child;

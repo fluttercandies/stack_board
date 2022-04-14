@@ -41,3 +41,7 @@
 ## 0.1.1
 
 * Update dependencies, pass static analysis
+
+## 0.1.2
+
+* Modify the type determination method
