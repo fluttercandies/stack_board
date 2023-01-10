@@ -86,14 +86,14 @@ class StackBoard extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         child: ExBuilder<StackConfig>(
           valueListenable: _controller,
-          shouldRebuild: (StackConfig p, StackConfig n) => p.data.length != n.data.length,
+          shouldRebuild: (StackConfig p, StackConfig n) => p.indexMap != n.indexMap,
           builder: (StackConfig sc) {
             return Stack(
               fit: StackFit.expand,
               children: <Widget>[
                 const SizedBox.expand(),
                 if (background != null) background!,
-                for (int i = 0; i < sc.data.length; i++) _itemBuilder(context, sc.data[i], i),
+                for (final StackItem<StackItemContent> item in sc.data) _itemBuilder(item),
               ],
             );
           },
@@ -102,9 +102,9 @@ class StackBoard extends StatelessWidget {
     );
   }
 
-  Widget _itemBuilder(BuildContext context, StackItem<StackItemContent> item, int i) {
+  Widget _itemBuilder(StackItem<StackItemContent> item) {
     return StackItemCase(
-      index: i,
+      stackItem: item,
       childBuilder: childBuilder,
       caseStyle: caseStyle,
       onDel: () => onDel?.call(item),

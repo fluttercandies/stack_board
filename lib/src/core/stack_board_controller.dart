@@ -7,14 +7,25 @@ import 'package:stack_board_item/stack_board_item.dart';
 class StackConfig {
   StackConfig({
     required this.data,
+    required this.indexMap,
   });
 
-  factory StackConfig.init() => StackConfig(data: <StackItem<StackItemContent>>[]);
+  factory StackConfig.init() => StackConfig(
+        data: <StackItem<StackItemContent>>[],
+        indexMap: <String, int>{},
+      );
 
   final List<StackItem<StackItemContent>> data;
+  final Map<String, int> indexMap;
 
-  StackConfig copyWith({List<StackItem<StackItemContent>>? data}) {
-    return StackConfig(data: data ?? this.data);
+  StackConfig copyWith({
+    List<StackItem<StackItemContent>>? data,
+    Map<String, int>? indexMap,
+  }) {
+    return StackConfig(
+      data: data ?? this.data,
+      indexMap: indexMap ?? this.indexMap,
+    );
   }
 }
 
@@ -29,24 +40,45 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
 
   final String? _tag;
 
-  final Set<String> selected = <String>{};
+  // final Set<String> selected = <String>{};
+
+  final Map<String, int> _indexMap = <String, int>{};
 
   static final StackBoardController _defaultController = StackBoardController(tag: 'def');
 
-  List<StackItem<StackItemContent>> get data => value.data;
+  List<StackItem<StackItemContent>> get innerData => value.data;
 
-  StackItem<StackItemContent>? getById(String id) =>
-      data.firstWhereOrNull((StackItem<StackItemContent> item) => item.id == id);
+  Map<String, int> get _newIndexMap => Map<String, int>.from(_indexMap);
+
+  StackItem<StackItemContent>? getById(String id) {
+    if (!_indexMap.containsKey(id)) return null;
+    return innerData[_indexMap[id]!];
+  }
+
+  int getIndexById(String id) {
+    return _indexMap[id]!;
+  }
+
+  /// 重排index
+  List<StackItem<StackItemContent>> _reorder(List<StackItem<StackItemContent>> data) {
+    for (int i = 0; i < data.length; i++) {
+      _indexMap[innerData[i].id] = i;
+    }
+
+    value = value.copyWith(indexMap: _newIndexMap);
+
+    return data;
+  }
 
   void addItem(StackItem<StackItemContent> item, {bool selectIt = false}) {
-    if (this.data.contains(item)) {
+    if (innerData.contains(item)) {
       print('StackBoardController addItem: item already exists');
       return;
     }
 
-    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(value.data);
+    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
 
-    selected.clear();
+    // selected.clear();
 
     // 其它 item EditStatus 重置为 idle
     for (int i = 0; i < data.length; i++) {
@@ -55,80 +87,82 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
     }
 
     data.add(item);
-    selected.add(item.id);
+    _indexMap[item.id] = data.length - 1;
+    // selected.add(item.id);
 
-    value = value.copyWith(data: data);
+    value = value.copyWith(data: data, indexMap: _newIndexMap);
   }
 
   void removeItem(StackItem<StackItemContent> item) {
-    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(value.data);
+    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
 
     data.remove(item);
-    selected.remove(item.id);
+    _indexMap.remove(item.id);
+    // selected.remove(item.id);
 
-    value = value.copyWith(data: data);
+    value = value.copyWith(data: _reorder(data), indexMap: _newIndexMap);
   }
 
   void removeById(String id) {
-    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(value.data);
+    if (!_indexMap.containsKey(id)) return;
 
-    data.removeWhere((StackItem<StackItemContent> item) => item.id == id);
-    selected.remove(id);
+    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
 
-    value = value.copyWith(data: data);
+    data.removeAt(_indexMap[id]!);
+    _indexMap.remove(id);
+    // selected.remove(id);
+
+    value = value.copyWith(data: data, indexMap: _newIndexMap);
   }
 
-  void selectOne(int index) {
-    final StackItem<StackItemContent> item = value.data[index];
-    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(value.data);
+  void selectOne(String id) {
+    if (!_indexMap.containsKey(id)) return;
 
-    if (selected.contains(item.id)) {
-      // 如果没有置顶，进行置顶操作
-      if (index == value.data.length - 1) {
-        return;
-      }
+    final int index = _indexMap[id]!;
 
-      data.removeAt(index);
-      data.add(item.copyWith(status: StackItemStatus.selected));
-      value = value.copyWith(data: data);
+    final StackItem<StackItemContent> item = innerData[index];
 
+    if (index == innerData.length - 1 && item.status != StackItemStatus.idle) {
       return;
     }
 
-    selected.clear();
+    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
 
-    data.remove(item);
+    data.removeAt(index);
 
-    // 其它 item EditStatus 重置为 idle
+    // 全部 item EditStatus 重置为 idle
     for (int i = 0; i < data.length; i++) {
       final StackItem<StackItemContent> item = data[i];
       data[i] = item.copyWith(status: StackItemStatus.idle);
+      _indexMap[item.id] = i;
     }
 
     data.add(item.copyWith(status: StackItemStatus.selected));
+    _indexMap[item.id] = data.length - 1;
+    // selected.add(item.id);
 
-    selected.add(item.id);
-
-    value = value.copyWith(data: data);
+    value = value.copyWith(data: data, indexMap: _newIndexMap);
   }
 
   void unSelectAll() {
-    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(value.data);
+    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
 
     for (int i = 0; i < data.length; i++) {
       final StackItem<StackItemContent> item = data[i];
       data[i] = item.copyWith(status: StackItemStatus.idle);
     }
 
-    selected.clear();
+    // selected.clear();
 
     value = value.copyWith(data: data);
   }
 
-  void updateBasic(int index, {Size? size, Offset? offset, double? angle, StackItemStatus? status}) {
-    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(value.data);
+  void updateBasic(String id, {Size? size, Offset? offset, double? angle, StackItemStatus? status}) {
+    if (!_indexMap.containsKey(id)) return;
 
-    data[index] = data[index].copyWith(
+    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
+
+    data[_indexMap[id]!] = data[_indexMap[id]!].copyWith(
       size: size,
       offset: offset,
       angle: angle,
@@ -141,20 +175,16 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
   /// * index Item index
   /// * id Item id
   /// * update Update function
-  void updateItem({
-    int? index,
-    String? id,
-    StackItem<StackItemContent> Function(StackItem<StackItemContent> oldItem)? update,
-  }) {
+  void updateItem<T extends StackItem<StackItemContent>>({int? index, String? id, T Function(T oldItem)? update}) {
     assert(index != null || id != null, 'index or id must not be null');
 
-    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(value.data);
+    final List<T> data = List<T>.from(innerData);
 
-    final StackItem<StackItemContent>? item = index != null ? data[index] : getById(id!);
+    final T? item = (index != null ? data[index] : getById(id!)) as T?;
 
     assert(item != null, 'item not found');
 
-    final StackItem<StackItemContent>? newItem = update?.call(item!);
+    final T? newItem = update?.call(item!);
 
     assert(newItem != null, 'newItem must not be null');
 
@@ -169,7 +199,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
 
   void clear() {
     value = StackConfig.init();
-    selected.clear();
+    _indexMap.clear();
+    // selected.clear();
   }
 
   @override

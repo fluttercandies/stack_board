@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// 删除拦截
-  Future<bool> _onDel() async {
+  Future<void> _onDel(StackItem<StackItemContent> item) async {
     final bool? r = await showDialog<bool>(
       context: context,
       builder: (_) {
@@ -70,7 +70,9 @@ class _HomePageState extends State<HomePage> {
       },
     );
 
-    return r ?? false;
+    if (r == true) {
+      _boardController.removeById(item.id);
+    }
   }
 
   @override
@@ -82,9 +84,8 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
       ),
       body: StackBoard(
-        onDel: (StackItem<StackItemContent> item) => _boardController.removeItem(item),
+        onDel: _onDel,
         controller: _boardController,
-
         caseStyle: const CaseStyle(
           borderColor: Colors.grey,
           iconColor: Colors.white,
@@ -92,48 +93,23 @@ class _HomePageState extends State<HomePage> {
 
         /// 背景
         background: ColoredBox(color: Colors.grey[100]!),
-
         childBuilder: (StackItem<StackItemContent> item) {
           if (item is StackTextItem) {
-            return StackTextCase(item: item);
+            return StackTextCase(
+              item: item,
+              onChanged: (String str) => _boardController.updateItem<StackTextItem>(
+                id: item.id,
+                update: (StackTextItem oldItem) => oldItem.copyWith(
+                  contentGenerators: (TextItemContent oldContent) => oldContent.copyWith(data: str),
+                ),
+              ),
+            );
           } else if (item is StackDrawItem) {
             return StackDrawCase(item: item);
           }
 
           return const SizedBox.shrink();
         },
-
-        /// 点击取消全部选中状态
-        /// tapToCancelAllItem: true,
-
-        /// 如果使用了继承于StackBoardItem的自定义item
-        /// 使用这个接口进行重构
-        // itemBuilder: (StackItem t) {
-        //   // if (t is CustomItem) {
-        //   //   return ItemCase(
-        //   //     key: Key('StackBoardItem${t.id}'), // <==== must
-        //   //     isCenter: false,
-        //   //     onDel: () async => _boardController.remove(t.id),
-        //   //     onTap: () => _boardController.moveItemToTop(t.id),
-        //   //     caseStyle: const CaseStyle(
-        //   //       borderColor: Colors.grey,
-        //   //       iconColor: Colors.white,
-        //   //     ),
-        //   //     child: Container(
-        //   //       width: 100,
-        //   //       height: 100,
-        //   //       color: t.color,
-        //   //       alignment: Alignment.center,
-        //   //       child: const Text(
-        //   //         'Custom item',
-        //   //         style: TextStyle(color: Colors.white),
-        //   //       ),
-        //   //     ),
-        //   //   );
-        //   // }
-
-        //   return null;
-        // },
       ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -147,7 +123,10 @@ class _HomePageState extends State<HomePage> {
                   FloatingActionButton(
                     onPressed: () {
                       _boardController.addItem(
-                        StackTextItem(content: TextItemContent(data: '哈哈哈哈哈')),
+                        StackTextItem(
+                          size: const Size(200, 100),
+                          content: TextItemContent(data: '哈哈哈哈哈'),
+                        ),
                       );
                     },
                     child: const Icon(Icons.border_color),

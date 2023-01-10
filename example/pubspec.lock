@@ -61,7 +61,7 @@ packages:
       name: flutter_drawing_board
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.4.1+1"
+    version: "0.4.1+4"
   flutter_hsvcolor_picker:
     dependency: transitive
     description:
@@ -148,7 +148,7 @@ packages:
       path: "../../stack_board_items"
       relative: true
     source: path
-    version: "0.0.1+4"
+    version: "0.0.2"
   stack_trace:
     dependency: transitive
     description:

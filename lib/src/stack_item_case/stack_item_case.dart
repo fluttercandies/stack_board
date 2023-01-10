@@ -10,7 +10,7 @@ import 'package:stack_board_item/stack_board_item.dart';
 class StackItemCase extends StatelessWidget {
   const StackItemCase({
     Key? key,
-    required this.index,
+    required this.stackItem,
     required this.childBuilder,
     this.caseStyle,
     this.onDel,
@@ -21,8 +21,8 @@ class StackItemCase extends StatelessWidget {
     this.onEditStatusChanged,
   }) : super(key: key);
 
-  /// StackItemData index
-  final int index;
+  /// StackItemData
+  final StackItem<StackItemContent> stackItem;
 
   /// Child builder, update when item status changed
   final Widget? Function(StackItem<StackItemContent> item)? childBuilder;
@@ -49,6 +49,8 @@ class StackItemCase extends StatelessWidget {
   /// 操作状态回调
   final bool? Function(StackItemStatus operatState)? onEditStatusChanged;
 
+  String get itemId => stackItem.id;
+
   StackBoardController _controller(BuildContext context) => StackBoardConfig.of(context).controller;
 
   /// 外框样式
@@ -69,7 +71,7 @@ class StackItemCase extends StatelessWidget {
   /// 点击
   void _onTap(BuildContext context) {
     onTap?.call();
-    _controller(context).selectOne(index);
+    _controller(context).selectOne(itemId);
     onEditStatusChanged?.call(StackItemStatus.editing);
   }
 
@@ -84,7 +86,7 @@ class StackItemCase extends StatelessWidget {
     }
 
     onEditStatusChanged?.call(_status);
-    _controller(context).updateBasic(index, status: _status);
+    _controller(context).updateBasic(itemId, status: _status);
   }
 
   /// 拖拽结束
@@ -93,7 +95,7 @@ class StackItemCase extends StatelessWidget {
 
     if (_status != StackItemStatus.selected) {
       _status = StackItemStatus.selected;
-      _controller(context).updateBasic(index, status: _status);
+      _controller(context).updateBasic(itemId, status: _status);
       onEditStatusChanged?.call(_status);
     }
   }
@@ -104,15 +106,19 @@ class StackItemCase extends StatelessWidget {
 
     final StackBoardController _stackController = _controller(context);
 
-    _stackController.selectOne(index);
+    if (_status == StackItemStatus.idle) {
+      _stackController.selectOne(itemId);
+      return;
+    }
 
     if (_status != StackItemStatus.moving) {
       _status = StackItemStatus.moving;
-      _stackController.updateBasic(index, status: _status);
+      _stackController.updateBasic(itemId, status: _status);
       onEditStatusChanged?.call(_status);
     }
 
-    final StackItem<StackItemContent> item = _stackController.data[index];
+    final StackItem<StackItemContent>? item = _stackController.getById(itemId);
+    if (item == null) return;
 
     final double angle = item.angle ?? 0;
     final double sina = math.sin(-angle);
@@ -130,7 +136,7 @@ class StackItemCase extends StatelessWidget {
     // 移动拦截
     if (!(onOffsetChanged?.call(realOffset) ?? true)) return;
 
-    _stackController.updateBasic(index, offset: realOffset);
+    _stackController.updateBasic(itemId, offset: realOffset);
 
     onOffsetChanged?.call(changeTo);
   }
@@ -141,20 +147,21 @@ class StackItemCase extends StatelessWidget {
 
     final StackBoardController _stackController = _controller(context);
 
-    _stackController.selectOne(index);
+    _stackController.selectOne(itemId);
 
     if (_status != StackItemStatus.scaling) {
       if (_status == StackItemStatus.moving || _status == StackItemStatus.roating) {
         _status = StackItemStatus.scaling;
       } else {
         _status = StackItemStatus.scaling;
-        _stackController.updateBasic(index, status: _status);
+        _stackController.updateBasic(itemId, status: _status);
       }
 
       onEditStatusChanged?.call(_status);
     }
 
-    final StackItem<StackItemContent> item = _stackController.data[index];
+    final StackItem<StackItemContent>? item = _stackController.getById(itemId);
+    if (item == null) return;
 
     if (item.offset == null) return;
     if (item.size == null) return;
@@ -199,12 +206,12 @@ class StackItemCase extends StatelessWidget {
 
     if (style.boxAspectRatio != null) {
       if (s.width < s.height) {
-        _stackController.updateBasic(index, size: Size(s.width, s.width / caseStyle!.boxAspectRatio!));
+        _stackController.updateBasic(itemId, size: Size(s.width, s.width / caseStyle!.boxAspectRatio!));
       } else {
-        _stackController.updateBasic(index, size: Size(s.height * style.boxAspectRatio!, s.height));
+        _stackController.updateBasic(itemId, size: Size(s.height * style.boxAspectRatio!, s.height));
       }
     } else {
-      _stackController.updateBasic(index, size: s);
+      _stackController.updateBasic(itemId, size: s);
     }
   }
 
@@ -214,20 +221,21 @@ class StackItemCase extends StatelessWidget {
 
     final StackBoardController _stackController = _controller(context);
 
-    _stackController.selectOne(index);
+    _stackController.selectOne(itemId);
 
     if (_status != StackItemStatus.roating) {
       if (_status == StackItemStatus.moving || _status == StackItemStatus.scaling) {
         _status = StackItemStatus.roating;
       } else {
         _status = StackItemStatus.roating;
-        _stackController.updateBasic(index, status: _status);
+        _stackController.updateBasic(itemId, status: _status);
       }
 
       onEditStatusChanged?.call(_status);
     }
 
-    final StackItem<StackItemContent> item = _stackController.data[index];
+    final StackItem<StackItemContent>? item = _stackController.getById(itemId);
+    if (item == null) return;
 
     if (item.size == null) return;
     if (item.offset == null) return;
@@ -264,26 +272,29 @@ class StackItemCase extends StatelessWidget {
     //旋转拦截
     if (!(onAngleChanged?.call(angle) ?? true)) return;
 
-    _stackController.updateBasic(index, angle: angle);
+    _stackController.updateBasic(itemId, angle: angle);
   }
 
   /// 旋转回0度
   void _turnBack(BuildContext context) {
     final StackBoardController _stackController = _controller(context);
 
-    _stackController.selectOne(index);
+    _stackController.selectOne(itemId);
 
-    final StackItem<StackItemContent> item = _stackController.data[index];
+    final StackItem<StackItemContent>? item = _stackController.getById(itemId);
+    if (item == null) return;
 
-    _stackController.updateBasic(index, status: StackItemStatus.roating);
+    _stackController.updateBasic(itemId, status: StackItemStatus.roating);
 
     if (item.angle != 0) {
-      _stackController.updateBasic(index, angle: 0, status: StackItemStatus.selected);
+      _stackController.updateBasic(itemId, angle: 0, status: StackItemStatus.selected);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final int index = _controller(context).getIndexById(itemId);
+
     return ConfigBuilder.withItem(
       index,
       shouldRebuild: (StackItem<StackItemContent> p, StackItem<StackItemContent> n) =>
@@ -330,7 +341,8 @@ class StackItemCase extends StatelessWidget {
   Widget _child(BuildContext context) {
     final StackBoardController _stackController = _controller(context);
 
-    final StackItem<StackItemContent> item = _stackController.data[index];
+    final StackItem<StackItemContent>? item = _stackController.getById(itemId);
+    if (item == null) return const SizedBox.shrink();
 
     Widget content = childBuilder?.call(item) ?? const SizedBox.shrink();
 
@@ -353,12 +365,14 @@ class StackItemCase extends StatelessWidget {
               _size = Size(_size!.width, minSize);
             }
 
-            _stackController.updateBasic(index, size: _size);
+            _stackController.updateBasic(itemId, size: _size);
           }
         },
         child: content,
       );
     }
+
+    final int index = _stackController.getIndexById(itemId);
 
     return ConfigBuilder.withItem(
       index,
@@ -484,7 +498,7 @@ class StackItemCase extends StatelessWidget {
             if (_status != StackItemStatus.idle) {
               _status = StackItemStatus.idle;
               onEditStatusChanged?.call(_status);
-              _controller(context).updateBasic(index, status: _status);
+              _controller(context).updateBasic(itemId, status: _status);
             }
           },
           child: _toolCase(context, const Icon(Icons.check)),
