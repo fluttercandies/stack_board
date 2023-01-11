@@ -44,18 +44,8 @@ class DrawItemContent implements StackItemContent {
     );
   }
 
-  final double size;
+  double size;
   final List<PaintContent> paintContents;
-
-  DrawItemContent copyWith({
-    double? size,
-    List<PaintContent>? paintContents,
-  }) {
-    return DrawItemContent(
-      size: size ?? this.size,
-      paintContents: paintContents ?? this.paintContents,
-    );
-  }
 
   @override
   Map<String, dynamic> toJson() {

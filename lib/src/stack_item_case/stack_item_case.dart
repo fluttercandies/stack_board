@@ -9,6 +9,7 @@ import 'package:stack_board/src/stack_board.dart';
 import 'package:stack_board/src/stack_item_case/config_builder.dart';
 import 'package:stack_board/src/widgets/get_size.dart';
 
+/// 操作盒
 class StackItemCase extends StatelessWidget {
   const StackItemCase({
     Key? key,
@@ -21,6 +22,8 @@ class StackItemCase extends StatelessWidget {
     this.onOffsetChanged,
     this.onAngleChanged,
     this.onEditStatusChanged,
+    this.actionsBuilder,
+    this.borderBuilder,
   }) : super(key: key);
 
   /// StackItemData
@@ -50,6 +53,12 @@ class StackItemCase extends StatelessWidget {
 
   /// 操作状态回调
   final bool? Function(StackItemStatus operatState)? onEditStatusChanged;
+
+  /// 操作层构建器
+  final Widget Function(StackItemStatus operatState, CaseStyle caseStyle)? actionsBuilder;
+
+  /// 边框构建器
+  final Widget Function(StackItemStatus operatState)? borderBuilder;
 
   String get itemId => stackItem.id;
 
@@ -296,7 +305,7 @@ class StackItemCase extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ConfigBuilder.withItem(
-      stackItem.id,
+      itemId,
       shouldRebuild: (StackItem<StackItemContent> p, StackItem<StackItemContent> n) =>
           p.offset != n.offset || p.angle != n.angle,
       childBuilder: (StackItem<StackItemContent> item, Widget c) {
@@ -308,7 +317,7 @@ class StackItemCase extends StatelessWidget {
         );
       },
       child: ConfigBuilder.withItem(
-        stackItem.id,
+        itemId,
         shouldRebuild: (StackItem<StackItemContent> p, StackItem<StackItemContent> n) => p.status != n.status,
         childBuilder: (StackItem<StackItemContent> item, Widget c) {
           final StackItemStatus status = item.status ?? StackItemStatus.idle;
@@ -320,15 +329,20 @@ class StackItemCase extends StatelessWidget {
               onPanUpdate: (DragUpdateDetails dud) => _onPanUpdate(dud, context, status),
               onPanEnd: (_) => _onPanEnd(context, status),
               onTap: () => _onTap(context),
-              child: Stack(children: <Widget>[
-                _border(context, status),
-                _child(context),
-                if (status != StackItemStatus.idle) _edit(context, status),
-                if (status != StackItemStatus.idle) _roate(context, status),
-                if (status != StackItemStatus.idle) _check(context, status),
-                if (onDel != null && status != StackItemStatus.idle) _del(context),
-                if (status != StackItemStatus.idle) _scale(context, status, item.angle),
-              ]),
+              child: Stack(
+                children: <Widget>[
+                  borderBuilder?.call(status) ?? _border(context, status),
+                  _child(context),
+                  if (actionsBuilder != null) actionsBuilder!(status, _caseStyle(context)),
+                  if (actionsBuilder == null) ...<Widget>[
+                    if (status != StackItemStatus.idle) _edit(context, status),
+                    if (status != StackItemStatus.idle) _roate(context, status),
+                    if (status != StackItemStatus.idle) _check(context, status),
+                    if (onDel != null && status != StackItemStatus.idle) _del(context),
+                    if (status != StackItemStatus.idle) _scale(context, status, item.angle),
+                  ],
+                ],
+              ),
             ),
           );
         },
@@ -373,7 +387,7 @@ class StackItemCase extends StatelessWidget {
     }
 
     return ConfigBuilder.withItem(
-      stackItem.id,
+      itemId,
       shouldRebuild: (StackItem<StackItemContent> p, StackItem<StackItemContent> n) => p.size != n.size,
       childBuilder: (StackItem<StackItemContent> item, Widget c) {
         return SizedBox.fromSize(size: item.size, child: c);
@@ -406,7 +420,7 @@ class StackItemCase extends StatelessWidget {
   }
 
   /// 编辑手柄
-  Widget _edit(BuildContext context, final StackItemStatus status) {
+  Widget _edit(BuildContext context, StackItemStatus status) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
@@ -483,7 +497,7 @@ class StackItemCase extends StatelessWidget {
   }
 
   /// 完成操作
-  Widget _check(BuildContext context, final StackItemStatus status) {
+  Widget _check(BuildContext context, StackItemStatus status) {
     StackItemStatus _status = status;
 
     return Positioned(

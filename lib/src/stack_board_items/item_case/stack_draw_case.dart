@@ -8,19 +8,31 @@ import 'package:stack_board/stack_items.dart';
 
 const double _defSize = 300;
 
+/// 绘制对象
 class StackDrawCase extends StatefulWidget {
   const StackDrawCase({
     Key? key,
     required this.item,
     this.background,
     this.onPaint,
+    this.onPointerDown,
+    this.onPointerMove,
   }) : super(key: key);
 
+  /// StackDrawItem
   final StackDrawItem item;
 
+  /// 背景
   final Widget? background;
 
+  /// 抬起时的回调当前的所以内容
   final Function(List<PaintContent> contents)? onPaint;
+
+  /// 开始拖动
+  final Function(PointerDownEvent pde)? onPointerDown;
+
+  /// 正在拖动
+  final Function(PointerMoveEvent pme)? onPointerMove;
 
   @override
   State<StackDrawCase> createState() => _StackDrawCaseState();
@@ -57,6 +69,8 @@ class _StackDrawCaseState extends State<StackDrawCase> {
           alignment: Alignment.center,
           children: <Widget>[
             DrawingBoard(
+              onPointerDown: widget.onPointerDown,
+              onPointerMove: widget.onPointerMove,
               onPointerUp: (_) => widget.onPaint?.call(_controller.getHistory),
               controller: _controller,
               boardPanEnabled: false,

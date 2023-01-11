@@ -44,54 +44,21 @@ class TextItemContent implements StackItemContent {
       selectionColor: data['selectionColor'] == null ? null : Color(asT<int>(data['selectionColor'])),
     );
   }
-  final String? data;
-  final TextStyle? style;
-  final StackTextStrutStyle? strutStyle;
-  final TextAlign? textAlign;
-  final TextDirection? textDirection;
-  final Locale? locale;
-  final bool? softWrap;
-  final TextOverflow? overflow;
-  final double? textScaleFactor;
-  final int? maxLines;
-  final String? semanticsLabel;
-  final TextWidthBasis? textWidthBasis;
-  final TextHeightBehavior? textHeightBehavior;
-  final Color? selectionColor;
 
-  TextItemContent copyWith({
-    String? data,
-    TextStyle? style,
-    StackTextStrutStyle? strutStyle,
-    TextAlign? textAlign,
-    TextDirection? textDirection,
-    Locale? locale,
-    bool? softWrap,
-    TextOverflow? overflow,
-    double? textScaleFactor,
-    int? maxLines,
-    String? semanticsLabel,
-    TextWidthBasis? textWidthBasis,
-    TextHeightBehavior? textHeightBehavior,
-    Color? selectionColor,
-  }) {
-    return TextItemContent(
-      data: data ?? this.data,
-      style: style ?? this.style,
-      strutStyle: strutStyle ?? this.strutStyle,
-      textAlign: textAlign ?? this.textAlign,
-      textDirection: textDirection ?? this.textDirection,
-      locale: locale ?? this.locale,
-      softWrap: softWrap ?? this.softWrap,
-      overflow: overflow ?? this.overflow,
-      textScaleFactor: textScaleFactor ?? this.textScaleFactor,
-      maxLines: maxLines ?? this.maxLines,
-      semanticsLabel: semanticsLabel ?? this.semanticsLabel,
-      textWidthBasis: textWidthBasis ?? this.textWidthBasis,
-      textHeightBehavior: textHeightBehavior ?? this.textHeightBehavior,
-      selectionColor: selectionColor ?? this.selectionColor,
-    );
-  }
+  String? data;
+  TextStyle? style;
+  StackTextStrutStyle? strutStyle;
+  TextAlign? textAlign;
+  TextDirection? textDirection;
+  Locale? locale;
+  bool? softWrap;
+  TextOverflow? overflow;
+  double? textScaleFactor;
+  int? maxLines;
+  String? semanticsLabel;
+  TextWidthBasis? textWidthBasis;
+  TextHeightBehavior? textHeightBehavior;
+  Color? selectionColor;
 
   @override
   Map<String, dynamic> toJson() {

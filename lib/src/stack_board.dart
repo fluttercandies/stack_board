@@ -44,6 +44,8 @@ class StackBoard extends StatelessWidget {
     this.onOffsetChanged,
     this.onAngleChanged,
     this.onEditStatusChanged,
+    this.actionsBuilder,
+    this.borderBuilder,
   }) : super(key: key);
 
   final StackBoardController? controller;
@@ -75,6 +77,12 @@ class StackBoard extends StatelessWidget {
 
   /// 操作状态回调
   final bool? Function(StackItem<StackItemContent> item, StackItemStatus operatState)? onEditStatusChanged;
+
+  /// 操作层构建器
+  final Widget Function(StackItemStatus operatState, CaseStyle caseStyle)? actionsBuilder;
+
+  /// 边框构建器
+  final Widget Function(StackItemStatus operatState)? borderBuilder;
 
   StackBoardController get _controller => controller ?? StackBoardController.def();
 
@@ -116,6 +124,8 @@ class StackBoard extends StatelessWidget {
       onOffsetChanged: (Offset offset) => onOffsetChanged?.call(item, offset) ?? true,
       onAngleChanged: (double angle) => onAngleChanged?.call(item, angle) ?? true,
       onEditStatusChanged: (StackItemStatus operatState) => onEditStatusChanged?.call(item, operatState) ?? true,
+      actionsBuilder: actionsBuilder,
+      borderBuilder: borderBuilder,
     );
   }
 }
