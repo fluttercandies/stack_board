@@ -61,7 +61,7 @@ abstract class StackItem<T extends StackItemContent> {
     Offset? offset,
     double? angle,
     StackItemStatus? status,
-    T? Function(T oldContent)? contentGenerators,
+    T? content,
   });
 
   /// to json

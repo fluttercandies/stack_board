@@ -295,10 +295,8 @@ class StackItemCase extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int index = _controller(context).getIndexById(itemId);
-
     return ConfigBuilder.withItem(
-      index,
+      stackItem.id,
       shouldRebuild: (StackItem<StackItemContent> p, StackItem<StackItemContent> n) =>
           p.offset != n.offset || p.angle != n.angle,
       childBuilder: (StackItem<StackItemContent> item, Widget c) {
@@ -310,7 +308,7 @@ class StackItemCase extends StatelessWidget {
         );
       },
       child: ConfigBuilder.withItem(
-        index,
+        stackItem.id,
         shouldRebuild: (StackItem<StackItemContent> p, StackItem<StackItemContent> n) => p.status != n.status,
         childBuilder: (StackItem<StackItemContent> item, Widget c) {
           final StackItemStatus status = item.status ?? StackItemStatus.idle;
@@ -374,10 +372,8 @@ class StackItemCase extends StatelessWidget {
       );
     }
 
-    final int index = _stackController.getIndexById(itemId);
-
     return ConfigBuilder.withItem(
-      index,
+      stackItem.id,
       shouldRebuild: (StackItem<StackItemContent> p, StackItem<StackItemContent> n) => p.size != n.size,
       childBuilder: (StackItem<StackItemContent> item, Widget c) {
         return SizedBox.fromSize(size: item.size, child: c);

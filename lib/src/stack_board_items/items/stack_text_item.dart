@@ -162,7 +162,7 @@ class StackTextItem extends StackItem<TextItemContent> {
     Size? size,
     Offset? offset,
     StackItemStatus? status,
-    TextItemContent? contentGenerators(TextItemContent oldContent)?,
+    TextItemContent? content,
   }) {
     return StackTextItem(
       id: id,
@@ -170,7 +170,7 @@ class StackTextItem extends StackItem<TextItemContent> {
       size: size ?? this.size,
       offset: offset ?? this.offset,
       status: status ?? this.status,
-      content: content == null ? null : contentGenerators?.call(content!) ?? content,
+      content: content ?? this.content,
     );
   }
 }

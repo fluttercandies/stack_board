@@ -20,6 +20,8 @@ class StackConfig {
   final List<StackItem<StackItemContent>> data;
   final Map<String, int> indexMap;
 
+  StackItem<StackItemContent> operator [](String id) => data[indexMap[id]!];
+
   StackConfig copyWith({
     List<StackItem<StackItemContent>>? data,
     Map<String, int>? indexMap,
@@ -64,10 +66,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
   /// reorder index
   List<StackItem<StackItemContent>> _reorder(List<StackItem<StackItemContent>> data) {
     for (int i = 0; i < data.length; i++) {
-      _indexMap[innerData[i].id] = i;
+      _indexMap[data[i].id] = i;
     }
-
-    value = value.copyWith(indexMap: _newIndexMap);
 
     return data;
   }
@@ -81,17 +81,14 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
 
     final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
 
-    // selected.clear();
-
     // 其它 item EditStatus 重置为 idle
     for (int i = 0; i < data.length; i++) {
-      final StackItem<StackItemContent> item = data[i];
-      data[i] = item.copyWith(status: StackItemStatus.idle);
+      data[i] = data[i].copyWith(status: StackItemStatus.idle);
     }
 
     data.add(item);
+
     _indexMap[item.id] = data.length - 1;
-    // selected.add(item.id);
 
     value = value.copyWith(data: data, indexMap: _newIndexMap);
   }
@@ -102,9 +99,10 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
 
     data.remove(item);
     _indexMap.remove(item.id);
-    // selected.remove(item.id);
 
-    value = value.copyWith(data: _reorder(data), indexMap: _newIndexMap);
+    _reorder(data);
+
+    value = value.copyWith(data: data, indexMap: _newIndexMap);
   }
 
   /// remove item by id

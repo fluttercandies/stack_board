@@ -101,7 +101,7 @@ class StackDrawItem extends StackItem<DrawItemContent> {
     Offset? offset,
     double? angle,
     StackItemStatus? status,
-    DrawItemContent? Function(DrawItemContent oldContent)? contentGenerators,
+    DrawItemContent? content,
   }) {
     return StackDrawItem(
       id: id,
@@ -109,7 +109,7 @@ class StackDrawItem extends StackItem<DrawItemContent> {
       offset: offset ?? this.offset,
       angle: angle ?? this.angle,
       status: status ?? this.status,
-      content: content == null ? null : contentGenerators?.call(content!) ?? content,
+      content: content ?? this.content,
     );
   }
 

@@ -99,9 +99,7 @@ class _HomePageState extends State<HomePage> {
             return StackTextCase(
               item: item,
               onChanged: (String str) => _boardController.updateItem(
-                item.copyWith(
-                  contentGenerators: (TextItemContent oldContent) => oldContent.copyWith(data: str),
-                ),
+                item.copyWith(content: item.content?.copyWith(data: str)),
               ),
             );
           } else if (item is StackDrawItem) {

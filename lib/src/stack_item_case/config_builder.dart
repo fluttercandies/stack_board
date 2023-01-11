@@ -31,7 +31,7 @@ class ConfigBuilder extends StatelessWidget {
   }
 
   static Widget withItem(
-    int index, {
+    String id, {
     required Widget child,
     bool Function(StackItem<StackItemContent> p, StackItem<StackItemContent> n)? shouldRebuild,
     Widget Function(StackItem<StackItemContent> item, Widget c)? childBuilder,
@@ -39,8 +39,8 @@ class ConfigBuilder extends StatelessWidget {
     return ConfigBuilder(
       shouldRebuild: (StackConfig p, StackConfig n) {
         try {
-          final StackItem<StackItemContent> pI = p.data[index];
-          final StackItem<StackItemContent> nI = n.data[index];
+          final StackItem<StackItemContent> pI = p[id];
+          final StackItem<StackItemContent> nI = n[id];
 
           return shouldRebuild?.call(pI, nI) ?? true;
         } catch (e) {
@@ -48,7 +48,7 @@ class ConfigBuilder extends StatelessWidget {
         }
       },
       childBuilder: (StackConfig sc, Widget c) {
-        final StackItem<StackItemContent> item = sc.data[index];
+        final StackItem<StackItemContent> item = sc[id];
         return childBuilder?.call(item, c) ?? c;
       },
       child: child,
