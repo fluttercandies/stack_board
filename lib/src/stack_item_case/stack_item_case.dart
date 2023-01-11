@@ -2,10 +2,12 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:stack_board/src/core/case_style.dart';
+import 'package:stack_board/src/core/stack_board_item/stack_item.dart';
+import 'package:stack_board/src/core/stack_board_item/stack_item_content.dart';
+import 'package:stack_board/src/core/stack_board_item/stack_item_status.dart';
 import 'package:stack_board/src/stack_board.dart';
 import 'package:stack_board/src/stack_item_case/config_builder.dart';
 import 'package:stack_board/src/widgets/get_size.dart';
-import 'package:stack_board_item/stack_board_item.dart';
 
 class StackItemCase extends StatelessWidget {
   const StackItemCase({

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:stack_board/flutter_stack_board.dart';
-import 'package:stack_board_item_set/stack_case.dart';
-import 'package:stack_board_item_set/stack_items.dart';
+import 'package:stack_board/stack_board_item.dart';
+import 'package:stack_board/stack_case.dart';
+import 'package:stack_board/stack_items.dart';
 
 void main() => runApp(const MyApp());
 
@@ -93,13 +94,12 @@ class _HomePageState extends State<HomePage> {
 
         /// 背景
         background: ColoredBox(color: Colors.grey[100]!),
-        childBuilder: (StackItem<StackItemContent> item) {
+        customBuilder: (StackItem<StackItemContent> item) {
           if (item is StackTextItem) {
             return StackTextCase(
               item: item,
-              onChanged: (String str) => _boardController.updateItem<StackTextItem>(
-                id: item.id,
-                update: (StackTextItem oldItem) => oldItem.copyWith(
+              onChanged: (String str) => _boardController.updateItem(
+                item.copyWith(
                   contentGenerators: (TextItemContent oldContent) => oldContent.copyWith(data: str),
                 ),
               ),

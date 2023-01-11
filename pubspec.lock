@@ -49,12 +49,12 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_drawing_board:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_drawing_board
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.4.1+4"
+    version: "0.4.2"
   flutter_hsvcolor_picker:
     dependency: transitive
     description:
@@ -122,19 +122,12 @@ packages:
     source: hosted
     version: "1.9.0"
   stack_board_item:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: stack_board_item
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.0.1+10"
-  stack_board_item_set:
-    dependency: "direct main"
-    description:
-      path: "../stack_board_items"
-      relative: true
-    source: path
-    version: "0.0.2"
   stack_trace:
     dependency: transitive
     description:
@@ -186,4 +179,4 @@ packages:
     version: "0.0.1+4"
 sdks:
   dart: ">=2.17.0-0 <3.0.0"
-  flutter: ">=2.0.0"
+  flutter: ">=3.0.0"

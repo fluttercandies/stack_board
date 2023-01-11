@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:stack_board/src/core/stack_board_controller.dart';
 import 'package:stack_board/src/stack_item_case/stack_item_case.dart';
 import 'package:stack_board/src/widgets/ex_builder.dart';
-import 'package:stack_board_item/stack_board_item.dart';
 
 import 'core/case_style.dart';
+import 'core/stack_board_controller.dart';
+import 'core/stack_board_item/stack_item.dart';
+import 'core/stack_board_item/stack_item_content.dart';
+import 'core/stack_board_item/stack_item_status.dart';
 
 class StackBoardConfig extends InheritedWidget {
   const StackBoardConfig({
@@ -35,7 +37,7 @@ class StackBoard extends StatelessWidget {
     this.controller,
     this.background,
     this.caseStyle,
-    this.childBuilder,
+    this.customBuilder,
     this.onDel,
     this.onTap,
     this.onSizeChanged,
@@ -53,7 +55,7 @@ class StackBoard extends StatelessWidget {
   final CaseStyle? caseStyle;
 
   /// 自定义类型控件构建器
-  final Widget? Function(StackItem<StackItemContent> item)? childBuilder;
+  final Widget? Function(StackItem<StackItemContent> item)? customBuilder;
 
   /// 移除拦截
   final void Function(StackItem<StackItemContent> item)? onDel;
@@ -104,8 +106,9 @@ class StackBoard extends StatelessWidget {
 
   Widget _itemBuilder(StackItem<StackItemContent> item) {
     return StackItemCase(
+      key: ValueKey<String>(item.id),
       stackItem: item,
-      childBuilder: childBuilder,
+      childBuilder: customBuilder,
       caseStyle: caseStyle,
       onDel: () => onDel?.call(item),
       onTap: () => onTap?.call(item),

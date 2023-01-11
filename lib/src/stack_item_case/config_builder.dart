@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:stack_board/src/core/stack_board_controller.dart';
+import 'package:stack_board/src/core/stack_board_item/stack_item.dart';
+import 'package:stack_board/src/core/stack_board_item/stack_item_content.dart';
 import 'package:stack_board/src/stack_board.dart';
 import 'package:stack_board/src/widgets/ex_builder.dart';
-import 'package:stack_board_item/stack_board_item.dart';
 
 export 'package:stack_board/src/core/stack_board_controller.dart';
 
