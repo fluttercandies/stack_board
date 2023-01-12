@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
+import 'package:widget_style_extension/widget_style_extension.dart';
 
 import 'stack_item_content.dart';
 import 'stack_item_status.dart';
@@ -65,7 +66,17 @@ abstract class StackItem<T extends StackItemContent> {
   });
 
   /// to json
-  Map<String, dynamic> toJson();
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'id': id,
+      'type': runtimeType.toString(),
+      if (angle != null) 'angle': angle,
+      if (size != null) 'size': size?.toJson(),
+      if (offset != null) 'offset': offset?.toJson(),
+      if (status != null) 'status': status?.index,
+      if (content != null) 'content': content?.toJson(),
+    };
+  }
 
   @override
   int get hashCode => id.hashCode;

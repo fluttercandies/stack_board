@@ -71,7 +71,10 @@ class _StackDrawCaseState extends State<StackDrawCase> {
             DrawingBoard(
               onPointerDown: widget.onPointerDown,
               onPointerMove: widget.onPointerMove,
-              onPointerUp: (_) => widget.onPaint?.call(_controller.getHistory),
+              onPointerUp: (_) {
+                widget.item.setContents(_controller.getHistory);
+                widget.onPaint?.call(_controller.getHistory);
+              },
               controller: _controller,
               boardPanEnabled: false,
               boardScaleEnabled: false,

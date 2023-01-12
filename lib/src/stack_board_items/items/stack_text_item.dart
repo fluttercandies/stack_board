@@ -110,17 +110,9 @@ class StackTextItem extends StackItem<TextItemContent> {
     );
   }
 
-  @override
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'id': id,
-      'type': 'StackTextItem',
-      if (angle != null) 'angle': angle,
-      if (size != null) 'size': size?.toJson(),
-      if (offset != null) 'offset': offset?.toJson(),
-      if (status != null) 'status': status?.index,
-      if (content != null) 'content': content?.toJson(),
-    };
+  /// 覆盖文本
+  void setData(String str) {
+    content!.data = str;
   }
 
   @override

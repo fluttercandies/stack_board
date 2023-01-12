@@ -45,7 +45,7 @@ class DrawItemContent implements StackItemContent {
   }
 
   double size;
-  final List<PaintContent> paintContents;
+  List<PaintContent> paintContents;
 
   @override
   Map<String, dynamic> toJson() {
@@ -85,6 +85,11 @@ class StackDrawItem extends StackItem<DrawItemContent> {
     );
   }
 
+  /// 覆盖绘制内容
+  void setContents(List<PaintContent> contents) {
+    content!.paintContents = contents;
+  }
+
   @override
   StackDrawItem copyWith({
     Size? size,
@@ -101,18 +106,5 @@ class StackDrawItem extends StackItem<DrawItemContent> {
       status: status ?? this.status,
       content: content ?? this.content,
     );
-  }
-
-  @override
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'id': id,
-      'type': 'StackDrawItem',
-      if (angle != null) 'angle': angle,
-      if (size != null) 'size': size?.toJson(),
-      if (offset != null) 'offset': offset?.toJson(),
-      if (status != null) 'status': status?.index,
-      if (content != null) 'content': content?.toJson(),
-    };
   }
 }

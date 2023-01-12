@@ -111,7 +111,10 @@ class StackTextCase extends StatelessWidget {
         readOnly: readOnly,
         obscureText: obscureText,
         maxLength: maxLength,
-        onChanged: onChanged,
+        onChanged: (String str) {
+          item.setData(str);
+          onChanged?.call(str);
+        },
         onTap: onTap,
         onEditingComplete: onEditingComplete,
         inputFormatters: inputFormatters,

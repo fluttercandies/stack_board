@@ -96,15 +96,11 @@ class _HomePageState extends State<HomePage> {
         background: ColoredBox(color: Colors.grey[100]!),
         customBuilder: (StackItem<StackItemContent> item) {
           if (item is StackTextItem) {
-            return StackTextCase(
-              item: item,
-              onChanged: (String str) {
-                item.content!.data = str;
-                _boardController.updateItem(item);
-              },
-            );
+            return StackTextCase(item: item);
           } else if (item is StackDrawItem) {
             return StackDrawCase(item: item);
+          } else if (item is StackImageItem) {
+            return StackImageCase(item: item);
           }
 
           return const SizedBox.shrink();
@@ -132,7 +128,16 @@ class _HomePageState extends State<HomePage> {
                   ),
                   _spacer,
                   FloatingActionButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _boardController.addItem(
+                        StackImageItem(
+                          size: const Size.square(300),
+                          content: ImageItemContent(
+                            url: 'https://files.flutter-io.cn/images/branding/flutterlogo/flutter-cn-logo.png',
+                          ),
+                        ),
+                      );
+                    },
                     child: const Icon(Icons.image),
                   ),
                   _spacer,
