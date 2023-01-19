@@ -1,5 +1,7 @@
-/// More info of StackItem
+/// * More info of StackItem
+/// * StackItem 内容
 abstract class StackItemContent {
-  /// to json
+  /// * to json
+  /// * 转 json
   Map<String, dynamic> toJson();
 }

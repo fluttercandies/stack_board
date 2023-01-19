@@ -79,6 +79,15 @@ class ImageItemContent extends StackItemContent {
 
   ImageProvider get image => _image;
 
+  void setRes({
+    String? url,
+    String? assetName,
+  }) {
+    if (url != null) this.url = url;
+    if (assetName != null) this.assetName = assetName;
+    _init();
+  }
+
   @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
@@ -102,7 +111,7 @@ class ImageItemContent extends StackItemContent {
 
 class StackImageItem extends StackItem<ImageItemContent> {
   StackImageItem({
-    ImageItemContent? content,
+    required ImageItemContent? content,
     String? id,
     double? angle,
     Size? size,
@@ -128,8 +137,16 @@ class StackImageItem extends StackItem<ImageItemContent> {
     );
   }
 
+  void setUrl(String url) {
+    content?.setRes(url: url);
+  }
+
+  void setAssetName(String assetName) {
+    content?.setRes(assetName: assetName);
+  }
+
   @override
-  StackItem<ImageItemContent> copyWith({
+  StackImageItem copyWith({
     Size? size,
     Offset? offset,
     double? angle,

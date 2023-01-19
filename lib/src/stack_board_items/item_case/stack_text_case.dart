@@ -68,7 +68,8 @@ class StackTextCase extends StatelessWidget {
     return item.status == StackItemStatus.editing ? _buildEditing(context) : _buildNormal(context);
   }
 
-  /// Text
+  /// * 构建文本
+  /// * Text
   Widget _buildNormal(BuildContext context) {
     return FittedBox(
       child: Text(
@@ -90,7 +91,8 @@ class StackTextCase extends StatelessWidget {
     );
   }
 
-  /// TextFormField
+  /// * 构建编辑框
+  /// * TextFormField
   Widget _buildEditing(BuildContext context) {
     return Center(
       child: TextFormField(

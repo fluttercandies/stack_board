@@ -66,13 +66,12 @@ class StackDrawItem extends StackItem<DrawItemContent> {
     Offset? offset,
     StackItemStatus? status,
   }) : super(
-          id: id,
-          size: size,
-          offset: offset,
-          angle: angle,
-          status: status,
-          content: content,
-        );
+            id: id,
+            size: size,
+            offset: offset,
+            angle: angle,
+            status: status,
+            content: content ?? DrawItemContent(size: size.shortestSide, paintContents: <PaintContent>[]));
 
   factory StackDrawItem.fromJson(Map<String, dynamic> data) {
     return StackDrawItem(
@@ -85,7 +84,8 @@ class StackDrawItem extends StackItem<DrawItemContent> {
     );
   }
 
-  /// 覆盖绘制内容
+  /// * 覆盖绘制内容
+  /// * Override the drawing content
   void setContents(List<PaintContent> contents) {
     content!.paintContents = contents;
   }

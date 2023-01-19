@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  /// 删除拦截
+  /// Delete intercept
   Future<void> _onDel(StackItem<StackItemContent> item) async {
     final bool? r = await showDialog<bool>(
       context: context,
@@ -74,6 +74,74 @@ class _HomePageState extends State<HomePage> {
     if (r == true) {
       _boardController.removeById(item.id);
     }
+  }
+
+  /// Add text item
+  void _addTextItem() {
+    _boardController.addItem(
+      StackTextItem(
+        size: const Size(200, 100),
+        content: TextItemContent(data: '哈哈哈哈哈'),
+      ),
+    );
+  }
+
+  /// Add image item
+  void _addImageItem() {
+    _boardController.addItem(
+      StackImageItem(
+        size: const Size.square(300),
+        content: ImageItemContent(
+          url: 'https://files.flutter-io.cn/images/branding/flutterlogo/flutter-cn-logo.png',
+        ),
+      ),
+    );
+  }
+
+  /// Add draw item
+  void _addDrawItem() {
+    _boardController.addItem(StackDrawItem(size: const Size.square(300)));
+  }
+
+  /// get json
+  Future<void> _getJson() async {
+    showDialog<void>(
+      context: context,
+      builder: (_) {
+        return Center(
+          child: SizedBox(
+            width: 400,
+            child: Material(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.only(top: 10, bottom: 60),
+                      child: Text('Json'),
+                    ),
+                    Container(
+                      constraints: const BoxConstraints(maxHeight: 500),
+                      child: SingleChildScrollView(
+                        child: Text(_boardController.getAllData().toString()),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.check)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -115,38 +183,11 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 children: <Widget>[
                   const SizedBox(width: 25),
-                  FloatingActionButton(
-                    onPressed: () {
-                      _boardController.addItem(
-                        StackTextItem(
-                          size: const Size(200, 100),
-                          content: TextItemContent(data: '哈哈哈哈哈'),
-                        ),
-                      );
-                    },
-                    child: const Icon(Icons.border_color),
-                  ),
+                  FloatingActionButton(onPressed: _addTextItem, child: const Icon(Icons.border_color)),
                   _spacer,
-                  FloatingActionButton(
-                    onPressed: () {
-                      _boardController.addItem(
-                        StackImageItem(
-                          size: const Size.square(300),
-                          content: ImageItemContent(
-                            url: 'https://files.flutter-io.cn/images/branding/flutterlogo/flutter-cn-logo.png',
-                          ),
-                        ),
-                      );
-                    },
-                    child: const Icon(Icons.image),
-                  ),
+                  FloatingActionButton(onPressed: _addImageItem, child: const Icon(Icons.image)),
                   _spacer,
-                  FloatingActionButton(
-                    onPressed: () {
-                      _boardController.addItem(StackDrawItem(size: const Size.square(300)));
-                    },
-                    child: const Icon(Icons.color_lens),
-                  ),
+                  FloatingActionButton(onPressed: _addDrawItem, child: const Icon(Icons.color_lens)),
                   _spacer,
                   FloatingActionButton(
                     onPressed: () {
@@ -163,25 +204,22 @@ class _HomePageState extends State<HomePage> {
                     },
                     child: const Icon(Icons.add_box),
                   ),
-                  _spacer,
-                  FloatingActionButton(
-                    onPressed: () {
-                      // _boardController.add<CustomItem>(
-                      //   CustomItem(
-                      //     color: Color((math.Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
-                      //     onDel: () async => true,
-                      //   ),
-                      // );
-                    },
-                    child: const Icon(Icons.add),
-                  ),
                 ],
               ),
             ),
           ),
-          FloatingActionButton(
-            onPressed: () => _boardController.clear(),
-            child: const Icon(Icons.close),
+          Row(
+            children: <Widget>[
+              FloatingActionButton(
+                onPressed: () => _boardController.clear(),
+                child: const Icon(Icons.close),
+              ),
+              _spacer,
+              FloatingActionButton(
+                onPressed: _getJson,
+                child: const Icon(Icons.check),
+              ),
+            ],
           ),
         ],
       ),

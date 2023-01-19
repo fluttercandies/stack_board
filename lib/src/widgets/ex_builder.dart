@@ -2,7 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:stack_board/src/helpers/safe_state.dart';
 
-/// 简化的 `ExValueBuilder`
+/// * 简化的 `ExValueBuilder`
+/// * Simplified `ExValueBuilder`
 class ExBuilder<T> extends StatefulWidget {
   const ExBuilder({
     Key? key,

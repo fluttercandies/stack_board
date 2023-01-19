@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:stack_board/src/core/stack_board_item/stack_item.dart';
 import 'package:stack_board/src/core/stack_board_item/stack_item_content.dart';
 import 'package:stack_board/src/core/stack_board_item/stack_item_status.dart';
+import 'package:stack_board/src/helpers/ex_list.dart';
 import 'package:stack_board/src/helpers/safe_value_notifier.dart';
 
 class StackConfig {
@@ -18,6 +19,7 @@ class StackConfig {
       );
 
   final List<StackItem<StackItemContent>> data;
+
   final Map<String, int> indexMap;
 
   StackItem<StackItemContent> operator [](String id) => data[indexMap[id]!];
@@ -37,14 +39,13 @@ class StackConfig {
 // ignore: must_be_immutable
 class StackBoardController extends SafeValueNotifier<StackConfig> {
   StackBoardController({String? tag})
-      : _tag = tag,
+      : assert(tag != 'def', 'tag can not be "def"'),
+        _tag = tag,
         super(StackConfig.init());
 
   factory StackBoardController.def() => _defaultController;
 
   final String? _tag;
-
-  // final Set<String> selected = <String>{};
 
   final Map<String, int> _indexMap = <String, int>{};
 
@@ -54,16 +55,21 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
 
   Map<String, int> get _newIndexMap => Map<String, int>.from(_indexMap);
 
+  /// * 通过 id 获取 item
+  /// * get item by id
   StackItem<StackItemContent>? getById(String id) {
     if (!_indexMap.containsKey(id)) return null;
     return innerData[_indexMap[id]!];
   }
 
+  /// * 通过 id 获取索引
+  /// * get index by id
   int getIndexById(String id) {
     return _indexMap[id]!;
   }
 
-  /// reorder index
+  /// * 重排索引
+  /// * reorder index
   List<StackItem<StackItemContent>> _reorder(List<StackItem<StackItemContent>> data) {
     for (int i = 0; i < data.length; i++) {
       _indexMap[data[i].id] = i;
@@ -72,7 +78,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
     return data;
   }
 
-  /// add item
+  /// * 添加 item
+  /// * add item
   void addItem(StackItem<StackItemContent> item, {bool selectIt = false}) {
     if (innerData.contains(item)) {
       print('StackBoardController addItem: item already exists');
@@ -93,7 +100,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
     value = value.copyWith(data: data, indexMap: _newIndexMap);
   }
 
-  /// remove item
+  /// * 移除 item
+  /// * remove item
   void removeItem(StackItem<StackItemContent> item) {
     final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
 
@@ -105,7 +113,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
     value = value.copyWith(data: data, indexMap: _newIndexMap);
   }
 
-  /// remove item by id
+  /// * 通过 id 移除 item
+  /// * remove item by id
   void removeById(String id) {
     if (!_indexMap.containsKey(id)) return;
 
@@ -118,7 +127,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
     value = value.copyWith(data: data, indexMap: _newIndexMap);
   }
 
-  /// select only item
+  /// * 选中唯一 item
+  /// * select only item
   void selectOne(String id) {
     if (!_indexMap.containsKey(id)) return;
 
@@ -148,7 +158,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
     value = value.copyWith(data: data, indexMap: _newIndexMap);
   }
 
-  /// unselect all items
+  /// * 取消选中所有 item
+  /// * unselect all items
   void unSelectAll() {
     final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
 
@@ -162,7 +173,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
     value = value.copyWith(data: data);
   }
 
-  /// update basic config
+  /// * 更新基础配置
+  /// * update basic config
   void updateBasic(String id, {Size? size, Offset? offset, double? angle, StackItemStatus? status}) {
     if (!_indexMap.containsKey(id)) return;
 
@@ -178,7 +190,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
     value = value.copyWith(data: data);
   }
 
-  /// updateItem
+  /// * 更新 item
+  /// * update item
   void updateItem(StackItem<StackItemContent> item) {
     if (!_indexMap.containsKey(item.id)) return;
 
@@ -189,39 +202,61 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
     value = value.copyWith(data: data);
   }
 
-  /// * index Item index
-  /// * id Item id
-  /// * update Update function
-  // void updateItem({
-  //   int? index,
-  //   String? id,
-  //   StackItem<StackItemContent> Function(StackItem<StackItemContent> oldItem)? update,
-  // }) {
-  //   assert(index != null || id != null, 'index or id must not be null');
-
-  //   final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
-
-  //   final StackItem<StackItemContent>? item = index != null ? data[index] : getById(id!);
-
-  //   assert(item != null, 'item not found');
-
-  //   final StackItem<StackItemContent>? newItem = update?.call(item!);
-
-  //   assert(newItem != null, 'newItem must not be null');
-
-  //   if (index != null) {
-  //     data[index] = newItem!;
-  //   } else {
-  //     data[data.indexOf(item!)] = newItem!;
-  //   }
-
-  //   value = value.copyWith(data: data);
-  // }
-
-  /// clear
+  /// * 清空
+  /// * clear
   void clear() {
     value = StackConfig.init();
     _indexMap.clear();
+  }
+
+  /// * 获取选中 item json 数据
+  /// * get selected item json data
+  Map<String, dynamic>? getSelectedData() {
+    return innerData
+        .firstWhereOrNull(
+          (StackItem<StackItemContent> item) => item.status == StackItemStatus.selected,
+        )
+        ?.toJson();
+  }
+
+  /// * 通过 id 获取数据 json
+  /// * get data json by id
+  Map<String, dynamic>? getDataById(String id) {
+    return innerData.firstWhereOrNull((StackItem<StackItemContent> item) => item.id == id)?.toJson();
+  }
+
+  /// * 通过类型获取数据 json 列表
+  /// * get data json list by type
+  List<Map<String, dynamic>> getTypeData<T extends StackItem<StackItemContent>>() {
+    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
+
+    final List<Map<String, dynamic>> list = <Map<String, dynamic>>[];
+
+    for (int i = 0; i < data.length; i++) {
+      final StackItem<StackItemContent> item = data[i];
+      if (item is T) {
+        final Map<String, dynamic> map = item.toJson();
+        list.add(map);
+      }
+    }
+
+    return list;
+  }
+
+  /// * 获取数据 json 列表
+  /// * get data json list
+  List<Map<String, dynamic>> getAllData() {
+    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
+
+    final List<Map<String, dynamic>> list = <Map<String, dynamic>>[];
+
+    for (int i = 0; i < data.length; i++) {
+      final StackItem<StackItemContent> item = data[i];
+      final Map<String, dynamic> map = item.toJson();
+      list.add(map);
+    }
+
+    return list;
   }
 
   @override

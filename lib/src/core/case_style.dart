@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:stack_board/src/helpers/as_t.dart';
 
-/// 操作壳样式
+/// * 操作壳样式
+/// * case style
 @immutable
 class CaseStyle {
   const CaseStyle({
@@ -28,20 +29,26 @@ class CaseStyle {
     );
   }
 
-  /// 边框(包括操作手柄)颜色
+  /// * 边框(包括操作手柄)颜色
+  /// * Border color (including operation handle)
   final Color borderColor;
 
-  /// 边框粗细
+  /// * 边框粗细
+  /// * Border thickness
   final double borderWidth;
 
-  /// 图标颜色
+  /// * 图标颜色
+  /// * Icon color
   final Color? iconColor;
 
-  /// 图标大小
+  /// * 图标大小
+  /// * Icon size
   final double iconSize;
 
   /// * 边框比例
   /// * if(boxAspectRatio!=null) 缩放变换将固定比例
+  /// * Border ratio
+  /// * if(boxAspectRatio!=null) Scaling transformation will fix the ratio
   final double? boxAspectRatio;
 
   Map<String, dynamic> toJson() => <String, dynamic>{

@@ -8,7 +8,8 @@ import 'package:stack_board/stack_items.dart';
 
 const double _defSize = 300;
 
-/// 绘制对象
+/// * 绘制对象
+/// * Draw object
 class StackDrawCase extends StatefulWidget {
   const StackDrawCase({
     Key? key,
@@ -19,19 +20,23 @@ class StackDrawCase extends StatefulWidget {
     this.onPointerMove,
   }) : super(key: key);
 
-  /// StackDrawItem
+  /// * StackDrawItem
   final StackDrawItem item;
 
-  /// 背景
+  /// * 背景
+  /// * background
   final Widget? background;
 
-  /// 抬起时的回调当前的所以内容
+  /// * 抬起时的回调当前的所以内容
+  /// * Callback to the current content when lifted
   final Function(List<PaintContent> contents)? onPaint;
 
-  /// 开始拖动
+  /// * 开始拖动
+  /// * Start dragging
   final Function(PointerDownEvent pde)? onPointerDown;
 
-  /// 正在拖动
+  /// * 正在拖动
+  /// * Dragging
   final Function(PointerMoveEvent pme)? onPointerMove;
 
   @override
@@ -89,14 +94,16 @@ class _StackDrawCaseState extends State<StackDrawCase> {
     );
   }
 
-  /// 遮罩
+  /// * 遮罩
+  /// * Mask
   Widget _mask() {
     return Positioned.fill(
       child: Container(color: Colors.transparent),
     );
   }
 
-  /// 工具栏
+  /// * 工具栏
+  /// * Tool bar
   Widget _tools() {
     return _configBuilder(
       shouldRebuild: (DrawConfig p, DrawConfig n) => p.fingerCount != n.fingerCount || p.contentType != n.contentType,
@@ -141,7 +148,8 @@ class _StackDrawCaseState extends State<StackDrawCase> {
     );
   }
 
-  /// 操作栏
+  /// * 操作栏
+  /// * Operation bar
   Widget _actions() {
     return _configBuilder(
       shouldRebuild: (DrawConfig p, DrawConfig n) => p.fingerCount != n.fingerCount,
@@ -233,7 +241,8 @@ class _StackDrawCaseState extends State<StackDrawCase> {
     );
   }
 
-  /// 选项构建器
+  /// * 选项构建器
+  /// * Option builder
   Widget _configBuilder({
     bool Function(DrawConfig p, DrawConfig n)? shouldRebuild,
     required Widget Function(DrawConfig dc, Widget? child) builder,
@@ -250,7 +259,8 @@ class _StackDrawCaseState extends State<StackDrawCase> {
   }
 }
 
-/// 默认工具项
+/// * 默认工具项
+/// * Default tool item
 class _DefToolItem extends StatelessWidget {
   const _DefToolItem({
     Key? key,
@@ -278,7 +288,8 @@ class _DefToolItem extends StatelessWidget {
   }
 }
 
-/// 默认操作项
+/// * 默认操作项
+/// * Default operation item
 class _DefActionItem extends StatelessWidget {
   const _DefActionItem({
     Key? key,

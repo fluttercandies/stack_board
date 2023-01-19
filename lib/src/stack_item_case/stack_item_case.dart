@@ -9,7 +9,22 @@ import 'package:stack_board/src/stack_board.dart';
 import 'package:stack_board/src/stack_item_case/config_builder.dart';
 import 'package:stack_board/src/widgets/get_size.dart';
 
-/// 操作盒
+/// * 操作盒
+/// * 用于包裹子组件，提供操作盒的功能
+/// * 1. 拖动
+/// * 2. 缩放
+/// * 3. 旋转
+/// * 4. 删除
+/// * 5. 点击
+/// * 6. 编辑
+/// * Operate box
+/// * Used to wrap child widgets to provide functions of operate box
+/// * 1. Drag
+/// * 2. Scale
+/// * 3. Rotate
+/// * 4. Delete
+/// * 5. Click
+/// * 6. Edit
 class StackItemCase extends StatelessWidget {
   const StackItemCase({
     Key? key,
@@ -26,49 +41,68 @@ class StackItemCase extends StatelessWidget {
     this.borderBuilder,
   }) : super(key: key);
 
-  /// StackItemData
+  /// * StackItemData
   final StackItem<StackItemContent> stackItem;
 
-  /// Child builder, update when item status changed
+  /// * 子组件构建器, 当item状态改变时更新
+  /// * Child builder, update when item status changed
   final Widget? Function(StackItem<StackItemContent> item)? childBuilder;
 
-  /// 外框样式
+  /// * 外框样式
+  /// * Outer frame style
   final CaseStyle? caseStyle;
 
-  /// 移除拦截
+  /// * 移除拦截
+  /// * Remove intercept
   final void Function()? onDel;
 
-  /// 点击回调
+  /// * 点击回调
+  /// * Click callback
   final void Function()? onTap;
 
-  /// 尺寸变化回调
-  /// 返回值可控制是否继续进行
+  /// * 尺寸变化回调
+  /// * 返回值可控制是否继续进行
+  /// * Size change callback
+  /// * The return value can control whether to continue
   final bool? Function(Size size)? onSizeChanged;
 
-  /// 位置变化回调
+  /// * 位置变化回调
+  /// * 返回值可控制是否继续进行
+  /// * Position change callback
+  /// * The return value can control whether to continue
   final bool? Function(Offset offset)? onOffsetChanged;
 
-  /// 角度变化回调
+  /// * 角度变化回调
+  /// * 返回值可控制是否继续进行
+  /// * Angle change callback
+  /// * The return value can control whether to continue
   final bool? Function(double angle)? onAngleChanged;
 
-  /// 操作状态回调
+  /// * 操作状态回调
+  /// * 返回值可控制是否继续进行
+  /// * Operation status callback
+  /// * The return value can control whether to continue
   final bool? Function(StackItemStatus operatState)? onEditStatusChanged;
 
-  /// 操作层构建器
+  /// * 操作层构建器
+  /// * Operation layer builder
   final Widget Function(StackItemStatus operatState, CaseStyle caseStyle)? actionsBuilder;
 
-  /// 边框构建器
+  /// * 边框构建器
+  /// * Border builder
   final Widget Function(StackItemStatus operatState)? borderBuilder;
 
   String get itemId => stackItem.id;
 
   StackBoardController _controller(BuildContext context) => StackBoardConfig.of(context).controller;
 
-  /// 外框样式
+  /// * 外框样式
+  /// * Outer frame style
   CaseStyle _caseStyle(BuildContext context) =>
       caseStyle ?? StackBoardConfig.of(context).caseStyle ?? const CaseStyle();
 
-  /// 主体鼠标指针样式
+  /// * 主体鼠标指针样式
+  /// * Main body mouse pointer style
   MouseCursor _cursor(StackItemStatus status) {
     if (status == StackItemStatus.moving) {
       return SystemMouseCursors.grabbing;
@@ -79,14 +113,16 @@ class StackItemCase extends StatelessWidget {
     return SystemMouseCursors.grab;
   }
 
-  /// 点击
+  /// * 点击
+  /// * Click
   void _onTap(BuildContext context) {
     onTap?.call();
     _controller(context).selectOne(itemId);
     onEditStatusChanged?.call(StackItemStatus.editing);
   }
 
-  /// 点击编辑
+  /// * 点击编辑
+  /// * Click edit
   void _tapEdit(BuildContext context, final StackItemStatus status) {
     StackItemStatus _status = status;
 
@@ -100,7 +136,8 @@ class StackItemCase extends StatelessWidget {
     _controller(context).updateBasic(itemId, status: _status);
   }
 
-  /// 拖拽结束
+  /// * 拖拽结束
+  /// * Drag end
   void _onPanEnd(BuildContext context, final StackItemStatus status) {
     StackItemStatus _status = status;
 
@@ -111,7 +148,8 @@ class StackItemCase extends StatelessWidget {
     }
   }
 
-  /// 移动操作
+  /// * 移动操作
+  /// * Move operation
   void _onPanUpdate(DragUpdateDetails dud, BuildContext context, final StackItemStatus status) {
     StackItemStatus _status = status;
 
@@ -152,7 +190,8 @@ class StackItemCase extends StatelessWidget {
     onOffsetChanged?.call(changeTo);
   }
 
-  /// 缩放操作
+  /// * 缩放操作
+  /// * Scale operation
   void _scaleHandle(DragUpdateDetails dud, BuildContext context, final StackItemStatus status) {
     StackItemStatus _status = status;
 
@@ -226,7 +265,8 @@ class StackItemCase extends StatelessWidget {
     }
   }
 
-  /// 旋转操作
+  /// * 旋转操作
+  /// * Rotate operation
   void _roateHandle(DragUpdateDetails dud, BuildContext context, final StackItemStatus status) {
     StackItemStatus _status = status;
 
@@ -286,7 +326,8 @@ class StackItemCase extends StatelessWidget {
     _stackController.updateBasic(itemId, angle: angle);
   }
 
-  /// 旋转回0度
+  /// * 旋转回0度
+  /// * Rotate back to 0 degrees
   void _turnBack(BuildContext context) {
     final StackBoardController _stackController = _controller(context);
 
@@ -351,7 +392,8 @@ class StackItemCase extends StatelessWidget {
     );
   }
 
-  /// 子控件
+  /// * 子组件
+  /// * Child component
   Widget _child(BuildContext context) {
     final StackBoardController _stackController = _controller(context);
 
@@ -399,7 +441,8 @@ class StackItemCase extends StatelessWidget {
     );
   }
 
-  /// 边框
+  /// * 边框
+  /// * Border
   Widget _border(BuildContext context, StackItemStatus status) {
     final CaseStyle style = _caseStyle(context);
 
@@ -419,7 +462,8 @@ class StackItemCase extends StatelessWidget {
     );
   }
 
-  /// 编辑手柄
+  /// * 编辑手柄
+  /// * Edit handle
   Widget _edit(BuildContext context, StackItemStatus status) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -433,7 +477,8 @@ class StackItemCase extends StatelessWidget {
     );
   }
 
-  /// 删除手柄
+  /// * 删除手柄
+  /// * Delete handle
   Widget _del(BuildContext context) {
     return Positioned(
       top: 0,
@@ -448,7 +493,8 @@ class StackItemCase extends StatelessWidget {
     );
   }
 
-  /// 缩放手柄
+  /// * 缩放手柄
+  /// * Scale handle
   Widget _scale(BuildContext context, StackItemStatus status, double? angle) {
     final bool hasAngle = angle != null && angle != 0;
 
@@ -473,7 +519,8 @@ class StackItemCase extends StatelessWidget {
     );
   }
 
-  /// 旋转手柄
+  /// * 旋转手柄
+  /// * Rotate handle
   Widget _roate(BuildContext context, StackItemStatus status) {
     return Positioned(
       top: 0,
@@ -496,7 +543,8 @@ class StackItemCase extends StatelessWidget {
     );
   }
 
-  /// 完成操作
+  /// * 完成操作
+  /// * Complete operation
   Widget _check(BuildContext context, StackItemStatus status) {
     StackItemStatus _status = status;
 
@@ -519,7 +567,8 @@ class StackItemCase extends StatelessWidget {
     );
   }
 
-  /// 操作手柄壳
+  /// * 操作手柄壳
+  /// * Operation handle shell
   Widget _toolCase(BuildContext context, Widget child) {
     final CaseStyle style = _caseStyle(context);
 
@@ -540,7 +589,8 @@ class StackItemCase extends StatelessWidget {
     );
   }
 
-  /// 工具栏
+  /// * 工具栏
+  /// * Toolbar
   // Widget _tools(BuildContext context) {
   //   final CaseStyle style = _caseStyle(context);
 

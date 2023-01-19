@@ -115,7 +115,8 @@ class StackTextItem extends StackItem<TextItemContent> {
     );
   }
 
-  /// 覆盖文本
+  /// * 覆盖文本
+  /// * Override text
   void setData(String str) {
     content!.data = str;
   }

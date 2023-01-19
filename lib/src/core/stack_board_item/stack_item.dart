@@ -8,13 +8,16 @@ import 'package:stack_board/src/widget_style_extension/ex_size.dart';
 import 'stack_item_content.dart';
 import 'stack_item_status.dart';
 
-/// Generate Id for StackItem
+/// * 生成 StackItem id
+/// * Generate Id for StackItem
 String _genId() {
   final DateTime now = DateTime.now();
   final int value = Random().nextInt(100000);
   return '$value-${now.millisecondsSinceEpoch}';
 }
 
+/// * 布局数据核心类
+/// * 自定义需要继承此类
 /// * Core class for layout data
 /// * Custom needs to inherit this class
 @immutable

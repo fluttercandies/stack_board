@@ -50,38 +50,56 @@ class StackBoard extends StatelessWidget {
 
   final StackBoardController? controller;
 
-  /// 背景
+  /// * 背景
+  /// * background
   final Widget? background;
 
-  /// 操作框样式
+  /// * 操作框样式
+  /// * case style
   final CaseStyle? caseStyle;
 
-  /// 自定义类型控件构建器
+  /// * 自定义类型控件构建器
+  /// * custom builder
   final Widget? Function(StackItem<StackItemContent> item)? customBuilder;
 
-  /// 移除拦截
+  /// * 移除拦截
+  /// * delete intercept
   final void Function(StackItem<StackItemContent> item)? onDel;
 
-  /// 点击回调
+  /// * 点击回调
+  /// * onTap item
   final void Function(StackItem<StackItemContent> item)? onTap;
 
-  /// 尺寸变化回调
-  /// 返回值可控制是否继续进行
+  /// * 尺寸变化回调
+  /// * 返回值可控制是否继续进行
+  /// * size changed callback
+  /// * return value can control whether to continue
   final bool? Function(StackItem<StackItemContent> item, Size size)? onSizeChanged;
 
-  /// 位置变化回调
+  /// * 位置变化回调
+  /// * 返回值可控制是否继续进行
+  /// * offset changed callback
+  /// * return value can control whether to continue
   final bool? Function(StackItem<StackItemContent> item, Offset offset)? onOffsetChanged;
 
-  /// 角度变化回调
+  /// * 角度变化回调
+  /// * 返回值可控制是否继续进行
+  /// * angle changed callback
+  /// * return value can control whether to continue
   final bool? Function(StackItem<StackItemContent> item, double angle)? onAngleChanged;
 
-  /// 操作状态回调
+  /// * 操作状态回调
+  /// * 返回值可控制是否继续进行
+  /// * edit status changed callback
+  /// * return value can control whether to continue
   final bool? Function(StackItem<StackItemContent> item, StackItemStatus operatState)? onEditStatusChanged;
 
-  /// 操作层构建器
+  /// * 操作层构建器
+  /// * actions builder
   final Widget Function(StackItemStatus operatState, CaseStyle caseStyle)? actionsBuilder;
 
-  /// 边框构建器
+  /// * 边框构建器
+  /// * border builder
   final Widget Function(StackItemStatus operatState)? borderBuilder;
 
   StackBoardController get _controller => controller ?? StackBoardController.def();
