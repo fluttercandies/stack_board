@@ -54,7 +54,7 @@ packages:
       name: flutter_drawing_board
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.4.2"
+    version: "0.4.3+2"
   flutter_hsvcolor_picker:
     dependency: transitive
     description:
@@ -121,13 +121,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.9.0"
-  stack_board_item:
-    dependency: transitive
-    description:
-      name: stack_board_item
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.0.1+10"
   stack_trace:
     dependency: transitive
     description:
@@ -170,13 +163,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.2"
-  widget_style_extension:
-    dependency: "direct main"
-    description:
-      name: widget_style_extension
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.0.1+4"
 sdks:
   dart: ">=2.17.0-0 <3.0.0"
   flutter: ">=3.0.0"

@@ -3,7 +3,8 @@ import 'package:stack_board/helpers.dart';
 import 'package:stack_board/src/core/stack_board_item/stack_item.dart';
 import 'package:stack_board/src/core/stack_board_item/stack_item_content.dart';
 import 'package:stack_board/src/core/stack_board_item/stack_item_status.dart';
-import 'package:widget_style_extension/widget_style_extension.dart';
+import 'package:stack_board/src/widget_style_extension/ex_offset.dart';
+import 'package:stack_board/src/widget_style_extension/ex_size.dart';
 
 class ImageItemContent extends StackItemContent {
   ImageItemContent({

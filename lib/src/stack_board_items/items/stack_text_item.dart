@@ -4,7 +4,12 @@ import 'package:stack_board/src/core/stack_board_item/stack_item_content.dart';
 import 'package:stack_board/src/core/stack_board_item/stack_item_status.dart';
 import 'package:stack_board/src/helpers/as_t.dart';
 import 'package:stack_board/src/helpers/ex_enum.dart';
-import 'package:widget_style_extension/widget_style_extension.dart';
+import 'package:stack_board/src/widget_style_extension/ex_%20locale.dart';
+import 'package:stack_board/src/widget_style_extension/ex_offset.dart';
+import 'package:stack_board/src/widget_style_extension/ex_size.dart';
+import 'package:stack_board/src/widget_style_extension/ex_text_height_behavior.dart';
+import 'package:stack_board/src/widget_style_extension/ex_text_style.dart';
+import 'package:stack_board/src/widget_style_extension/stack_text_strut_style.dart';
 
 /// TextItemContent
 class TextItemContent implements StackItemContent {

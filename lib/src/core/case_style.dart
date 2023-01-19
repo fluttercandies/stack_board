@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stack_board_item/helpers.dart';
+import 'package:stack_board/src/helpers/as_t.dart';
 
 /// 操作壳样式
 @immutable

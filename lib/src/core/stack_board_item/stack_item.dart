@@ -2,7 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
-import 'package:widget_style_extension/widget_style_extension.dart';
+import 'package:stack_board/src/widget_style_extension/ex_offset.dart';
+import 'package:stack_board/src/widget_style_extension/ex_size.dart';
 
 import 'stack_item_content.dart';
 import 'stack_item_status.dart';
