@@ -4,6 +4,52 @@ import 'package:stack_board/stack_board_item.dart';
 import 'package:stack_board/stack_case.dart';
 import 'package:stack_board/stack_items.dart';
 
+class ColorContent extends StackItemContent {
+  ColorContent({required this.color});
+
+  Color color;
+
+  @override
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'color': color.value,
+    };
+  }
+}
+
+class ColorStackItem extends StackItem<ColorContent> {
+  ColorStackItem({
+    Size? size,
+    Offset? offset,
+    double? angle,
+    StackItemStatus? status,
+    ColorContent? content,
+  }) : super(
+          size: size,
+          offset: offset,
+          angle: angle,
+          status: status,
+          content: content,
+        );
+
+  @override
+  ColorStackItem copyWith({
+    Size? size,
+    Offset? offset,
+    double? angle,
+    StackItemStatus? status,
+    ColorContent? content,
+  }) {
+    return ColorStackItem(
+      size: size ?? this.size,
+      offset: offset ?? this.offset,
+      angle: angle ?? this.angle,
+      status: status ?? this.status,
+      content: content ?? this.content,
+    );
+  }
+}
+
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
@@ -103,6 +149,9 @@ class _HomePageState extends State<HomePage> {
     _boardController.addItem(StackDrawItem(size: const Size.square(300)));
   }
 
+  /// Add custom item
+  void _addCustomItem() {}
+
   /// get json
   Future<void> _getJson() async {
     showDialog<void>(
@@ -189,21 +238,7 @@ class _HomePageState extends State<HomePage> {
                   _spacer,
                   FloatingActionButton(onPressed: _addDrawItem, child: const Icon(Icons.color_lens)),
                   _spacer,
-                  FloatingActionButton(
-                    onPressed: () {
-                      // _boardController.add(
-                      //   StackBoardItem(
-                      //     child: const Text(
-                      //       'Custom Widget',
-                      //       style: TextStyle(color: Colors.black),
-                      //     ),
-                      //     onDel: _onDel,
-                      //     // caseStyle: const CaseStyle(initOffset: Offset(100, 100)),
-                      //   ),
-                      // );
-                    },
-                    child: const Icon(Icons.add_box),
-                  ),
+                  FloatingActionButton(onPressed: _addCustomItem, child: const Icon(Icons.add_box)),
                 ],
               ),
             ),
@@ -228,28 +263,3 @@ class _HomePageState extends State<HomePage> {
 
   Widget get _spacer => const SizedBox(width: 5);
 }
-
-// class ItemCaseDemo extends StatefulWidget {
-//   const ItemCaseDemo({Key? key}) : super(key: key);
-
-//   @override
-//   _ItemCaseDemoState createState() => _ItemCaseDemoState();
-// }
-
-// class _ItemCaseDemoState extends State<ItemCaseDemo> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Stack(
-//       children: <Widget>[
-//         ItemCase(
-//           isCenter: false,
-//           child: const Text('Custom case'),
-//           onDel: () async {},
-//           onOperatStateChanged: (OperatingState operatState) => null,
-//           onOffsetChanged: (Offset offset) => null,
-//           onSizeChanged: (Size size) => null,
-//         ),
-//       ],
-//     );
-//   }
-// }
