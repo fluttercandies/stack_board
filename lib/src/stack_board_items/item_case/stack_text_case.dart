@@ -81,7 +81,9 @@ class StackTextCase extends StatelessWidget {
         locale: content?.locale,
         softWrap: content?.softWrap,
         overflow: content?.overflow,
-        textScaleFactor: content?.textScaleFactor,
+        textScaler: content?.textScaleFactor != null
+            ? TextScaler.linear(content!.textScaleFactor!)
+            : TextScaler.noScaling,
         maxLines: content?.maxLines,
         semanticsLabel: content?.semanticsLabel,
         textWidthBasis: content?.textWidthBasis,

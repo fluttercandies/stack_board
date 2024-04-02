@@ -136,7 +136,7 @@ class _HomePageState extends State<HomePage> {
   void _addImageItem() {
     _boardController.addItem(
       StackImageItem(
-        size: const Size.square(300),
+        size: const Size(300, 85),
         content: ImageItemContent(
           url: 'https://files.flutter-io.cn/images/branding/flutterlogo/flutter-cn-logo.png',
         ),
@@ -205,8 +205,8 @@ class _HomePageState extends State<HomePage> {
         onDel: _onDel,
         controller: _boardController,
         caseStyle: const CaseStyle(
-          borderColor: Colors.grey,
-          iconColor: Colors.white,
+          buttonBorderColor: Colors.grey,
+          buttonIconColor: Colors.white,
         ),
 
         /// 背景

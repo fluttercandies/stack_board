@@ -88,14 +88,54 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
 
     final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
 
-    // 其它 item EditStatus 重置为 idle
-    for (int i = 0; i < data.length; i++) {
-      data[i] = data[i].copyWith(status: StackItemStatus.idle);
-    }
+    // Initial offset
+    // `TODO`: transform this to parameters
+    const double baseOffset = 50;
+    const double deltaOffset = 10;
+    double deltaOffsetMultiplicator = 1;
 
-    data.add(item);
+    // Set items status to idle and calculate the deltaOffsetMultiplicator to prevent overlapping
+    data.asMap().forEach((int index, StackItem<StackItemContent> item) {
+      if (item.offset!.dx -
+                  (item.size!.width / 2) -
+                  item.offset!.dy -
+                  (item.size!.height / 2) <
+              10 &&
+          (item.offset!.dx - item.size!.width / 2) % deltaOffset < 10) {
+        deltaOffsetMultiplicator =
+            ((item.offset!.dx - (item.size!.width / 2)) / deltaOffset) + 1;
+      }
+      data[index] = item.copyWith(status: StackItemStatus.idle);
+    });
+
+    // Add item with offset
+    data.add(item.copyWith(
+        offset: Offset(
+            item.size!.width / 2 +
+                baseOffset +
+                deltaOffsetMultiplicator * deltaOffset,
+            item.size!.height / 2 +
+                baseOffset +
+                deltaOffsetMultiplicator * deltaOffset)));
 
     _indexMap[item.id] = data.length - 1;
+
+    value = value.copyWith(data: data, indexMap: _newIndexMap);
+  }
+
+  /// * move item on top
+  void moveItemOnTop(String id) {
+    if (!_indexMap.containsKey(id)) return;
+
+    final List<StackItem<StackItemContent>> data =
+        List<StackItem<StackItemContent>>.from(innerData);
+
+    final StackItem<StackItemContent> item = data[_indexMap[id]!];
+
+    data.removeAt(_indexMap[id]!);
+    data.add(item);
+
+    _reorder(data);
 
     value = value.copyWith(data: data, indexMap: _newIndexMap);
   }
@@ -144,7 +184,7 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
 
     data.removeAt(index);
 
-    // 全部 item EditStatus 重置为 idle
+    // 全部 item status 重置为 idle
     for (int i = 0; i < data.length; i++) {
       final StackItem<StackItemContent> item = data[i];
       data[i] = item.copyWith(status: StackItemStatus.idle);
@@ -165,19 +205,21 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
 
     for (int i = 0; i < data.length; i++) {
       final StackItem<StackItemContent> item = data[i];
-      data[i] = item.copyWith(status: StackItemStatus.idle);
+      data[i] = item.copyWith(
+          status: item.status == StackItemStatus.editing
+              ? StackItemStatus.selected
+              : StackItemStatus.idle);
     }
-
-    // selected.clear();
 
     value = value.copyWith(data: data);
   }
 
   /// * 更新基础配置
   /// * update basic config
-  void updateBasic(String id, {Size? size, Offset? offset, double? angle, StackItemStatus? status}) {
+  void updateBasic(String id,
+      {Size? size, Offset? offset, double? angle, StackItemStatus? status}) {
     if (!_indexMap.containsKey(id)) return;
-
+    
     final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
 
     data[_indexMap[id]!] = data[_indexMap[id]!].copyWith(

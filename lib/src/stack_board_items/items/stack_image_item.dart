@@ -16,7 +16,7 @@ class ImageItemContent extends StackItemContent {
     this.height,
     this.color,
     this.colorBlendMode,
-    this.fit,
+    this.fit = BoxFit.cover,
     this.repeat = ImageRepeat.noRepeat,
     this.matchTextDirection = false,
     this.gaplessPlayback = false,
@@ -70,7 +70,7 @@ class ImageItemContent extends StackItemContent {
   double? height;
   Color? color;
   BlendMode? colorBlendMode;
-  BoxFit? fit;
+  BoxFit fit;
   ImageRepeat repeat;
   bool matchTextDirection;
   bool gaplessPlayback;

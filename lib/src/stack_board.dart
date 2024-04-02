@@ -43,7 +43,7 @@ class StackBoard extends StatelessWidget {
     this.onSizeChanged,
     this.onOffsetChanged,
     this.onAngleChanged,
-    this.onEditStatusChanged,
+    this.onStatusChanged,
     this.actionsBuilder,
     this.borderBuilder,
   }) : super(key: key);
@@ -92,7 +92,9 @@ class StackBoard extends StatelessWidget {
   /// * 返回值可控制是否继续进行
   /// * edit status changed callback
   /// * return value can control whether to continue
-  final bool? Function(StackItem<StackItemContent> item, StackItemStatus operatState)? onEditStatusChanged;
+  final bool? Function(
+          StackItem<StackItemContent> item, StackItemStatus operatState)?
+      onStatusChanged;
 
   /// * 操作层构建器
   /// * actions builder
@@ -141,7 +143,8 @@ class StackBoard extends StatelessWidget {
       onSizeChanged: (Size size) => onSizeChanged?.call(item, size) ?? true,
       onOffsetChanged: (Offset offset) => onOffsetChanged?.call(item, offset) ?? true,
       onAngleChanged: (double angle) => onAngleChanged?.call(item, angle) ?? true,
-      onEditStatusChanged: (StackItemStatus operatState) => onEditStatusChanged?.call(item, operatState) ?? true,
+      onStatusChanged: (StackItemStatus operatState) =>
+          onStatusChanged?.call(item, operatState) ?? true,
       actionsBuilder: actionsBuilder,
       borderBuilder: borderBuilder,
     );
