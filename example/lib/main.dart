@@ -159,21 +159,32 @@ class _HomePageState extends State<HomePage> {
   Future<void> _generateFromJson() async {
     final String jsonString =
         (await Clipboard.getData(Clipboard.kTextPlain))?.text ?? '';
-    final List<dynamic> items = jsonDecode(jsonString) as List<dynamic>;
-    for (final dynamic item in items) {
-      if (item['type'] == 'StackTextItem') {
-        _boardController.addItem(
-          StackTextItem.fromJson(item),
-        );
-      } else if (item['type'] == 'StackImageItem') {
-        _boardController.addItem(
-          StackImageItem.fromJson(item),
-        );
-      } else if (item['type'] == 'StackDrawItem') {
-        _boardController.addItem(
-          StackDrawItem.fromJson(item),
-        );
+    if (jsonString.isEmpty) {
+      _showAlertDialog(
+          title: 'Clipboard is empty',
+          content: 'Please copy the json string to the clipboard first');
+      return;
+    }
+    try {
+      final List<dynamic> items = jsonDecode(jsonString) as List<dynamic>;
+
+      for (final dynamic item in items) {
+        if (item['type'] == 'StackTextItem') {
+          _boardController.addItem(
+            StackTextItem.fromJson(item),
+          );
+        } else if (item['type'] == 'StackImageItem') {
+          _boardController.addItem(
+            StackImageItem.fromJson(item),
+          );
+        } else if (item['type'] == 'StackDrawItem') {
+          _boardController.addItem(
+            StackDrawItem.fromJson(item),
+          );
+        }
       }
+    } catch (e) {
+      _showAlertDialog(title: 'Error', content: e.toString());
     }
   }
 
@@ -274,17 +285,17 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               FloatingActionButton(
                 onPressed: () => _boardController.clear(),
-                child: const Icon(Icons.close),
+                child: const Icon(Icons.delete),
               ),
               _spacer,
               FloatingActionButton(
                 onPressed: _getJson,
-                child: const Icon(Icons.check),
+                child: const Icon(Icons.file_download),
               ),
               _spacer,
               FloatingActionButton(
                 onPressed: _generateFromJson,
-                child: const Icon(Icons.sync),
+                child: const Icon(Icons.file_upload),
               ),
             ],
           ),
@@ -294,4 +305,24 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget get _spacer => const SizedBox(width: 5);
+
+  void _showAlertDialog({required String title, required String content}) {
+    showDialog<void>(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
