@@ -28,8 +28,8 @@ class ImageItemContent extends StackItemContent {
 
   factory ImageItemContent.fromJson(Map<String, dynamic> json) {
     return ImageItemContent(
-      url: asT<String>(json['url']),
-      assetName: asT<String>(json['assetName']),
+      url: json['assetName'] != null ? null : asT<String>(json['url']),
+      assetName: json['url'] != null ? null : asT<String>(json['assetName']),
       semanticLabel: asT<String>(json['semanticLabel']),
       excludeFromSemantics: asT<bool>(json['excludeFromSemantics'], false),
       width: asT<double>(json['width']),
@@ -99,7 +99,7 @@ class ImageItemContent extends StackItemContent {
       if (height != null) 'height': height,
       if (color != null) 'color': color?.value,
       if (colorBlendMode != null) 'colorBlendMode': colorBlendMode?.index,
-      if (fit != null) 'fit': fit?.index,
+      'fit': fit.index,
       'repeat': repeat.index,
       'matchTextDirection': matchTextDirection,
       'gaplessPlayback': gaplessPlayback,
@@ -114,7 +114,7 @@ class StackImageItem extends StackItem<ImageItemContent> {
     required ImageItemContent? content,
     String? id,
     double? angle,
-    Size? size,
+    required Size size,
     Offset? offset,
     StackItemStatus? status,
   }) : super(
@@ -130,7 +130,7 @@ class StackImageItem extends StackItem<ImageItemContent> {
     return StackImageItem(
       id: data['id'] == null ? null : asT<String>(data['id']),
       angle: data['angle'] == null ? null : asT<double>(data['angle']),
-      size: data['size'] == null ? null : jsonToSize(asMap(data['size'])),
+      size: jsonToSize(asMap(data['size'])),
       offset: data['offset'] == null ? null : jsonToOffset(asMap(data['offset'])),
       status: StackItemStatus.values[data['status'] as int],
       content: ImageItemContent.fromJson(asMap(data['content'])),

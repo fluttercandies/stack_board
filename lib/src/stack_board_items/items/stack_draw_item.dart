@@ -100,7 +100,7 @@ class StackDrawItem extends StackItem<DrawItemContent> {
   }) {
     return StackDrawItem(
       id: id,
-      size: size ?? this.size ?? const Size(300, 300),
+      size: size ?? this.size,
       offset: offset ?? this.offset,
       angle: angle ?? this.angle,
       status: status ?? this.status,

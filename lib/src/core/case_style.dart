@@ -29,7 +29,7 @@ class CaseStyle {
 
     return CaseStyle(
       buttonBgColor: buttonBgColor ?? Colors.white,
-      buttonBorderColor: buttonBorderColor ?? Colors.white,
+      buttonBorderColor: buttonBorderColor ?? Colors.grey,
       buttonBorderWidth: buttonBorderWidth ?? 1,
       buttonIconColor: buttonIconColor ?? Colors.grey,
       buttonSize: buttonSize ?? 24,

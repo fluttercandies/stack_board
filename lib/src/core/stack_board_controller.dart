@@ -94,29 +94,36 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
     const double deltaOffset = 10;
     double deltaOffsetMultiplicator = 1;
 
-    // Set items status to idle and calculate the deltaOffsetMultiplicator to prevent overlapping
+    // Set items status to idle
     data.asMap().forEach((int index, StackItem<StackItemContent> item) {
-      if (item.offset!.dx -
-                  (item.size!.width / 2) -
-                  item.offset!.dy -
-                  (item.size!.height / 2) <
-              10 &&
-          (item.offset!.dx - item.size!.width / 2) % deltaOffset < 10) {
-        deltaOffsetMultiplicator =
-            ((item.offset!.dx - (item.size!.width / 2)) / deltaOffset) + 1;
-      }
       data[index] = item.copyWith(status: StackItemStatus.idle);
     });
 
-    // Add item with offset
-    data.add(item.copyWith(
+    // If the item has no offset, calculate the offset in order to prevent overlapping
+    if (item.offset == Offset.zero) {
+      for (final StackItem<StackItemContent> item in data) {
+        if (item.offset.dx -
+                    (item.size.width / 2) -
+                    item.offset.dy -
+                    (item.size.height / 2) <
+                10 &&
+            (item.offset.dx - item.size.width / 2) % deltaOffset < 10) {
+          deltaOffsetMultiplicator =
+              ((item.offset.dx - (item.size.width / 2)) / deltaOffset) + 1;
+        }
+      }
+
+      data.add(item.copyWith(
         offset: Offset(
-            item.size!.width / 2 +
-                baseOffset +
-                deltaOffsetMultiplicator * deltaOffset,
-            item.size!.height / 2 +
-                baseOffset +
-                deltaOffsetMultiplicator * deltaOffset)));
+              item.size.width / 2 +
+                  baseOffset +
+                  deltaOffsetMultiplicator * deltaOffset,
+              item.size.height / 2 +
+                  baseOffset +
+                  deltaOffsetMultiplicator * deltaOffset)));
+    } else {
+      data.add(item);
+    }
 
     _indexMap[item.id] = data.length - 1;
 

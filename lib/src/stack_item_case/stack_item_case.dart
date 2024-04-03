@@ -8,7 +8,6 @@ import 'package:stack_board/src/core/stack_board_item/stack_item_content.dart';
 import 'package:stack_board/src/core/stack_board_item/stack_item_status.dart';
 import 'package:stack_board/src/stack_board.dart';
 import 'package:stack_board/src/stack_item_case/config_builder.dart';
-import 'package:stack_board/src/widgets/get_size.dart';
 
 /// * Operate box
 /// * Used to wrap child widgets to provide functions of operate box
@@ -152,6 +151,7 @@ class _StackItemCaseState extends State<StackItemCase> {
     if (item == null) return;
 
     if (item.status != newStatus) {
+      if (item.status == StackItemStatus.editing) return;
       if (item.status != StackItemStatus.selected)
         _stackController.selectOne(itemId);
       _stackController.updateBasic(itemId, status: newStatus);
@@ -162,15 +162,16 @@ class _StackItemCaseState extends State<StackItemCase> {
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     centerPoint = renderBox.localToGlobal(Offset.zero);
     startGlobalPoint = details.globalPosition;
-    startOffset = item.offset ?? Offset.zero;
-    startSize = item.size ?? Size.zero;
-    startAngle = item.angle ?? 0;
+    startOffset = item.offset;
+    startSize = item.size;
+    startAngle = item.angle;
   }
 
   /// * 拖拽结束
   /// * Drag end
   void _onPanEnd(BuildContext context, StackItemStatus status) {
     if (status != StackItemStatus.selected) {
+      if (status == StackItemStatus.editing) return;
       status = StackItemStatus.selected;
       _controller(context).updateBasic(itemId, status: status);
       widget.onStatusChanged?.call(status);
@@ -184,19 +185,19 @@ class _StackItemCaseState extends State<StackItemCase> {
 
     final StackItem<StackItemContent>? item = _stackController.getById(itemId);
     if (item == null) return;
+    if (item.status == StackItemStatus.editing) return;
 
-    final double angle = item.angle ?? 0;
+    final double angle = item.angle;
     final double sina = math.sin(-angle);
     final double cosa = math.cos(-angle);
 
     Offset d = dud.delta;
-    final Offset changeTo = item.offset?.translate(d.dx, d.dy) ?? Offset.zero;
+    final Offset changeTo = item.offset.translate(d.dx, d.dy);
 
     // 向量旋转
     d = Offset(sina * d.dy + cosa * d.dx, cosa * d.dy - sina * d.dx);
 
-    final Offset? realOffset = item.offset?.translate(d.dx, d.dy);
-    if (realOffset == null) return;
+    final Offset realOffset = item.offset.translate(d.dx, d.dy);
 
     // 移动拦截
     if (!(widget.onOffsetChanged?.call(realOffset) ?? true)) return;
@@ -220,9 +221,6 @@ class _StackItemCaseState extends State<StackItemCase> {
     final StackItem<StackItemContent>? item = _stackController.getById(itemId);
     if (item == null) return Size.zero;
 
-    if (item.offset == null) return Size.zero;
-    if (item.size == null) return Size.zero;
-
     final double minSize = _minSize(context);
 
     final double originalDistance =
@@ -234,7 +232,7 @@ class _StackItemCaseState extends State<StackItemCase> {
     final double w = startSize.width * scale;
     final double h = startSize.height * scale;
 
-    if (w < minSize || h < minSize) return item.size!;
+    if (w < minSize || h < minSize) return item.size;
 
     return Size(w, h);
   }
@@ -316,15 +314,26 @@ class _StackItemCaseState extends State<StackItemCase> {
       itemId,
       shouldRebuild:
           (StackItem<StackItemContent> p, StackItem<StackItemContent> n) =>
-              p.offset != n.offset || p.angle != n.angle || p.size != n.size,
+              p.offset != n.offset ||
+              p.angle != n.angle ||
+              p.size != n.size ||
+              p.status != n.status,
       childBuilder: (StackItem<StackItemContent> item, Widget c) {
         return Positioned(
           key: ValueKey<String>(item.id),
-          top: item.offset?.dy ?? 0,
-          left: item.offset?.dx ?? 0,
+          top: item.offset.dy,
+          left: item.offset.dx,
           child: Transform.translate(
-            offset: Offset(-item.size!.width / 2, -item.size!.height / 2),
-            child: Transform.rotate(angle: item.angle ?? 0, child: c),
+            offset: Offset(
+                -item.size.width / 2 -
+                    (item.status != StackItemStatus.idle
+                        ? _caseStyle(context).buttonSize / 2
+                        : 0),
+                -item.size.height / 2 -
+                    (item.status != StackItemStatus.idle
+                        ? _caseStyle(context).buttonSize * 1.5
+                        : 0)),
+            child: Transform.rotate(angle: item.angle, child: c),
           ),
         );
       },
@@ -334,22 +343,18 @@ class _StackItemCaseState extends State<StackItemCase> {
             (StackItem<StackItemContent> p, StackItem<StackItemContent> n) =>
                 p.status != n.status,
         childBuilder: (StackItem<StackItemContent> item, Widget c) {
-          final StackItemStatus status = item.status ?? StackItemStatus.idle;
-
           return MouseRegion(
-            cursor: _cursor(status),
+            cursor: _cursor(item.status),
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onPanStart: (DragStartDetails details) =>
                   _onPanStart(details, context, StackItemStatus.moving),
               onPanUpdate: (DragUpdateDetails dud) =>
                   _onPanUpdate(dud, context),
-              onPanEnd: (_) => _onPanEnd(context, status),
+              onPanEnd: (_) => _onPanEnd(context, item.status),
               onTap: () => _onTap(context),
-              onDoubleTap: () => _onEdit(context, status),
-              child: Stack(
-                children: _children(context, item),
-              ),
+              onDoubleTap: () => _onEdit(context, item.status),
+              child: _childrenStack(context, item),
             ),
           );
         },
@@ -358,115 +363,103 @@ class _StackItemCaseState extends State<StackItemCase> {
     );
   }
 
-  List<Widget> _children(
+  Widget _childrenStack(
       BuildContext context, StackItem<StackItemContent> item) {
     final CaseStyle style = _caseStyle(context);
-    final StackItemStatus status = item.status ?? StackItemStatus.idle;
 
     final List<Widget> widgets = <Widget>[_content(context, item)];
 
     widgets.add(
-        widget.borderBuilder?.call(status) ?? _frameBorder(context, status));
+        widget.borderBuilder?.call(item.status) ??
+        _frameBorder(context, item.status));
     if (widget.actionsBuilder != null) {
-      widgets.add(widget.actionsBuilder!(status, _caseStyle(context)));
-    } else if (status != StackItemStatus.idle) {
-      if (item.size!.height > style.buttonSize * 5) {
+      widgets.add(widget.actionsBuilder!(item.status, _caseStyle(context)));
+    } else if (item.status != StackItemStatus.editing) {
+      if (item.status != StackItemStatus.idle) {
+        if (item.size.height > _minSize(context) * 2) {
         widgets.add(Positioned(
             bottom: style.buttonSize,
             right: 0,
-            top: 0,
-            child: _resizeXHandle(context, status)));
+              top: style.buttonSize,
+              child: _resizeXHandle(context, item.status)));
         widgets.add(Positioned(
             bottom: style.buttonSize,
             left: 0,
-            top: 0,
-            child: _resizeXHandle(context, status)));
+              top: style.buttonSize,
+              child: _resizeXHandle(context, item.status)));
       }
-      if (item.size!.width > style.buttonSize * 5) {
+        if (item.size.width > _minSize(context) * 2) {
         widgets.add(Positioned(
-            left: 0, top: 0, right: 0, child: _resizeYHandle(context, status)));
+              left: 0,
+              top: style.buttonSize,
+              right: 0,
+              child: _resizeYHandle(context, item.status)));
         widgets.add(Positioned(
             left: 0,
             bottom: style.buttonSize,
             right: 0,
-            child: _resizeYHandle(context, status)));
+              child: _resizeYHandle(context, item.status)));
       }
-      if (item.size!.height > style.buttonSize * 3 &&
-          item.size!.width > style.buttonSize * 3) {
+        if (item.size.height > _minSize(context) &&
+            item.size.width > _minSize(context)) {
         widgets.add(Positioned(
-            top: 0,
+              top: style.buttonSize,
             right: 0,
             child: _scaleHandle(
-                context, status, SystemMouseCursors.resizeUpRightDownLeft)));
+                context, item.status,
+                  SystemMouseCursors.resizeUpRightDownLeft)));
         widgets.add(Positioned(
             bottom: style.buttonSize,
             left: 0,
             child: _scaleHandle(
-                context, status, SystemMouseCursors.resizeUpRightDownLeft)));
+                context, item.status,
+                  SystemMouseCursors.resizeUpRightDownLeft)));
       }
       widgets.addAll(<Widget>[
-        if (status == StackItemStatus.editing)
+          if (item.status == StackItemStatus.editing)
           _deleteHandle(context)
         else
-          _rotateAndMoveHandle(context, status, item),
+            _rotateAndMoveHandle(context, item.status, item),
         Positioned(
-            top: 0,
+              top: style.buttonSize,
             left: 0,
             child: _scaleHandle(
-                context, status, SystemMouseCursors.resizeUpLeftDownRight)),
+                context, item.status,
+                  SystemMouseCursors.resizeUpLeftDownRight)),
         Positioned(
             bottom: style.buttonSize,
             right: 0,
             child: _scaleHandle(
-                context, status, SystemMouseCursors.resizeUpLeftDownRight)),
-      ]);
+                context, item.status,
+                  SystemMouseCursors.resizeUpLeftDownRight)),
+        ]);
+      }
+    } else {
+      widgets.add(_deleteHandle(context));
     }
-    return widgets;
+    return Stack(children: widgets);
   }
 
   /// * 子组件
   /// * Child component
   Widget _content(BuildContext context, StackItem<StackItemContent> item) {
-    final StackBoardController _stackController = _controller(context);
     final CaseStyle style = _caseStyle(context);
 
-    Widget content = widget.childBuilder?.call(item) ?? const SizedBox.shrink();
-
-    Size? _size = item.size;
-
-    if (_size == null) {
-      final double minSize = _minSize(context);
-
-      content = GetSize(
-        onChanged: (Size? size) {
-          if (size != null && _size == null) {
-            _size = size;
-
-            if (_size!.width < minSize) {
-              _size = Size(minSize, _size!.height);
-            }
-
-            if (_size!.height < minSize) {
-              _size = Size(_size!.width, minSize);
-            }
-
-            _stackController.updateBasic(itemId, size: _size);
-          }
-        },
-        child: content,
-      );
-    }
+    final Widget content =
+        widget.childBuilder?.call(item) ?? const SizedBox.shrink();
 
     return ConfigBuilder.withItem(
       itemId,
       shouldRebuild:
           (StackItem<StackItemContent> p, StackItem<StackItemContent> n) =>
-              p.size != n.size,
+              p.size != n.size || p.status != n.status,
       childBuilder: (StackItem<StackItemContent> item, Widget c) {
         return Padding(
-            padding: EdgeInsets.fromLTRB(
+            padding: item.status == StackItemStatus.idle
+                ? EdgeInsets.zero
+                : EdgeInsets.fromLTRB(
                 style.buttonSize / 2,
-                style.buttonSize / 2,
+                    style.buttonSize * 1.5,
                 style.buttonSize / 2,
                 style.buttonSize * 1.5),
             child: SizedBox.fromSize(size: item.size, child: c));
@@ -481,11 +474,13 @@ class _StackItemCaseState extends State<StackItemCase> {
     final CaseStyle style = _caseStyle(context);
 
     return Positioned(
-      top: style.buttonSize / 2,
+        top: style.buttonSize * 1.5,
       bottom: style.buttonSize * 1.5,
       left: style.buttonSize / 2,
       right: style.buttonSize / 2,
-      child: Container(
+        child: IgnorePointer(
+          ignoring: true,
+          child: Container(
         decoration: BoxDecoration(
           border: Border.all(
             color: status == StackItemStatus.idle
@@ -495,7 +490,7 @@ class _StackItemCaseState extends State<StackItemCase> {
           ),
         ),
       ),
-    );
+        ));
   }
 
   /// * 删除手柄
@@ -553,6 +548,7 @@ class _StackItemCaseState extends State<StackItemCase> {
       child: MouseRegion(
         cursor: cursor,
         child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onPanStart: (DragStartDetails dud) =>
                 _onPanStart(dud, context, StackItemStatus.resizing),
             onPanUpdate: (DragUpdateDetails dud) =>
@@ -620,7 +616,7 @@ class _StackItemCaseState extends State<StackItemCase> {
               const Icon(Icons.sync),
             ),
           ),
-          if (item.size!.width + item.size!.height < style.buttonSize * 6)
+          if (item.size.width + item.size.height < style.buttonSize * 6)
             Padding(
               padding: EdgeInsets.only(left: style.buttonSize / 2),
               child: GestureDetector(

@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:stack_board/flutter_stack_board.dart';
 import 'package:stack_board/stack_board_item.dart';
 import 'package:stack_board/stack_case.dart';
@@ -19,7 +22,7 @@ class ColorContent extends StackItemContent {
 
 class ColorStackItem extends StackItem<ColorContent> {
   ColorStackItem({
-    Size? size,
+    required Size size,
     Offset? offset,
     double? angle,
     StackItemStatus? status,
@@ -152,8 +155,32 @@ class _HomePageState extends State<HomePage> {
   /// Add custom item
   void _addCustomItem() {}
 
+  /// Add custom item
+  Future<void> _generateFromJson() async {
+    final String jsonString =
+        (await Clipboard.getData(Clipboard.kTextPlain))?.text ?? '';
+    final List<dynamic> items = jsonDecode(jsonString) as List<dynamic>;
+    for (final dynamic item in items) {
+      if (item['type'] == 'StackTextItem') {
+        _boardController.addItem(
+          StackTextItem.fromJson(item),
+        );
+      } else if (item['type'] == 'StackImageItem') {
+        _boardController.addItem(
+          StackImageItem.fromJson(item),
+        );
+      } else if (item['type'] == 'StackDrawItem') {
+        _boardController.addItem(
+          StackDrawItem.fromJson(item),
+        );
+      }
+    }
+  }
+
   /// get json
   Future<void> _getJson() async {
+    final String json = jsonEncode(_boardController.getAllData());
+    Clipboard.setData(ClipboardData(text: json));
     showDialog<void>(
       context: context,
       builder: (_) {
@@ -173,7 +200,7 @@ class _HomePageState extends State<HomePage> {
                     Container(
                       constraints: const BoxConstraints(maxHeight: 500),
                       child: SingleChildScrollView(
-                        child: Text(_boardController.getAllData().toString()),
+                        child: Text(json),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -206,7 +233,7 @@ class _HomePageState extends State<HomePage> {
         controller: _boardController,
         caseStyle: const CaseStyle(
           buttonBorderColor: Colors.grey,
-          buttonIconColor: Colors.white,
+          buttonIconColor: Colors.grey,
         ),
 
         /// 背景
@@ -253,6 +280,11 @@ class _HomePageState extends State<HomePage> {
               FloatingActionButton(
                 onPressed: _getJson,
                 child: const Icon(Icons.check),
+              ),
+              _spacer,
+              FloatingActionButton(
+                onPressed: _generateFromJson,
+                child: const Icon(Icons.sync),
               ),
             ],
           ),
