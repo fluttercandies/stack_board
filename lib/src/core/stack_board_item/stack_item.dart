@@ -24,7 +24,7 @@ String _genId() {
 abstract class StackItem<T extends StackItemContent> {
   StackItem({
     String? id,
-    this.size,
+    required this.size,
     Offset? offset,
     double? angle = 0,
     StackItemStatus? status = StackItemStatus.selected,
@@ -46,16 +46,16 @@ abstract class StackItem<T extends StackItemContent> {
   final String id;
 
   /// Size
-  final Size? size;
+  final Size size;
 
   /// Offset
-  final Offset? offset;
+  final Offset offset;
 
   /// Angle
-  final double? angle;
+  final double angle;
 
   /// Status
-  final StackItemStatus? status;
+  final StackItemStatus status;
 
   /// Content
   final T? content;
@@ -74,10 +74,10 @@ abstract class StackItem<T extends StackItemContent> {
     return <String, dynamic>{
       'id': id,
       'type': runtimeType.toString(),
-      if (angle != null) 'angle': angle,
-      if (size != null) 'size': size?.toJson(),
-      if (offset != null) 'offset': offset?.toJson(),
-      if (status != null) 'status': status?.index,
+      'angle': angle,
+      'size': size.toJson(),
+      'offset': offset.toJson(),
+      'status': status.index,
       if (content != null) 'content': content?.toJson(),
     };
   }

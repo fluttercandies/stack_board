@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:stack_board/flutter_stack_board.dart';
 import 'package:stack_board/stack_board_item.dart';
 import 'package:stack_board/stack_case.dart';
@@ -19,7 +22,7 @@ class ColorContent extends StackItemContent {
 
 class ColorStackItem extends StackItem<ColorContent> {
   ColorStackItem({
-    Size? size,
+    required Size size,
     Offset? offset,
     double? angle,
     StackItemStatus? status,
@@ -136,7 +139,7 @@ class _HomePageState extends State<HomePage> {
   void _addImageItem() {
     _boardController.addItem(
       StackImageItem(
-        size: const Size.square(300),
+        size: const Size(300, 85),
         content: ImageItemContent(
           url: 'https://files.flutter-io.cn/images/branding/flutterlogo/flutter-cn-logo.png',
         ),
@@ -152,8 +155,43 @@ class _HomePageState extends State<HomePage> {
   /// Add custom item
   void _addCustomItem() {}
 
+  /// Add custom item
+  Future<void> _generateFromJson() async {
+    final String jsonString =
+        (await Clipboard.getData(Clipboard.kTextPlain))?.text ?? '';
+    if (jsonString.isEmpty) {
+      _showAlertDialog(
+          title: 'Clipboard is empty',
+          content: 'Please copy the json string to the clipboard first');
+      return;
+    }
+    try {
+      final List<dynamic> items = jsonDecode(jsonString) as List<dynamic>;
+
+      for (final dynamic item in items) {
+        if (item['type'] == 'StackTextItem') {
+          _boardController.addItem(
+            StackTextItem.fromJson(item),
+          );
+        } else if (item['type'] == 'StackImageItem') {
+          _boardController.addItem(
+            StackImageItem.fromJson(item),
+          );
+        } else if (item['type'] == 'StackDrawItem') {
+          _boardController.addItem(
+            StackDrawItem.fromJson(item),
+          );
+        }
+      }
+    } catch (e) {
+      _showAlertDialog(title: 'Error', content: e.toString());
+    }
+  }
+
   /// get json
   Future<void> _getJson() async {
+    final String json = jsonEncode(_boardController.getAllData());
+    Clipboard.setData(ClipboardData(text: json));
     showDialog<void>(
       context: context,
       builder: (_) {
@@ -173,7 +211,7 @@ class _HomePageState extends State<HomePage> {
                     Container(
                       constraints: const BoxConstraints(maxHeight: 500),
                       child: SingleChildScrollView(
-                        child: Text(_boardController.getAllData().toString()),
+                        child: Text(json),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -205,8 +243,8 @@ class _HomePageState extends State<HomePage> {
         onDel: _onDel,
         controller: _boardController,
         caseStyle: const CaseStyle(
-          borderColor: Colors.grey,
-          iconColor: Colors.white,
+          buttonBorderColor: Colors.grey,
+          buttonIconColor: Colors.grey,
         ),
 
         /// 背景
@@ -247,12 +285,17 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               FloatingActionButton(
                 onPressed: () => _boardController.clear(),
-                child: const Icon(Icons.close),
+                child: const Icon(Icons.delete),
               ),
               _spacer,
               FloatingActionButton(
                 onPressed: _getJson,
-                child: const Icon(Icons.check),
+                child: const Icon(Icons.file_download),
+              ),
+              _spacer,
+              FloatingActionButton(
+                onPressed: _generateFromJson,
+                child: const Icon(Icons.file_upload),
               ),
             ],
           ),
@@ -262,4 +305,24 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget get _spacer => const SizedBox(width: 5);
+
+  void _showAlertDialog({required String title, required String content}) {
+    showDialog<void>(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }

@@ -19,6 +19,10 @@ enum StackItemStatus {
   scaling,
 
   /// * 正在旋转
+  /// * Resizing (compressing or streching)
+  resizing,
+
+  /// * 正在旋转
   /// * Rotating
   roating,
 
