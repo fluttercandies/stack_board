@@ -1,37 +1,56 @@
-import 'dart:math' as math;
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:stack_board/stack_board.dart';
+import 'package:flutter/services.dart';
+import 'package:stack_board/flutter_stack_board.dart';
+import 'package:stack_board/stack_board_item.dart';
+import 'package:stack_board/stack_case.dart';
+import 'package:stack_board/stack_items.dart';
 
-///自定义类型 Custom item type
-class CustomItem extends StackBoardItem {
-  const CustomItem({
-    required this.color,
-    Future<bool> Function()? onDel,
-    int? id, // <==== must
+class ColorContent extends StackItemContent {
+  ColorContent({required this.color});
+
+  Color color;
+
+  @override
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'color': color.value,
+    };
+  }
+}
+
+class ColorStackItem extends StackItem<ColorContent> {
+  ColorStackItem({
+    required Size size,
+    Offset? offset,
+    double? angle,
+    StackItemStatus? status,
+    ColorContent? content,
   }) : super(
-          child: const Text('CustomItem'),
-          onDel: onDel,
-          id: id, // <==== must
+          size: size,
+          offset: offset,
+          angle: angle,
+          status: status,
+          content: content,
         );
 
-  final Color? color;
-
-  @override // <==== must
-  CustomItem copyWith({
-    CaseStyle? caseStyle,
-    Widget? child,
-    int? id,
-    Future<bool> Function()? onDel,
-    dynamic Function(bool)? onEdit,
-    bool? tapToEdit,
-    Color? color,
-  }) =>
-      CustomItem(
-        onDel: onDel,
-        id: id,
-        color: color ?? this.color,
-      );
+  @override
+  ColorStackItem copyWith({
+    Size? size,
+    Offset? offset,
+    double? angle,
+    StackItemStatus? status,
+    ColorContent? content,
+  }) {
+    return ColorStackItem(
+      size: size ?? this.size,
+      offset: offset ?? this.offset,
+      angle: angle ?? this.angle,
+      status: status ?? this.status,
+      content: content ?? this.content,
+    );
+  }
 }
 
 void main() => runApp(const MyApp());
@@ -67,8 +86,8 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  /// 删除拦截
-  Future<bool> _onDel() async {
+  /// Delete intercept
+  Future<void> _onDel(StackItem<StackItemContent> item) async {
     final bool? r = await showDialog<bool>(
       context: context,
       builder: (_) {
@@ -88,12 +107,8 @@ class _HomePageState extends State<HomePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        IconButton(
-                            onPressed: () => Navigator.pop(context, true),
-                            icon: const Icon(Icons.check)),
-                        IconButton(
-                            onPressed: () => Navigator.pop(context, false),
-                            icon: const Icon(Icons.clear)),
+                        IconButton(onPressed: () => Navigator.pop(context, true), icon: const Icon(Icons.check)),
+                        IconButton(onPressed: () => Navigator.pop(context, false), icon: const Icon(Icons.clear)),
                       ],
                     ),
                   ],
@@ -105,7 +120,115 @@ class _HomePageState extends State<HomePage> {
       },
     );
 
-    return r ?? false;
+    if (r == true) {
+      _boardController.removeById(item.id);
+    }
+  }
+
+  /// Add text item
+  void _addTextItem() {
+    _boardController.addItem(
+      StackTextItem(
+        size: const Size(200, 100),
+        content: TextItemContent(data: '哈哈哈哈哈'),
+      ),
+    );
+  }
+
+  /// Add image item
+  void _addImageItem() {
+    _boardController.addItem(
+      StackImageItem(
+        size: const Size(300, 85),
+        content: ImageItemContent(
+          url: 'https://files.flutter-io.cn/images/branding/flutterlogo/flutter-cn-logo.png',
+        ),
+      ),
+    );
+  }
+
+  /// Add draw item
+  void _addDrawItem() {
+    _boardController.addItem(StackDrawItem(size: const Size.square(300)));
+  }
+
+  /// Add custom item
+  void _addCustomItem() {}
+
+  /// Add custom item
+  Future<void> _generateFromJson() async {
+    final String jsonString =
+        (await Clipboard.getData(Clipboard.kTextPlain))?.text ?? '';
+    if (jsonString.isEmpty) {
+      _showAlertDialog(
+          title: 'Clipboard is empty',
+          content: 'Please copy the json string to the clipboard first');
+      return;
+    }
+    try {
+      final List<dynamic> items = jsonDecode(jsonString) as List<dynamic>;
+
+      for (final dynamic item in items) {
+        if (item['type'] == 'StackTextItem') {
+          _boardController.addItem(
+            StackTextItem.fromJson(item),
+          );
+        } else if (item['type'] == 'StackImageItem') {
+          _boardController.addItem(
+            StackImageItem.fromJson(item),
+          );
+        } else if (item['type'] == 'StackDrawItem') {
+          _boardController.addItem(
+            StackDrawItem.fromJson(item),
+          );
+        }
+      }
+    } catch (e) {
+      _showAlertDialog(title: 'Error', content: e.toString());
+    }
+  }
+
+  /// get json
+  Future<void> _getJson() async {
+    final String json = jsonEncode(_boardController.getAllData());
+    Clipboard.setData(ClipboardData(text: json));
+    showDialog<void>(
+      context: context,
+      builder: (_) {
+        return Center(
+          child: SizedBox(
+            width: 400,
+            child: Material(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.only(top: 10, bottom: 60),
+                      child: Text('Json'),
+                    ),
+                    Container(
+                      constraints: const BoxConstraints(maxHeight: 500),
+                      child: SingleChildScrollView(
+                        child: Text(json),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.check)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -117,46 +240,25 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
       ),
       body: StackBoard(
+        onDel: _onDel,
         controller: _boardController,
-
         caseStyle: const CaseStyle(
-          borderColor: Colors.grey,
-          iconColor: Colors.white,
+          buttonBorderColor: Colors.grey,
+          buttonIconColor: Colors.grey,
         ),
 
         /// 背景
         background: ColoredBox(color: Colors.grey[100]!),
-
-        /// 点击取消全部选中状态
-        /// tapToCancelAllItem: true,
-
-        /// 如果使用了继承于StackBoardItem的自定义item
-        /// 使用这个接口进行重构
-        customBuilder: (StackBoardItem t) {
-          if (t is CustomItem) {
-            return ItemCase(
-              key: Key('StackBoardItem${t.id}'), // <==== must
-              isCenter: false,
-              onDel: () async => _boardController.remove(t.id),
-              onTap: () => _boardController.moveItemToTop(t.id),
-              caseStyle: const CaseStyle(
-                borderColor: Colors.grey,
-                iconColor: Colors.white,
-              ),
-              child: Container(
-                width: 100,
-                height: 100,
-                color: t.color,
-                alignment: Alignment.center,
-                child: const Text(
-                  'Custom item',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            );
+        customBuilder: (StackItem<StackItemContent> item) {
+          if (item is StackTextItem) {
+            return StackTextCase(item: item);
+          } else if (item is StackDrawItem) {
+            return StackDrawCase(item: item);
+          } else if (item is StackImageItem) {
+            return StackImageCase(item: item);
           }
 
-          return null;
+          return const SizedBox.shrink();
         },
       ),
       floatingActionButton: Row(
@@ -168,82 +270,34 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 children: <Widget>[
                   const SizedBox(width: 25),
-                  FloatingActionButton(
-                    onPressed: () {
-                      _boardController.add(
-                        const AdaptiveText(
-                          'Flutter Candies',
-                          tapToEdit: true,
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      );
-                    },
-                    child: const Icon(Icons.border_color),
-                  ),
+                  FloatingActionButton(onPressed: _addTextItem, child: const Icon(Icons.border_color)),
                   _spacer,
-                  FloatingActionButton(
-                    onPressed: () {
-                      _boardController.add(
-                        StackBoardItem(
-                          child: Image.network(
-                              'https://avatars.githubusercontent.com/u/47586449?s=200&v=4'),
-                        ),
-                      );
-                    },
-                    child: const Icon(Icons.image),
-                  ),
+                  FloatingActionButton(onPressed: _addImageItem, child: const Icon(Icons.image)),
                   _spacer,
-                  FloatingActionButton(
-                    onPressed: () {
-                      _boardController.add(
-                        const StackDrawing(
-                          caseStyle: CaseStyle(
-                            borderColor: Colors.grey,
-                            iconColor: Colors.white,
-                            boxAspectRatio: 1,
-                          ),
-                        ),
-                      );
-                    },
-                    child: const Icon(Icons.color_lens),
-                  ),
+                  FloatingActionButton(onPressed: _addDrawItem, child: const Icon(Icons.color_lens)),
                   _spacer,
-                  FloatingActionButton(
-                    onPressed: () {
-                      _boardController.add(
-                        StackBoardItem(
-                          child: const Text(
-                            'Custom Widget',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          onDel: _onDel,
-                          // caseStyle: const CaseStyle(initOffset: Offset(100, 100)),
-                        ),
-                      );
-                    },
-                    child: const Icon(Icons.add_box),
-                  ),
-                  _spacer,
-                  FloatingActionButton(
-                    onPressed: () {
-                      _boardController.add<CustomItem>(
-                        CustomItem(
-                          color: Color((math.Random().nextDouble() * 0xFFFFFF)
-                                  .toInt())
-                              .withOpacity(1.0),
-                          onDel: () async => true,
-                        ),
-                      );
-                    },
-                    child: const Icon(Icons.add),
-                  ),
+                  FloatingActionButton(onPressed: _addCustomItem, child: const Icon(Icons.add_box)),
                 ],
               ),
             ),
           ),
-          FloatingActionButton(
-            onPressed: () => _boardController.clear(),
-            child: const Icon(Icons.close),
+          Row(
+            children: <Widget>[
+              FloatingActionButton(
+                onPressed: () => _boardController.clear(),
+                child: const Icon(Icons.delete),
+              ),
+              _spacer,
+              FloatingActionButton(
+                onPressed: _getJson,
+                child: const Icon(Icons.file_download),
+              ),
+              _spacer,
+              FloatingActionButton(
+                onPressed: _generateFromJson,
+                child: const Icon(Icons.file_upload),
+              ),
+            ],
           ),
         ],
       ),
@@ -251,29 +305,24 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget get _spacer => const SizedBox(width: 5);
-}
 
-class ItemCaseDemo extends StatefulWidget {
-  const ItemCaseDemo({Key? key}) : super(key: key);
-
-  @override
-  _ItemCaseDemoState createState() => _ItemCaseDemoState();
-}
-
-class _ItemCaseDemoState extends State<ItemCaseDemo> {
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        ItemCase(
-          isCenter: false,
-          child: const Text('Custom case'),
-          onDel: () async {},
-          onOperatStateChanged: (OperatState operatState) => null,
-          onOffsetChanged: (Offset offset) => null,
-          onSizeChanged: (Size size) => null,
-        ),
-      ],
+  void _showAlertDialog({required String title, required String content}) {
+    showDialog<void>(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
