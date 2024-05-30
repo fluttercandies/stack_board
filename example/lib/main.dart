@@ -47,7 +47,7 @@ class ColorStackItem extends StackItem<ColorContent> {
     ColorContent? content,
   }) {
     return ColorStackItem(
-      id: id,
+      id: id, // <= must !!
       size: size ?? this.size,
       offset: offset ?? this.offset,
       angle: angle ?? this.angle,
