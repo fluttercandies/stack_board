@@ -126,7 +126,7 @@ class _StackDrawCaseState extends State<StackDrawCase> {
           child: Container(
             width: 30,
             decoration: BoxDecoration(
-              color: Theme.of(context).bottomAppBarTheme.color,
+              color: Theme.of(context).canvasColor,
               boxShadow: _left == 0
                   ? const <BoxShadow>[
                       BoxShadow(
@@ -171,7 +171,7 @@ class _StackDrawCaseState extends State<StackDrawCase> {
           child: Container(
             height: 30,
             decoration: BoxDecoration(
-              color: Theme.of(context).bottomAppBarTheme.color,
+              color: Theme.of(context).canvasColor,
               boxShadow: _bottom == 0
                   ? const <BoxShadow>[
                       BoxShadow(
