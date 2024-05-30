@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,11 +24,13 @@ class ColorContent extends StackItemContent {
 class ColorStackItem extends StackItem<ColorContent> {
   ColorStackItem({
     required Size size,
+    String? id,
     Offset? offset,
     double? angle,
     StackItemStatus? status,
     ColorContent? content,
   }) : super(
+          id: id,
           size: size,
           offset: offset,
           angle: angle,
@@ -44,6 +47,7 @@ class ColorStackItem extends StackItem<ColorContent> {
     ColorContent? content,
   }) {
     return ColorStackItem(
+      id: id,
       size: size ?? this.size,
       offset: offset ?? this.offset,
       angle: angle ?? this.angle,
@@ -153,16 +157,21 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// Add custom item
-  void _addCustomItem() {}
+  void _addCustomItem() {
+    final Color color = Colors.primaries[Random().nextInt(Colors.primaries.length)];
+    _boardController.addItem(
+      ColorStackItem(
+        size: const Size.square(100),
+        content: ColorContent(color: color),
+      ),
+    );
+  }
 
   /// Add custom item
   Future<void> _generateFromJson() async {
-    final String jsonString =
-        (await Clipboard.getData(Clipboard.kTextPlain))?.text ?? '';
+    final String jsonString = (await Clipboard.getData(Clipboard.kTextPlain))?.text ?? '';
     if (jsonString.isEmpty) {
-      _showAlertDialog(
-          title: 'Clipboard is empty',
-          content: 'Please copy the json string to the clipboard first');
+      _showAlertDialog(title: 'Clipboard is empty', content: 'Please copy the json string to the clipboard first');
       return;
     }
     try {
@@ -256,6 +265,12 @@ class _HomePageState extends State<HomePage> {
             return StackDrawCase(item: item);
           } else if (item is StackImageItem) {
             return StackImageCase(item: item);
+          } else if (item is ColorStackItem) {
+            return Container(
+              width: item.size.width,
+              height: item.size.height,
+              color: item.content?.color,
+            );
           }
 
           return const SizedBox.shrink();
