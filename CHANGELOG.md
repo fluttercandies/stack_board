@@ -1,47 +1,82 @@
-## 0.0.1
+## 0.2.0
 
-* Complete basic functions
+* Merged #8 
+* Working improved version inspired by Canva editor
 
-## 0.0.2
+## 0.1.2
 
-* Support web
+* Modify the type determination method
 
-## 0.0.3
-
-* Fix some problems
-
-## 0.0.4
-
-* Add rotate operation
-
-## 0.0.5
-
-* Update dependencies
-
-## 0.0.6
-
-* Update dependencies, improve code quality
-
-## 0.0.7
-
-* Add init offset config
-
-## 0.0.8
-
-* Fix bug, add click to top and update dependencies
-
-## 0.0.9
-
-* Fix bug, new example
-
-## 0.1.0
-
-* Update dependencies
 
 ## 0.1.1
 
 * Update dependencies, pass static analysis
 
-## 0.1.2
 
-* Modify the type determination method
+## 0.1.0
+
+* Update dependencies
+
+
+## 0.0.9
+
+* Fix bug, new example
+
+
+## 0.0.8
+
+* Fix bug, add click to top and update dependencies
+
+
+## 0.0.7
+
+* Add init offset config
+
+
+## 0.0.6
+
+* Update dependencies, improve code quality
+
+
+## 0.0.5
+
+* Update dependencies
+
+## 0.0.4
+
+* Add rotate operation
+
+
+## 0.0.3
+
+* Fix some problems
+
+
+## 0.0.2
+
+* Support web
+
+
+## 0.0.1
+
+* Complete basic functions
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
