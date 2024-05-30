@@ -10,14 +10,6 @@ A Flutter package of custom stack board.
 
 <br>
 
-## 效果预览
-
-预览网址:[https://stack.liugl.cn](https://stack.liugl.cn)
-
----
-
-<br>
-
 ## 1.使用 StackBoardController
 
 <br>
@@ -36,7 +28,7 @@ StackBoard(
 
 <br>
 
-<img src="https://raw.githubusercontent.com/fluttercandies/stack_board/master/preview/text.gif" height=400>
+<img src="https://raw.githubusercontent.com/xSILENCEx/project_images/main/stack_board/sb_txt.gif" height=400>
 
 <br>
 
@@ -56,7 +48,7 @@ _boardController.add(
 
 <br>
 
-<img src="https://raw.githubusercontent.com/fluttercandies/stack_board/master/preview/img.gif" height=400>
+<img src="https://raw.githubusercontent.com/xSILENCEx/project_images/main/stack_board/sb_image.gif" height=400>
 
 <br>
 
@@ -74,7 +66,7 @@ _boardController.add(
 
 <br>
 
-<img src="https://raw.githubusercontent.com/fluttercandies/stack_board/master/preview/draw.gif" height=400>
+<img src="https://raw.githubusercontent.com/xSILENCEx/project_images/main/stack_board/sb_draw.gif" height=400>
 
 <br>
 
@@ -92,120 +84,63 @@ _boardController.add(
 
 <br>
 
-### 添加自定义Widget
-
-<br>
-
-<img src="https://raw.githubusercontent.com/fluttercandies/stack_board/master/preview/cw.gif" height=400>
-
-<br>
-
-```dart
-_boardController.add(
-    StackBoardItem(
-        child: const Text(
-            'Custom Widget',
-            style: TextStyle(color: Colors.black),
-        ),
-        onDel: _onDel,
-    ),
-);
-```
-
-
----
-
-<details>
-  <summary>_onDel</summary>
-
-```dart
-/// 删除拦截
-Future<bool> _onDel() async {
-    final bool? r = await showDialog<bool>(
-        context: context,
-        builder: (_) {
-            return Center(
-                child: SizedBox(
-                    width: 400,
-                    child: Material(
-                        child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                    const Padding(
-                                        padding: EdgeInsets.only(top: 10, bottom: 60),
-                                        child: Text('确认删除?'),
-                                    ),
-                                    Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                        children: <Widget>[
-                                            IconButton(
-                                                onPressed: () => Navigator.pop(context, true),
-                                                icon: const Icon(Icons.check)),
-                                            IconButton(
-                                                onPressed: () => Navigator.pop(context, false),
-                                                icon: const Icon(Icons.clear)),
-                                        ],
-                                    ),
-                                ],
-                            ),
-                        ),
-                    ),
-                ),
-            );
-        },
-    );
-
-    return r ?? false;
-}
-```
-
-</details> 
-
----
-
-<br>
-
 ### 添加自定义item
 
 <br>
 
-<img src="https://raw.githubusercontent.com/fluttercandies/stack_board/master/preview/stack.gif" height=400>
+<img src="https://raw.githubusercontent.com/xSILENCEx/project_images/main/stack_board/sb_custom.gif" height=400>
 
 <br>
 
-> 1.继承自StackBoardItem
+> 1.继承自 StackItemContent 和 StackItem
 ```dart
-///自定义类型 Custom item type
-class CustomItem extends StackBoardItem {
-  const CustomItem({
-    required this.color,
-    Future<bool> Function()? onDel,
-    int? id, // <==== must
+class ColorContent extends StackItemContent {
+  ColorContent({required this.color});
+
+  Color color;
+
+  @override
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'color': color.value,
+    };
+  }
+}
+
+class ColorStackItem extends StackItem<ColorContent> {
+  ColorStackItem({
+    required Size size,
+    String? id,
+    Offset? offset,
+    double? angle,
+    StackItemStatus? status,
+    ColorContent? content,
   }) : super(
-          child: const Text('CustomItem'),
-          onDel: onDel,
-          id: id, // <==== must
+          id: id,
+          size: size,
+          offset: offset,
+          angle: angle,
+          status: status,
+          content: content,
         );
 
-  final Color? color;
-
-  @override // <==== must
-  CustomItem copyWith({
-    CaseStyle? caseStyle,
-    Widget? child,
-    int? id,
-    Future<bool> Function()? onDel,
-    dynamic Function(bool)? onEdit,
-    bool? tapToEdit,
-    Color? color,
-  }) =>
-      CustomItem(
-        onDel: onDel,
-        id: id,
-        color: color ?? this.color,
-      );
+  @override
+  ColorStackItem copyWith({
+    Size? size,
+    Offset? offset,
+    double? angle,
+    StackItemStatus? status,
+    ColorContent? content,
+  }) {
+    return ColorStackItem(
+      id: id, // <= must !!
+      size: size ?? this.size,
+      offset: offset ?? this.offset,
+      angle: angle ?? this.angle,
+      status: status ?? this.status,
+      content: content ?? this.content,
+    );
+  }
 }
 ```
 > 2.使用controller添加
@@ -214,12 +149,16 @@ import 'dart:math' as math;
 
 ...
 
-_boardController.add<CustomItem>(
-    CustomItem(
-        color: Color((math.Random().nextDouble() * 0xFFFFFF).toInt()),
-        onDel: () async => true,
-    ),
-);
+/// Add custom item
+void _addCustomItem() {
+    final Color color = Colors.primaries[Random().nextInt(Colors.primaries.length)];
+    _boardController.addItem(
+        ColorStackItem(
+        size: const Size.square(100),
+        content: ColorContent(color: color),
+        ),
+    );
+}
 ```
 > 3.使用customBuilder构建
 ```dart
@@ -227,54 +166,23 @@ StackBoard(
     controller: _boardController,
         /// 如果使用了继承于StackBoardItem的自定义item
         /// 使用这个接口进行重构
-    customBuilder: (StackBoardItem t) {
-        if (t is CustomItem) {
-            return ItemCase(
-                key: Key('StackBoardItem${t.id}'), // <==== must
-                isCenter: false,
-                onDel: () async => _boardController.remove(t.id),
-                onTap: () => _boardController.moveItemToTop(t.id),
-                caseStyle: const CaseStyle(
-                    borderColor: Colors.grey,
-                    iconColor: Colors.white,
-                ),
-                child: Container(
-                    width: 100,
-                    height: 100,
-                    color: t.color,
-                    alignment: Alignment.center,
-                    child: const Text(
-                        'Custom item',
-                        style: TextStyle(color: Colors.white),
-                    ),
-                ),
+      customBuilder: (StackItem<StackItemContent> item) {
+          if (...) {
+
+           ...
+
+          } else if (item is ColorStackItem) {
+            return Container(
+              width: item.size.width,
+              height: item.size.height,
+              color: item.content?.color,
             );
-        }
-    },
+          }
+
+          ...
+        },
 )
 ```
-
-<br>
-
-## 2.使用ItemCase进行完全自定义
-
-<br>
-
-```dart
-Stack(
-    children: <Widget>[
-        ItemCase(
-            isCenter: false,
-            child: const Text('Custom case'),
-            onDel: () async {},
-            onOffsetChanged: (Offset offset) {},
-            onSizeChanged: (Size size) {},
-        ),
-    ],
-)
-```
-
-
 
 
 
