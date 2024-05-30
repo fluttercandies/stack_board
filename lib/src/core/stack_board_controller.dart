@@ -49,7 +49,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
 
   final Map<String, int> _indexMap = <String, int>{};
 
-  static final StackBoardController _defaultController = StackBoardController(tag: 'def');
+  static final StackBoardController _defaultController =
+      StackBoardController(tag: 'def');
 
   List<StackItem<StackItemContent>> get innerData => value.data;
 
@@ -70,7 +71,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
 
   /// * 重排索引
   /// * reorder index
-  List<StackItem<StackItemContent>> _reorder(List<StackItem<StackItemContent>> data) {
+  List<StackItem<StackItemContent>> _reorder(
+      List<StackItem<StackItemContent>> data) {
     for (int i = 0; i < data.length; i++) {
       _indexMap[data[i].id] = i;
     }
@@ -86,7 +88,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
       return;
     }
 
-    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
+    final List<StackItem<StackItemContent>> data =
+        List<StackItem<StackItemContent>>.from(innerData);
 
     // Initial offset
     // `TODO`: transform this to parameters
@@ -114,7 +117,7 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
       }
 
       data.add(item.copyWith(
-        offset: Offset(
+          offset: Offset(
               item.size.width / 2 +
                   baseOffset +
                   deltaOffsetMultiplicator * deltaOffset,
@@ -150,7 +153,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
   /// * 移除 item
   /// * remove item
   void removeItem(StackItem<StackItemContent> item) {
-    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
+    final List<StackItem<StackItemContent>> data =
+        List<StackItem<StackItemContent>>.from(innerData);
 
     data.remove(item);
     _indexMap.remove(item.id);
@@ -165,7 +169,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
   void removeById(String id) {
     if (!_indexMap.containsKey(id)) return;
 
-    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
+    final List<StackItem<StackItemContent>> data =
+        List<StackItem<StackItemContent>>.from(innerData);
 
     data.removeAt(_indexMap[id]!);
     _indexMap.remove(id);
@@ -187,7 +192,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
       return;
     }
 
-    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
+    final List<StackItem<StackItemContent>> data =
+        List<StackItem<StackItemContent>>.from(innerData);
 
     data.removeAt(index);
 
@@ -208,7 +214,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
   /// * 取消选中所有 item
   /// * unselect all items
   void unSelectAll() {
-    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
+    final List<StackItem<StackItemContent>> data =
+        List<StackItem<StackItemContent>>.from(innerData);
 
     for (int i = 0; i < data.length; i++) {
       final StackItem<StackItemContent> item = data[i];
@@ -226,8 +233,9 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
   void updateBasic(String id,
       {Size? size, Offset? offset, double? angle, StackItemStatus? status}) {
     if (!_indexMap.containsKey(id)) return;
-    
-    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
+
+    final List<StackItem<StackItemContent>> data =
+        List<StackItem<StackItemContent>>.from(innerData);
 
     data[_indexMap[id]!] = data[_indexMap[id]!].copyWith(
       size: size,
@@ -244,7 +252,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
   void updateItem(StackItem<StackItemContent> item) {
     if (!_indexMap.containsKey(item.id)) return;
 
-    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
+    final List<StackItem<StackItemContent>> data =
+        List<StackItem<StackItemContent>>.from(innerData);
 
     data[_indexMap[item.id]!] = item;
 
@@ -263,7 +272,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
   Map<String, dynamic>? getSelectedData() {
     return innerData
         .firstWhereOrNull(
-          (StackItem<StackItemContent> item) => item.status == StackItemStatus.selected,
+          (StackItem<StackItemContent> item) =>
+              item.status == StackItemStatus.selected,
         )
         ?.toJson();
   }
@@ -271,13 +281,17 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
   /// * 通过 id 获取数据 json
   /// * get data json by id
   Map<String, dynamic>? getDataById(String id) {
-    return innerData.firstWhereOrNull((StackItem<StackItemContent> item) => item.id == id)?.toJson();
+    return innerData
+        .firstWhereOrNull((StackItem<StackItemContent> item) => item.id == id)
+        ?.toJson();
   }
 
   /// * 通过类型获取数据 json 列表
   /// * get data json list by type
-  List<Map<String, dynamic>> getTypeData<T extends StackItem<StackItemContent>>() {
-    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
+  List<Map<String, dynamic>>
+      getTypeData<T extends StackItem<StackItemContent>>() {
+    final List<StackItem<StackItemContent>> data =
+        List<StackItem<StackItemContent>>.from(innerData);
 
     final List<Map<String, dynamic>> list = <Map<String, dynamic>>[];
 
@@ -295,7 +309,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
   /// * 获取数据 json 列表
   /// * get data json list
   List<Map<String, dynamic>> getAllData() {
-    final List<StackItem<StackItemContent>> data = List<StackItem<StackItemContent>>.from(innerData);
+    final List<StackItem<StackItemContent>> data =
+        List<StackItem<StackItemContent>>.from(innerData);
 
     final List<Map<String, dynamic>> list = <Map<String, dynamic>>[];
 
@@ -312,7 +327,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
   int get hashCode => _tag.hashCode;
 
   @override
-  bool operator ==(Object other) => other is StackBoardController && _tag == other._tag;
+  bool operator ==(Object other) =>
+      other is StackBoardController && _tag == other._tag;
 
   @override
   void dispose() {

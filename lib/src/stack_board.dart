@@ -20,7 +20,8 @@ class StackBoardConfig extends InheritedWidget {
   final CaseStyle? caseStyle;
 
   static StackBoardConfig of(BuildContext context) {
-    final StackBoardConfig? result = context.dependOnInheritedWidgetOfExactType<StackBoardConfig>();
+    final StackBoardConfig? result =
+        context.dependOnInheritedWidgetOfExactType<StackBoardConfig>();
     assert(result != null, 'No StackBoardConfig found in context');
     return result!;
   }
@@ -74,19 +75,22 @@ class StackBoard extends StatelessWidget {
   /// * 返回值可控制是否继续进行
   /// * size changed callback
   /// * return value can control whether to continue
-  final bool? Function(StackItem<StackItemContent> item, Size size)? onSizeChanged;
+  final bool? Function(StackItem<StackItemContent> item, Size size)?
+      onSizeChanged;
 
   /// * 位置变化回调
   /// * 返回值可控制是否继续进行
   /// * offset changed callback
   /// * return value can control whether to continue
-  final bool? Function(StackItem<StackItemContent> item, Offset offset)? onOffsetChanged;
+  final bool? Function(StackItem<StackItemContent> item, Offset offset)?
+      onOffsetChanged;
 
   /// * 角度变化回调
   /// * 返回值可控制是否继续进行
   /// * angle changed callback
   /// * return value can control whether to continue
-  final bool? Function(StackItem<StackItemContent> item, double angle)? onAngleChanged;
+  final bool? Function(StackItem<StackItemContent> item, double angle)?
+      onAngleChanged;
 
   /// * 操作状态回调
   /// * 返回值可控制是否继续进行
@@ -98,13 +102,15 @@ class StackBoard extends StatelessWidget {
 
   /// * 操作层构建器
   /// * actions builder
-  final Widget Function(StackItemStatus operatState, CaseStyle caseStyle)? actionsBuilder;
+  final Widget Function(StackItemStatus operatState, CaseStyle caseStyle)?
+      actionsBuilder;
 
   /// * 边框构建器
   /// * border builder
   final Widget Function(StackItemStatus operatState)? borderBuilder;
 
-  StackBoardController get _controller => controller ?? StackBoardController.def();
+  StackBoardController get _controller =>
+      controller ?? StackBoardController.def();
 
   @override
   Widget build(BuildContext context) {
@@ -116,14 +122,16 @@ class StackBoard extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         child: ExBuilder<StackConfig>(
           valueListenable: _controller,
-          shouldRebuild: (StackConfig p, StackConfig n) => p.indexMap != n.indexMap,
+          shouldRebuild: (StackConfig p, StackConfig n) =>
+              p.indexMap != n.indexMap,
           builder: (StackConfig sc) {
             return Stack(
               fit: StackFit.expand,
               children: <Widget>[
                 const SizedBox.expand(),
                 if (background != null) background!,
-                for (final StackItem<StackItemContent> item in sc.data) _itemBuilder(item),
+                for (final StackItem<StackItemContent> item in sc.data)
+                  _itemBuilder(item),
               ],
             );
           },
@@ -141,8 +149,10 @@ class StackBoard extends StatelessWidget {
       onDel: () => onDel?.call(item),
       onTap: () => onTap?.call(item),
       onSizeChanged: (Size size) => onSizeChanged?.call(item, size) ?? true,
-      onOffsetChanged: (Offset offset) => onOffsetChanged?.call(item, offset) ?? true,
-      onAngleChanged: (double angle) => onAngleChanged?.call(item, angle) ?? true,
+      onOffsetChanged: (Offset offset) =>
+          onOffsetChanged?.call(item, offset) ?? true,
+      onAngleChanged: (double angle) =>
+          onAngleChanged?.call(item, angle) ?? true,
       onStatusChanged: (StackItemStatus operatState) =>
           onStatusChanged?.call(item, operatState) ?? true,
       actionsBuilder: actionsBuilder,

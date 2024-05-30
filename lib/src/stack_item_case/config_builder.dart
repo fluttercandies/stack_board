@@ -33,7 +33,8 @@ class ConfigBuilder extends StatelessWidget {
   static Widget withItem(
     String id, {
     required Widget child,
-    bool Function(StackItem<StackItemContent> p, StackItem<StackItemContent> n)? shouldRebuild,
+    bool Function(StackItem<StackItemContent> p, StackItem<StackItemContent> n)?
+        shouldRebuild,
     Widget Function(StackItem<StackItemContent> item, Widget c)? childBuilder,
   }) {
     return ConfigBuilder(

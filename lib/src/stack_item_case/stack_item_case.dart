@@ -79,12 +79,13 @@ class StackItemCase extends StatefulWidget {
 
   /// * 操作层构建器
   /// * Operation layer builder
-  final Widget Function(StackItemStatus operatState, CaseStyle caseStyle)? actionsBuilder;
+  final Widget Function(StackItemStatus operatState, CaseStyle caseStyle)?
+      actionsBuilder;
 
   /// * 边框构建器
   /// * Border builder
   final Widget Function(StackItemStatus operatState)? borderBuilder;
-  
+
   @override
   State<StatefulWidget> createState() {
     return _StackItemCaseState();
@@ -369,68 +370,63 @@ class _StackItemCaseState extends State<StackItemCase> {
 
     final List<Widget> widgets = <Widget>[_content(context, item)];
 
-    widgets.add(
-        widget.borderBuilder?.call(item.status) ??
+    widgets.add(widget.borderBuilder?.call(item.status) ??
         _frameBorder(context, item.status));
     if (widget.actionsBuilder != null) {
       widgets.add(widget.actionsBuilder!(item.status, _caseStyle(context)));
     } else if (item.status != StackItemStatus.editing) {
       if (item.status != StackItemStatus.idle) {
         if (item.size.height > _minSize(context) * 2) {
-        widgets.add(Positioned(
-            bottom: style.buttonSize,
-            right: 0,
+          widgets.add(Positioned(
+              bottom: style.buttonSize,
+              right: 0,
               top: style.buttonSize,
               child: _resizeXHandle(context, item.status)));
-        widgets.add(Positioned(
-            bottom: style.buttonSize,
-            left: 0,
+          widgets.add(Positioned(
+              bottom: style.buttonSize,
+              left: 0,
               top: style.buttonSize,
               child: _resizeXHandle(context, item.status)));
-      }
+        }
         if (item.size.width > _minSize(context) * 2) {
-        widgets.add(Positioned(
+          widgets.add(Positioned(
               left: 0,
               top: style.buttonSize,
               right: 0,
               child: _resizeYHandle(context, item.status)));
-        widgets.add(Positioned(
-            left: 0,
-            bottom: style.buttonSize,
-            right: 0,
+          widgets.add(Positioned(
+              left: 0,
+              bottom: style.buttonSize,
+              right: 0,
               child: _resizeYHandle(context, item.status)));
-      }
+        }
         if (item.size.height > _minSize(context) &&
             item.size.width > _minSize(context)) {
-        widgets.add(Positioned(
+          widgets.add(Positioned(
               top: style.buttonSize,
-            right: 0,
-            child: _scaleHandle(
-                context, item.status,
+              right: 0,
+              child: _scaleHandle(context, item.status,
                   SystemMouseCursors.resizeUpRightDownLeft)));
-        widgets.add(Positioned(
-            bottom: style.buttonSize,
-            left: 0,
-            child: _scaleHandle(
-                context, item.status,
+          widgets.add(Positioned(
+              bottom: style.buttonSize,
+              left: 0,
+              child: _scaleHandle(context, item.status,
                   SystemMouseCursors.resizeUpRightDownLeft)));
-      }
-      widgets.addAll(<Widget>[
+        }
+        widgets.addAll(<Widget>[
           if (item.status == StackItemStatus.editing)
-          _deleteHandle(context)
-        else
+            _deleteHandle(context)
+          else
             _rotateAndMoveHandle(context, item.status, item),
-        Positioned(
+          Positioned(
               top: style.buttonSize,
-            left: 0,
-            child: _scaleHandle(
-                context, item.status,
+              left: 0,
+              child: _scaleHandle(context, item.status,
                   SystemMouseCursors.resizeUpLeftDownRight)),
-        Positioned(
-            bottom: style.buttonSize,
-            right: 0,
-            child: _scaleHandle(
-                context, item.status,
+          Positioned(
+              bottom: style.buttonSize,
+              right: 0,
+              child: _scaleHandle(context, item.status,
                   SystemMouseCursors.resizeUpLeftDownRight)),
         ]);
       }
@@ -458,10 +454,10 @@ class _StackItemCaseState extends State<StackItemCase> {
             padding: item.status == StackItemStatus.idle
                 ? EdgeInsets.zero
                 : EdgeInsets.fromLTRB(
-                style.buttonSize / 2,
+                    style.buttonSize / 2,
                     style.buttonSize * 1.5,
-                style.buttonSize / 2,
-                style.buttonSize * 1.5),
+                    style.buttonSize / 2,
+                    style.buttonSize * 1.5),
             child: SizedBox.fromSize(size: item.size, child: c));
       },
       child: content,
@@ -475,21 +471,21 @@ class _StackItemCaseState extends State<StackItemCase> {
 
     return Positioned(
         top: style.buttonSize * 1.5,
-      bottom: style.buttonSize * 1.5,
-      left: style.buttonSize / 2,
-      right: style.buttonSize / 2,
+        bottom: style.buttonSize * 1.5,
+        left: style.buttonSize / 2,
+        right: style.buttonSize / 2,
         child: IgnorePointer(
           ignoring: true,
           child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: status == StackItemStatus.idle
-                ? Colors.transparent
-                : style.frameBorderColor,
-            width: style.frameBorderWidth,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: status == StackItemStatus.idle
+                    ? Colors.transparent
+                    : style.frameBorderColor,
+                width: style.frameBorderWidth,
+              ),
+            ),
           ),
-        ),
-      ),
         ));
   }
 

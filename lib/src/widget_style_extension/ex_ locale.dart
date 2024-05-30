@@ -11,5 +11,6 @@ extension ExLocale on Locale {
 }
 
 Locale jsonToLocale(Map<String, dynamic> data) {
-  return Locale(asT<String>(data['languageCode']), asNullT<String>(data['countryCode']));
+  return Locale(
+      asT<String>(data['languageCode']), asNullT<String>(data['countryCode']));
 }

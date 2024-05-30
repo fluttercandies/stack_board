@@ -83,7 +83,8 @@ class _StackDrawCaseState extends State<StackDrawCase> {
               controller: _controller,
               boardPanEnabled: false,
               boardScaleEnabled: false,
-              background: widget.background ?? Container(width: _size, height: _size, color: Colors.white),
+              background: widget.background ??
+                  Container(width: _size, height: _size, color: Colors.white),
             ),
             _tools(),
             _actions(),
@@ -106,7 +107,8 @@ class _StackDrawCaseState extends State<StackDrawCase> {
   /// * Tool bar
   Widget _tools() {
     return _configBuilder(
-      shouldRebuild: (DrawConfig p, DrawConfig n) => p.fingerCount != n.fingerCount || p.contentType != n.contentType,
+      shouldRebuild: (DrawConfig p, DrawConfig n) =>
+          p.fingerCount != n.fingerCount || p.contentType != n.contentType,
       builder: (DrawConfig dc, Widget? child) {
         final bool isPen = _isEditing && dc.fingerCount == 1;
 
@@ -152,7 +154,8 @@ class _StackDrawCaseState extends State<StackDrawCase> {
   /// * Operation bar
   Widget _actions() {
     return _configBuilder(
-      shouldRebuild: (DrawConfig p, DrawConfig n) => p.fingerCount != n.fingerCount,
+      shouldRebuild: (DrawConfig p, DrawConfig n) =>
+          p.fingerCount != n.fingerCount,
       builder: (DrawConfig dc, Widget? child) {
         final bool isPen = dc.fingerCount == 1;
 
@@ -198,13 +201,15 @@ class _StackDrawCaseState extends State<StackDrawCase> {
                 trackHeight: 2,
               ),
               child: _configBuilder(
-                shouldRebuild: (DrawConfig p, DrawConfig n) => p.strokeWidth != n.strokeWidth,
+                shouldRebuild: (DrawConfig p, DrawConfig n) =>
+                    p.strokeWidth != n.strokeWidth,
                 builder: (DrawConfig dc, _) {
                   return Slider(
                     value: dc.strokeWidth,
                     max: 40,
                     min: 1,
-                    onChanged: (double v) => _controller.setStyle(strokeWidth: v),
+                    onChanged: (double v) =>
+                        _controller.setStyle(strokeWidth: v),
                   );
                 },
               ),

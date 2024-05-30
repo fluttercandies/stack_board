@@ -111,8 +111,12 @@ class _HomePageState extends State<HomePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        IconButton(onPressed: () => Navigator.pop(context, true), icon: const Icon(Icons.check)),
-                        IconButton(onPressed: () => Navigator.pop(context, false), icon: const Icon(Icons.clear)),
+                        IconButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            icon: const Icon(Icons.check)),
+                        IconButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            icon: const Icon(Icons.clear)),
                       ],
                     ),
                   ],
@@ -145,7 +149,8 @@ class _HomePageState extends State<HomePage> {
       StackImageItem(
         size: const Size(300, 85),
         content: ImageItemContent(
-          url: 'https://files.flutter-io.cn/images/branding/flutterlogo/flutter-cn-logo.png',
+          url:
+              'https://files.flutter-io.cn/images/branding/flutterlogo/flutter-cn-logo.png',
         ),
       ),
     );
@@ -158,7 +163,8 @@ class _HomePageState extends State<HomePage> {
 
   /// Add custom item
   void _addCustomItem() {
-    final Color color = Colors.primaries[Random().nextInt(Colors.primaries.length)];
+    final Color color =
+        Colors.primaries[Random().nextInt(Colors.primaries.length)];
     _boardController.addItem(
       ColorStackItem(
         size: const Size.square(100),
@@ -169,9 +175,12 @@ class _HomePageState extends State<HomePage> {
 
   /// Add custom item
   Future<void> _generateFromJson() async {
-    final String jsonString = (await Clipboard.getData(Clipboard.kTextPlain))?.text ?? '';
+    final String jsonString =
+        (await Clipboard.getData(Clipboard.kTextPlain))?.text ?? '';
     if (jsonString.isEmpty) {
-      _showAlertDialog(title: 'Clipboard is empty', content: 'Please copy the json string to the clipboard first');
+      _showAlertDialog(
+          title: 'Clipboard is empty',
+          content: 'Please copy the json string to the clipboard first');
       return;
     }
     try {
@@ -227,7 +236,9 @@ class _HomePageState extends State<HomePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.check)),
+                        IconButton(
+                            onPressed: () => Navigator.pop(context),
+                            icon: const Icon(Icons.check)),
                       ],
                     ),
                   ],
@@ -285,13 +296,20 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 children: <Widget>[
                   const SizedBox(width: 25),
-                  FloatingActionButton(onPressed: _addTextItem, child: const Icon(Icons.border_color)),
+                  FloatingActionButton(
+                      onPressed: _addTextItem,
+                      child: const Icon(Icons.border_color)),
                   _spacer,
-                  FloatingActionButton(onPressed: _addImageItem, child: const Icon(Icons.image)),
+                  FloatingActionButton(
+                      onPressed: _addImageItem, child: const Icon(Icons.image)),
                   _spacer,
-                  FloatingActionButton(onPressed: _addDrawItem, child: const Icon(Icons.color_lens)),
+                  FloatingActionButton(
+                      onPressed: _addDrawItem,
+                      child: const Icon(Icons.color_lens)),
                   _spacer,
-                  FloatingActionButton(onPressed: _addCustomItem, child: const Icon(Icons.add_box)),
+                  FloatingActionButton(
+                      onPressed: _addCustomItem,
+                      child: const Icon(Icons.add_box)),
                 ],
               ),
             ),

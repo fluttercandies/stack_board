@@ -18,14 +18,18 @@ class StackTextStrutStyle {
   factory StackTextStrutStyle.fromJson(Map<String, dynamic> data) {
     return StackTextStrutStyle(
       fontFamily: asNullT<String?>(data['fontFamily']),
-      fontFamilyFallback: asNullT<String?>(data['fontFamilyFallback'])?.split(','),
+      fontFamilyFallback:
+          asNullT<String?>(data['fontFamilyFallback'])?.split(','),
       fontSize: asNullT<double?>(data['fontSize']),
       height: asNullT<double?>(data['height']),
       leadingDistribution: ExEnum.tryParse<TextLeadingDistribution>(
-          TextLeadingDistribution.values, asNullT<String?>(data['leadingDistribution'])),
+          TextLeadingDistribution.values,
+          asNullT<String?>(data['leadingDistribution'])),
       leading: asNullT<double?>(data['leading']),
-      fontWeight: ExEnum.tryParse<FontWeight>(FontWeight.values, asNullT<String?>(data['fontWeight'])),
-      fontStyle: ExEnum.tryParse<FontStyle>(FontStyle.values, asNullT<String?>(data['fontStyle'])),
+      fontWeight: ExEnum.tryParse<FontWeight>(
+          FontWeight.values, asNullT<String?>(data['fontWeight'])),
+      fontStyle: ExEnum.tryParse<FontStyle>(
+          FontStyle.values, asNullT<String?>(data['fontStyle'])),
       forceStrutHeight: asNullT<bool?>(data['forceStrutHeight']),
     );
   }
@@ -57,10 +61,12 @@ class StackTextStrutStyle {
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       if (fontFamily != null) 'fontFamily': fontFamily,
-      if (fontFamilyFallback != null) 'fontFamilyFallback': fontFamilyFallback?.join(','),
+      if (fontFamilyFallback != null)
+        'fontFamilyFallback': fontFamilyFallback?.join(','),
       if (fontSize != null) 'fontSize': fontSize,
       if (height != null) 'height': height,
-      if (leadingDistribution != null) 'leadingDistribution': leadingDistribution.toString(),
+      if (leadingDistribution != null)
+        'leadingDistribution': leadingDistribution.toString(),
       if (leading != null) 'leading': leading,
       if (fontWeight != null) 'fontWeight': fontWeight,
       if (fontStyle != null) 'fontStyle': fontStyle,

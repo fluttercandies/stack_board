@@ -33,8 +33,11 @@ class TextItemContent implements StackItemContent {
   factory TextItemContent.fromJson(Map<String, dynamic> data) {
     return TextItemContent(
       data: data['data'] == null ? null : asT<String>(data['data']),
-      style: data['style'] == null ? null : jsonToTextStyle(asMap(data['style'])),
-      strutStyle: data['strutStyle'] == null ? null : StackTextStrutStyle.fromJson(asMap(data['strutStyle'])),
+      style:
+          data['style'] == null ? null : jsonToTextStyle(asMap(data['style'])),
+      strutStyle: data['strutStyle'] == null
+          ? null
+          : StackTextStrutStyle.fromJson(asMap(data['strutStyle'])),
       textAlign: data['textAlign'] == null
           ? null
           : ExEnum.tryParse<TextAlign>(
@@ -43,22 +46,30 @@ class TextItemContent implements StackItemContent {
           ? null
           : ExEnum.tryParse<TextDirection>(
               TextDirection.values, asT<String>(data['textDirection'])),
-      locale: data['locale'] == null ? null : jsonToLocale(asMap(data['locale'])),
+      locale:
+          data['locale'] == null ? null : jsonToLocale(asMap(data['locale'])),
       softWrap: data['softWrap'] == null ? null : asT<bool>(data['softWrap']),
       overflow: data['overflow'] == null
           ? null
           : ExEnum.tryParse<TextOverflow>(
               TextOverflow.values, asT<String>(data['overflow'])),
-      textScaleFactor: data['textScaleFactor'] == null ? null : asT<double>(data['textScaleFactor']),
+      textScaleFactor: data['textScaleFactor'] == null
+          ? null
+          : asT<double>(data['textScaleFactor']),
       maxLines: data['maxLines'] == null ? null : asT<int>(data['maxLines']),
-      semanticsLabel: data['semanticsLabel'] == null ? null : asT<String>(data['semanticsLabel']),
+      semanticsLabel: data['semanticsLabel'] == null
+          ? null
+          : asT<String>(data['semanticsLabel']),
       textWidthBasis: data['textWidthBasis'] == null
           ? null
           : ExEnum.tryParse<TextWidthBasis>(
               TextWidthBasis.values, asT<String>(data['textWidthBasis'])),
-      textHeightBehavior:
-          data['textHeightBehavior'] == null ? null : jsonToTextHeightBehavior(asMap(data['textHeightBehavior'])),
-      selectionColor: data['selectionColor'] == null ? null : Color(asT<int>(data['selectionColor'])),
+      textHeightBehavior: data['textHeightBehavior'] == null
+          ? null
+          : jsonToTextHeightBehavior(asMap(data['textHeightBehavior'])),
+      selectionColor: data['selectionColor'] == null
+          ? null
+          : Color(asT<int>(data['selectionColor'])),
     );
   }
 
@@ -92,7 +103,8 @@ class TextItemContent implements StackItemContent {
       if (maxLines != null) 'maxLines': maxLines,
       if (semanticsLabel != null) 'semanticsLabel': semanticsLabel,
       if (textWidthBasis != null) 'textWidthBasis': textWidthBasis?.toString(),
-      if (textHeightBehavior != null) 'textHeightBehavior': textHeightBehavior?.toJson(),
+      if (textHeightBehavior != null)
+        'textHeightBehavior': textHeightBehavior?.toJson(),
       if (selectionColor != null) 'selectionColor': selectionColor?.value,
     };
   }
@@ -121,7 +133,8 @@ class StackTextItem extends StackItem<TextItemContent> {
       id: data['id'] == null ? null : asT<String>(data['id']),
       angle: data['angle'] == null ? null : asT<double>(data['angle']),
       size: jsonToSize(asMap(data['size'])),
-      offset: data['offset'] == null ? null : jsonToOffset(asMap(data['offset'])),
+      offset:
+          data['offset'] == null ? null : jsonToOffset(asMap(data['offset'])),
       status: StackItemStatus.values[data['status'] as int],
       content: TextItemContent.fromJson(asMap(data['content'])),
     );

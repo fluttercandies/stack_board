@@ -17,7 +17,8 @@ TextHeightBehavior jsonToTextHeightBehavior(Map<String, dynamic> data) {
     applyHeightToFirstAscent: asT<bool>(data['applyHeightToFirstAscent']),
     applyHeightToLastDescent: asT<bool>(data['applyHeightToLastDescent']),
     leadingDistribution: ExEnum.tryParse<TextLeadingDistribution>(
-            TextLeadingDistribution.values, asT<String>(data['leadingDistribution'])) ??
+            TextLeadingDistribution.values,
+            asT<String>(data['leadingDistribution'])) ??
         TextLeadingDistribution.proportional,
   );
 }

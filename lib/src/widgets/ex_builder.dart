@@ -38,7 +38,8 @@ class ExBuilder<T> extends StatefulWidget {
   State<StatefulWidget> createState() => _ExBuilderState<T>();
 }
 
-class _ExBuilderState<T> extends State<ExBuilder<T>> with SafeState<ExBuilder<T>> {
+class _ExBuilderState<T> extends State<ExBuilder<T>>
+    with SafeState<ExBuilder<T>> {
   late T _value;
 
   @override
@@ -66,7 +67,8 @@ class _ExBuilderState<T> extends State<ExBuilder<T>> with SafeState<ExBuilder<T>
 
   void _valueChanged() {
     ///条件判断
-    if (widget.shouldRebuild?.call(_value, widget.valueListenable.value) ?? true) {
+    if (widget.shouldRebuild?.call(_value, widget.valueListenable.value) ??
+        true) {
       safeSetState(() {
         _value = widget.valueListenable.value;
       });
@@ -77,9 +79,11 @@ class _ExBuilderState<T> extends State<ExBuilder<T>> with SafeState<ExBuilder<T>
   Widget build(BuildContext context) {
     if (widget.child == null)
       return widget.builder?.call(_value) ??
-          widget.childBuilder?.call(_value, widget.child ?? const SizedBox.shrink()) ??
+          widget.childBuilder
+              ?.call(_value, widget.child ?? const SizedBox.shrink()) ??
           const SizedBox.shrink();
 
-    return widget.childBuilder?.call(_value, widget.child!) ?? const SizedBox.shrink();
+    return widget.childBuilder?.call(_value, widget.child!) ??
+        const SizedBox.shrink();
   }
 }

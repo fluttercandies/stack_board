@@ -9,12 +9,15 @@ extension ExTextStyle on TextStyle {
       if (color != null) 'color': color?.value,
       if (decoration != null) 'decoration': decoration?.toString(),
       if (decorationColor != null) 'decorationColor': decorationColor?.value,
-      if (decorationStyle != null) 'decorationStyle': decorationStyle?.toString(),
-      if (decorationThickness != null) 'decorationThickness': decorationThickness,
+      if (decorationStyle != null)
+        'decorationStyle': decorationStyle?.toString(),
+      if (decorationThickness != null)
+        'decorationThickness': decorationThickness,
       if (fontWeight != null) 'fontWeight': fontWeight?.toString(),
       if (fontStyle != null) 'fontStyle': fontStyle?.toString(),
       if (fontFamily != null) 'fontFamily': fontFamily,
-      if (fontFamilyFallback != null) 'fontFamilyFallback': fontFamilyFallback?.join(','),
+      if (fontFamilyFallback != null)
+        'fontFamilyFallback': fontFamilyFallback?.join(','),
       if (fontSize != null) 'fontSize': fontSize,
       if (letterSpacing != null) 'letterSpacing': letterSpacing,
       if (wordSpacing != null) 'wordSpacing': wordSpacing,
@@ -28,19 +31,34 @@ extension ExTextStyle on TextStyle {
 TextStyle? jsonToTextStyle(Map<String, dynamic> data) {
   return TextStyle(
     color: data['color'] == null ? null : Color(asT<int>(data['color'])),
-    decoration: data['decoration'] == null ? null : stringToTextDecoration(asT<String>(data['decoration'])),
-    decorationColor: data['decorationColor'] == null ? null : Color(asT<int>(data['decorationColor'])),
-    decorationStyle:
-        ExEnum.tryParse<TextDecorationStyle>(TextDecorationStyle.values, asT<String>(data['decorationStyle'])),
-    decorationThickness: data['decorationThickness'] == null ? null : asT<double>(data['decorationThickness']),
-    fontWeight: ExEnum.tryParse<FontWeight>(FontWeight.values, asT<String>(data['fontWeight'])),
-    fontStyle: ExEnum.tryParse<FontStyle>(FontStyle.values, asT<String>(data['fontStyle'])),
-    fontFamily: data['fontFamily'] == null ? null : asT<String>(data['fontFamily']),
-    fontFamilyFallback: data['fontFamilyFallback'] == null ? null : asT<String>(data['fontFamilyFallback']).split(','),
+    decoration: data['decoration'] == null
+        ? null
+        : stringToTextDecoration(asT<String>(data['decoration'])),
+    decorationColor: data['decorationColor'] == null
+        ? null
+        : Color(asT<int>(data['decorationColor'])),
+    decorationStyle: ExEnum.tryParse<TextDecorationStyle>(
+        TextDecorationStyle.values, asT<String>(data['decorationStyle'])),
+    decorationThickness: data['decorationThickness'] == null
+        ? null
+        : asT<double>(data['decorationThickness']),
+    fontWeight: ExEnum.tryParse<FontWeight>(
+        FontWeight.values, asT<String>(data['fontWeight'])),
+    fontStyle: ExEnum.tryParse<FontStyle>(
+        FontStyle.values, asT<String>(data['fontStyle'])),
+    fontFamily:
+        data['fontFamily'] == null ? null : asT<String>(data['fontFamily']),
+    fontFamilyFallback: data['fontFamilyFallback'] == null
+        ? null
+        : asT<String>(data['fontFamilyFallback']).split(','),
     fontSize: data['fontSize'] == null ? null : asT<double>(data['fontSize']),
-    letterSpacing: data['letterSpacing'] == null ? null : asT<double>(data['letterSpacing']),
-    wordSpacing: data['wordSpacing'] == null ? null : asT<double>(data['wordSpacing']),
-    textBaseline: ExEnum.tryParse(TextBaseline.values, asT<String>(data['textBaseline'])),
+    letterSpacing: data['letterSpacing'] == null
+        ? null
+        : asT<double>(data['letterSpacing']),
+    wordSpacing:
+        data['wordSpacing'] == null ? null : asT<double>(data['wordSpacing']),
+    textBaseline:
+        ExEnum.tryParse(TextBaseline.values, asT<String>(data['textBaseline'])),
     height: data['height'] == null ? null : asT<double>(data['height']),
     locale: data['locale'] == null ? null : jsonToLocale(asMap(data['locale'])),
   );

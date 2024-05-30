@@ -15,7 +15,8 @@ class DrawItemContent implements StackItemContent {
 
   factory DrawItemContent.fromJson(
     Map<String, dynamic> data, {
-    PaintContent Function(String type, Map<String, dynamic> jsonStepMap)? contentFactory,
+    PaintContent Function(String type, Map<String, dynamic> jsonStepMap)?
+        contentFactory,
   }) {
     return DrawItemContent(
       size: data['size'] as double,
@@ -39,7 +40,8 @@ class DrawItemContent implements StackItemContent {
             return StraightLine.fromJson(contentJson);
         }
 
-        return contentFactory?.call(type, contentJson) ?? EmptyContent.fromJson(contentJson);
+        return contentFactory?.call(type, contentJson) ??
+            EmptyContent.fromJson(contentJson);
       }).toList(),
     );
   }
@@ -51,7 +53,8 @@ class DrawItemContent implements StackItemContent {
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'size': size,
-      'paintContents': paintContents.map((PaintContent e) => e.toJson()).toList(),
+      'paintContents':
+          paintContents.map((PaintContent e) => e.toJson()).toList(),
     };
   }
 }
@@ -71,7 +74,9 @@ class StackDrawItem extends StackItem<DrawItemContent> {
             offset: offset,
             angle: angle,
             status: status,
-            content: content ?? DrawItemContent(size: size.shortestSide, paintContents: <PaintContent>[]));
+            content: content ??
+                DrawItemContent(
+                    size: size.shortestSide, paintContents: <PaintContent>[]));
 
   factory StackDrawItem.fromJson(Map<String, dynamic> data) {
     return StackDrawItem(
@@ -80,7 +85,8 @@ class StackDrawItem extends StackItem<DrawItemContent> {
       size: jsonToSize(data['size'] as Map<String, dynamic>),
       offset: jsonToOffset(data['offset'] as Map<String, dynamic>),
       status: StackItemStatus.values[data['status'] as int],
-      content: DrawItemContent.fromJson(data['content'] as Map<String, dynamic>),
+      content:
+          DrawItemContent.fromJson(data['content'] as Map<String, dynamic>),
     );
   }
 

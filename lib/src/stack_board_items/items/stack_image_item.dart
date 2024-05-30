@@ -131,7 +131,8 @@ class StackImageItem extends StackItem<ImageItemContent> {
       id: data['id'] == null ? null : asT<String>(data['id']),
       angle: data['angle'] == null ? null : asT<double>(data['angle']),
       size: jsonToSize(asMap(data['size'])),
-      offset: data['offset'] == null ? null : jsonToOffset(asMap(data['offset'])),
+      offset:
+          data['offset'] == null ? null : jsonToOffset(asMap(data['offset'])),
       status: StackItemStatus.values[data['status'] as int],
       content: ImageItemContent.fromJson(asMap(data['content'])),
     );
