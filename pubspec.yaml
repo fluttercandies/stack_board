@@ -1,6 +1,6 @@
 name: stack_board
 description: A Flutter package of stack board, components that can be stacked and edited for any widget.
-version: 0.2.2
+version: 0.2.3
 homepage: https://github.com/fluttercandies/stack_board
 
 environment:

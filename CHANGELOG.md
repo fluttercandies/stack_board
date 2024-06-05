@@ -1,3 +1,7 @@
+## 0.2.3
+
+* Fix syntax errors
+
 ## 0.2.2
 
 * Pass static analysis

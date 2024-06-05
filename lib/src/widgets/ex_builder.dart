@@ -77,11 +77,12 @@ class _ExBuilderState<T> extends State<ExBuilder<T>>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.child == null)
+    if (widget.child == null) {
       return widget.builder?.call(_value) ??
           widget.childBuilder
               ?.call(_value, widget.child ?? const SizedBox.shrink()) ??
           const SizedBox.shrink();
+    }
 
     return widget.childBuilder?.call(_value, widget.child!) ??
         const SizedBox.shrink();
