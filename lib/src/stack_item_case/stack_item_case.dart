@@ -153,8 +153,9 @@ class _StackItemCaseState extends State<StackItemCase> {
 
     if (item.status != newStatus) {
       if (item.status == StackItemStatus.editing) return;
-      if (item.status != StackItemStatus.selected)
+      if (item.status != StackItemStatus.selected) {
         _stackController.selectOne(itemId);
+      }
       _stackController.updateBasic(itemId, status: newStatus);
       _stackController.moveItemOnTop(itemId);
       widget.onStatusChanged?.call(newStatus);

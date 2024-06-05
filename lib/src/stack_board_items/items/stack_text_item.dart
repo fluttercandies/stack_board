@@ -4,7 +4,7 @@ import 'package:stack_board/src/core/stack_board_item/stack_item_content.dart';
 import 'package:stack_board/src/core/stack_board_item/stack_item_status.dart';
 import 'package:stack_board/src/helpers/as_t.dart';
 import 'package:stack_board/src/helpers/ex_enum.dart';
-import 'package:stack_board/src/widget_style_extension/ex_%20locale.dart';
+import 'package:stack_board/src/widget_style_extension/ex_locale.dart';
 import 'package:stack_board/src/widget_style_extension/ex_offset.dart';
 import 'package:stack_board/src/widget_style_extension/ex_size.dart';
 import 'package:stack_board/src/widget_style_extension/ex_text_height_behavior.dart';

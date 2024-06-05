@@ -1,7 +1,7 @@
 import 'package:flutter/painting.dart';
 import 'package:stack_board/src/helpers/as_t.dart';
 import 'package:stack_board/src/helpers/ex_enum.dart';
-import 'ex_ locale.dart';
+import 'ex_locale.dart';
 
 extension ExTextStyle on TextStyle {
   Map<String, dynamic> toJson() {
