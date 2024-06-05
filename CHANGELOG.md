@@ -1,3 +1,8 @@
+## 0.2.2
+
+* Pass static analysis
+* Update plugins
+
 ## 0.2.1
 
 * Merged #9 
