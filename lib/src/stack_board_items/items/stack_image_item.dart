@@ -26,24 +26,36 @@ class ImageItemContent extends StackItemContent {
     _init();
   }
 
-factory ImageItemContent.fromJson(Map<String, dynamic> json) {
-  return ImageItemContent(
-    url: json['url'] != null ? asT<String>(json['url']) : null,
-    assetName: json['assetName'] != null ? asT<String>(json['assetName']) : null,
-    semanticLabel: json['semanticLabel'] != null ? asT<String>(json['semanticLabel']) : null,
-    excludeFromSemantics: json['excludeFromSemantics'] != null ? asT<bool>(json['excludeFromSemantics'], false) : false,
-    width: json['width'] != null ? asT<double>(json['width']) : null,
-    height: json['height'] != null ? asT<double>(json['height']) : null,
-    color: json['color'] != null ? Color(asT<int>(json['color'])) : null,
-    colorBlendMode: json['colorBlendMode'] != null ? BlendMode.values[asT<int>(json['colorBlendMode'])] : BlendMode.srcIn,
-    fit: json['fit'] != null ? BoxFit.values[asT<int>(json['fit'])] : BoxFit.cover,
-    repeat: json['repeat'] != null ? ImageRepeat.values[asT<int>(json['repeat'])] : ImageRepeat.noRepeat,
-    matchTextDirection: json['matchTextDirection'] != null ? asT<bool>(json['matchTextDirection'], false) : false,
-    gaplessPlayback: json['gaplessPlayback'] != null ? asT<bool>(json['gaplessPlayback'], false) : false,
-    isAntiAlias: json['isAntiAlias'] != null ? asT<bool>(json['isAntiAlias'], false) : true,
-    filterQuality: json['filterQuality'] != null ? FilterQuality.values[asT<int>(json['filterQuality'])] : FilterQuality.high,
-  );
-}
+  factory ImageItemContent.fromJson(Map<String, dynamic> json) {
+    return ImageItemContent(
+      url: json['url'] != null ? asT<String>(json['url']) : null,
+      assetName:
+          json['assetName'] != null ? asT<String>(json['assetName']) : null,
+      semanticLabel: json['semanticLabel'] != null
+          ? asT<String>(json['semanticLabel'])
+          : null,
+      excludeFromSemantics:
+          asNullT<bool>(json['excludeFromSemantics']) ?? false,
+      width: json['width'] != null ? asT<double>(json['width']) : null,
+      height: json['height'] != null ? asT<double>(json['height']) : null,
+      color: json['color'] != null ? Color(asT<int>(json['color'])) : null,
+      colorBlendMode: json['colorBlendMode'] != null
+          ? BlendMode.values[asT<int>(json['colorBlendMode'])]
+          : BlendMode.srcIn,
+      fit: json['fit'] != null
+          ? BoxFit.values[asT<int>(json['fit'])]
+          : BoxFit.cover,
+      repeat: json['repeat'] != null
+          ? ImageRepeat.values[asT<int>(json['repeat'])]
+          : ImageRepeat.noRepeat,
+      matchTextDirection: asNullT<bool>(json['matchTextDirection']) ?? false,
+      gaplessPlayback: asNullT<bool>(json['gaplessPlayback']) ?? false,
+      isAntiAlias: asNullT<bool>(json['isAntiAlias']) ?? true,
+      filterQuality: json['filterQuality'] != null
+          ? FilterQuality.values[asT<int>(json['filterQuality'])]
+          : FilterQuality.high,
+    );
+  }
 
   void _init() {
     if (url != null && assetName != null) {

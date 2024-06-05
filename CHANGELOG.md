@@ -1,3 +1,8 @@
+## 0.2.1
+
+* Merged #9 
+* Fix: Images not displaying from JSON in Windows app
+
 ## 0.2.0
 
 * Merged #8 
