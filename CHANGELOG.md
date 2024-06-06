@@ -1,3 +1,7 @@
+## 0.2.4
+
+* Add web [demo](https://xsilencex.github.io/stack_board_demo/)
+
 ## 0.2.3
 
 * Fix syntax errors

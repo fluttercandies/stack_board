@@ -10,6 +10,10 @@ A Flutter package of custom stack board.
 
 <br>
 
+Try it: [Demo](https://xsilencex.github.io/stack_board_demo/)
+
+<br>
+
 ## 1.使用 StackBoardController
 
 <br>
