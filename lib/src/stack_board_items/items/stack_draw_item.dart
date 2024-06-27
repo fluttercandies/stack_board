@@ -7,6 +7,8 @@ import 'package:stack_board/src/core/stack_board_item/stack_item_status.dart';
 import 'package:stack_board/src/widget_style_extension/ex_offset.dart';
 import 'package:stack_board/src/widget_style_extension/ex_size.dart';
 
+import '../../../helpers.dart';
+
 class DrawItemContent implements StackItemContent {
   DrawItemContent({
     required this.size,
@@ -87,6 +89,7 @@ class StackDrawItem extends StackItem<DrawItemContent> {
       size: jsonToSize(data['size'] as Map<String, dynamic>),
       offset: jsonToOffset(data['offset'] as Map<String, dynamic>),
       status: StackItemStatus.values[data['status'] as int],
+      lockZOrder: asNullT<bool>(data['lockZOrder']) ?? false,
       content:
           DrawItemContent.fromJson(data['content'] as Map<String, dynamic>),
     );

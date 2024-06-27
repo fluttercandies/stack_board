@@ -148,6 +148,7 @@ class StackImageItem extends StackItem<ImageItemContent> {
       offset:
           data['offset'] == null ? null : jsonToOffset(asMap(data['offset'])),
       status: StackItemStatus.values[data['status'] as int],
+      lockZOrder: asNullT<bool>(data['lockZOrder']) ?? false,
       content: ImageItemContent.fromJson(asMap(data['content'])),
     );
   }

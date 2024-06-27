@@ -138,6 +138,7 @@ class StackTextItem extends StackItem<TextItemContent> {
       offset:
           data['offset'] == null ? null : jsonToOffset(asMap(data['offset'])),
       status: StackItemStatus.values[data['status'] as int],
+      lockZOrder: asNullT<bool>(data['lockZOrder']) ?? false,
       content: TextItemContent.fromJson(asMap(data['content'])),
     );
   }
