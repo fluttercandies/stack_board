@@ -142,6 +142,8 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
 
     final StackItem<StackItemContent> item = data[_indexMap[id]!];
 
+    if(item.lockZOrder) return;
+
     data.removeAt(_indexMap[id]!);
     data.add(item);
 
@@ -182,6 +184,15 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
   /// * 选中唯一 item
   /// * select only item
   void selectOne(String id) {
+    // 全部 item status 重置为 idle
+    setAllItemStatuses(StackItemStatus.idle);
+    // Select the item
+    setItemStatus(id, StackItemStatus.selected);
+    // Move the item to the top
+    moveItemOnTop(id);
+  }
+
+  void setItemStatus(String id, StackItemStatus status) {
     if (!_indexMap.containsKey(id)) return;
 
     final int index = _indexMap[id]!;
@@ -193,20 +204,21 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
     }
 
     final List<StackItem<StackItemContent>> data =
+    List<StackItem<StackItemContent>>.from(innerData);
+
+    innerData[index] = item.copyWith(status: status);
+
+    value = value.copyWith(data: data);
+  }
+
+  void setAllItemStatuses(StackItemStatus status) {
+    final List<StackItem<StackItemContent>> data =
         List<StackItem<StackItemContent>>.from(innerData);
 
-    data.removeAt(index);
-
-    // 全部 item status 重置为 idle
     for (int i = 0; i < data.length; i++) {
       final StackItem<StackItemContent> item = data[i];
-      data[i] = item.copyWith(status: StackItemStatus.idle);
-      _indexMap[item.id] = i;
+      data[i] = item.copyWith(status: status);
     }
-
-    data.add(item.copyWith(status: StackItemStatus.selected));
-    _indexMap[item.id] = data.length - 1;
-    // selected.add(item.id);
 
     value = value.copyWith(data: data, indexMap: _newIndexMap);
   }
@@ -339,4 +351,5 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
 
     super.dispose();
   }
+
 }

@@ -67,6 +67,7 @@ class StackDrawItem extends StackItem<DrawItemContent> {
     double? angle,
     Size size = const Size(300, 300),
     Offset? offset,
+    bool? lockZOrder,
     StackItemStatus? status,
   }) : super(
             id: id,
@@ -74,6 +75,7 @@ class StackDrawItem extends StackItem<DrawItemContent> {
             offset: offset,
             angle: angle,
             status: status,
+            lockZOrder: lockZOrder,
             content: content ??
                 DrawItemContent(
                     size: size.shortestSide, paintContents: <PaintContent>[]));
@@ -102,6 +104,7 @@ class StackDrawItem extends StackItem<DrawItemContent> {
     Offset? offset,
     double? angle,
     StackItemStatus? status,
+    bool? lockZOrder,
     DrawItemContent? content,
   }) {
     return StackDrawItem(
@@ -110,6 +113,7 @@ class StackDrawItem extends StackItem<DrawItemContent> {
       offset: offset ?? this.offset,
       angle: angle ?? this.angle,
       status: status ?? this.status,
+      lockZOrder: lockZOrder ?? this.lockZOrder,
       content: content ?? this.content,
     );
   }

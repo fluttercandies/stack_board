@@ -36,6 +36,7 @@ class ColorStackItem extends StackItem<ColorContent> {
           angle: angle,
           status: status,
           content: content,
+          lockZOrder: true,
         );
 
   @override
@@ -44,6 +45,7 @@ class ColorStackItem extends StackItem<ColorContent> {
     Offset? offset,
     double? angle,
     StackItemStatus? status,
+    bool? lockZOrder,
     ColorContent? content,
   }) {
     return ColorStackItem(

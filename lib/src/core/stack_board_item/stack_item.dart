@@ -28,10 +28,12 @@ abstract class StackItem<T extends StackItemContent> {
     Offset? offset,
     double? angle = 0,
     StackItemStatus? status = StackItemStatus.selected,
+    bool? lockZOrder = false,
     this.content,
   })  : id = id ?? _genId(),
         offset = offset ?? Offset.zero,
         angle = angle ?? 0,
+        lockZOrder = lockZOrder ?? false,
         status = status ?? StackItemStatus.selected;
 
   const StackItem.empty({
@@ -40,6 +42,7 @@ abstract class StackItem<T extends StackItemContent> {
     required this.angle,
     required this.status,
     required this.content,
+    required this.lockZOrder,
   }) : id = '';
 
   /// id
@@ -57,6 +60,8 @@ abstract class StackItem<T extends StackItemContent> {
   /// Status
   final StackItemStatus status;
 
+  final bool lockZOrder;
+
   /// Content
   final T? content;
 
@@ -66,6 +71,7 @@ abstract class StackItem<T extends StackItemContent> {
     Offset? offset,
     double? angle,
     StackItemStatus? status,
+    bool? lockZOrder,
     T? content,
   });
 
@@ -78,6 +84,7 @@ abstract class StackItem<T extends StackItemContent> {
       'size': size.toJson(),
       'offset': offset.toJson(),
       'status': status.index,
+      'lockZOrder': lockZOrder,
       if (content != null) 'content': content?.toJson(),
     };
   }

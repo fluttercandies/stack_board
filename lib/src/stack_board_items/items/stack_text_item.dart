@@ -118,6 +118,7 @@ class StackTextItem extends StackItem<TextItemContent> {
     double? angle,
     required Size size,
     Offset? offset,
+    bool? lockZOrder,
     StackItemStatus? status,
   }) : super(
           id: id,
@@ -125,6 +126,7 @@ class StackTextItem extends StackItem<TextItemContent> {
           offset: offset,
           angle: angle,
           status: status,
+          lockZOrder: lockZOrder,
           content: content,
         );
 
@@ -152,6 +154,7 @@ class StackTextItem extends StackItem<TextItemContent> {
     Size? size,
     Offset? offset,
     StackItemStatus? status,
+    bool? lockZOrder,
     TextItemContent? content,
   }) {
     return StackTextItem(
@@ -160,6 +163,7 @@ class StackTextItem extends StackItem<TextItemContent> {
       size: size ?? this.size,
       offset: offset ?? this.offset,
       status: status ?? this.status,
+      lockZOrder: lockZOrder ?? this.lockZOrder,
       content: content ?? this.content,
     );
   }
