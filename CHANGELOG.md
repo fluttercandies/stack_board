@@ -1,3 +1,9 @@
+## 0.2.5
+
+* Merged #12, add lock z order
+* Fix sorting exception
+* Fix click unresponsiveness
+
 ## 0.2.4
 
 * Add web [demo](https://xsilencex.github.io/stack_board_demo/)
