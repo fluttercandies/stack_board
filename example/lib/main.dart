@@ -160,7 +160,8 @@ class _HomePageState extends State<HomePage> {
 
   /// Add draw item
   void _addDrawItem() {
-    _boardController.addItem(StackDrawItem(size: const Size.square(300)));
+    _boardController
+        .addItem(StackDrawItem(size: const Size.square(300), lockZOrder: true));
   }
 
   /// Add custom item

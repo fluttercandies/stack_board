@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -87,6 +88,11 @@ abstract class StackItem<T extends StackItemContent> {
       'lockZOrder': lockZOrder,
       if (content != null) 'content': content?.toJson(),
     };
+  }
+
+  @override
+  String toString() {
+    return jsonEncode(toJson());
   }
 
   @override

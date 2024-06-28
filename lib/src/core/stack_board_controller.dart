@@ -33,6 +33,11 @@ class StackConfig {
       indexMap: indexMap ?? this.indexMap,
     );
   }
+
+  @override
+  String toString() {
+    return 'StackConfig(data: $data, indexMap: $indexMap)';
+  }
 }
 
 @immutable
@@ -133,25 +138,6 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
     value = value.copyWith(data: data, indexMap: _newIndexMap);
   }
 
-  /// * move item on top
-  void moveItemOnTop(String id) {
-    if (!_indexMap.containsKey(id)) return;
-
-    final List<StackItem<StackItemContent>> data =
-        List<StackItem<StackItemContent>>.from(innerData);
-
-    final StackItem<StackItemContent> item = data[_indexMap[id]!];
-
-    if(item.lockZOrder) return;
-
-    data.removeAt(_indexMap[id]!);
-    data.add(item);
-
-    _reorder(data);
-
-    value = value.copyWith(data: data, indexMap: _newIndexMap);
-  }
-
   /// * 移除 item
   /// * remove item
   void removeItem(StackItem<StackItemContent> item) {
@@ -176,22 +162,41 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
 
     data.removeAt(_indexMap[id]!);
     _indexMap.remove(id);
-    // selected.remove(id);
+
+    _reorder(data);
 
     value = value.copyWith(data: data, indexMap: _newIndexMap);
   }
 
   /// * 选中唯一 item
   /// * select only item
-  void selectOne(String id) {
+  void selectOne(String id, {bool forceMoveToTop = false}) {
     // 全部 item status 重置为 idle
-    setAllItemStatuses(StackItemStatus.idle);
-    // Select the item
-    setItemStatus(id, StackItemStatus.selected);
-    // Move the item to the top
-    moveItemOnTop(id);
+    final List<StackItem<StackItemContent>> data =
+        List<StackItem<StackItemContent>>.from(innerData);
+
+    for (int i = 0; i < data.length; i++) {
+      final StackItem<StackItemContent> item = data[i];
+      final bool selectedOne = item.id == id;
+      data[i] = item.copyWith(
+          status:
+              selectedOne ? StackItemStatus.selected : StackItemStatus.idle);
+    }
+
+    if (_indexMap.containsKey(id)) {
+      final StackItem<StackItemContent> item = data[_indexMap[id]!];
+      if (!item.lockZOrder || forceMoveToTop) {
+        data.removeAt(_indexMap[id]!);
+        data.add(item);
+      }
+    }
+
+    _reorder(data);
+
+    value = value.copyWith(data: data, indexMap: _newIndexMap);
   }
 
+  /// * update one item status
   void setItemStatus(String id, StackItemStatus status) {
     if (!_indexMap.containsKey(id)) return;
 
@@ -204,13 +209,14 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
     }
 
     final List<StackItem<StackItemContent>> data =
-    List<StackItem<StackItemContent>>.from(innerData);
+        List<StackItem<StackItemContent>>.from(innerData);
 
     innerData[index] = item.copyWith(status: status);
 
     value = value.copyWith(data: data);
   }
 
+  /// * update all item status
   void setAllItemStatuses(StackItemStatus status) {
     final List<StackItem<StackItemContent>> data =
         List<StackItem<StackItemContent>>.from(innerData);
@@ -219,6 +225,25 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
       final StackItem<StackItemContent> item = data[i];
       data[i] = item.copyWith(status: status);
     }
+
+    value = value.copyWith(data: data, indexMap: _newIndexMap);
+  }
+
+  /// * move item on top
+  void moveItemOnTop(String id, {bool force = false}) {
+    if (!_indexMap.containsKey(id)) return;
+
+    final List<StackItem<StackItemContent>> data =
+        List<StackItem<StackItemContent>>.from(innerData);
+
+    final StackItem<StackItemContent> item = data[_indexMap[id]!];
+
+    if (!item.lockZOrder || force) {
+      data.removeAt(_indexMap[id]!);
+      data.add(item);
+    }
+
+    _reorder(data);
 
     value = value.copyWith(data: data, indexMap: _newIndexMap);
   }
@@ -351,5 +376,4 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
 
     super.dispose();
   }
-
 }

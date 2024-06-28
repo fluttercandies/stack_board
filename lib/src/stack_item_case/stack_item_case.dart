@@ -373,6 +373,7 @@ class _StackItemCaseState extends State<StackItemCase> {
 
     widgets.add(widget.borderBuilder?.call(item.status) ??
         _frameBorder(context, item.status));
+
     if (widget.actionsBuilder != null) {
       widgets.add(widget.actionsBuilder!(item.status, _caseStyle(context)));
     } else if (item.status != StackItemStatus.editing) {
