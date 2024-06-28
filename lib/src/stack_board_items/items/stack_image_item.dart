@@ -129,6 +129,7 @@ class StackImageItem extends StackItem<ImageItemContent> {
     required Size size,
     Offset? offset,
     StackItemStatus? status,
+    bool? lockZOrder,
   }) : super(
           id: id,
           size: size,
@@ -136,6 +137,7 @@ class StackImageItem extends StackItem<ImageItemContent> {
           angle: angle,
           status: status,
           content: content,
+          lockZOrder: lockZOrder,
         );
 
   factory StackImageItem.fromJson(Map<String, dynamic> data) {
@@ -146,6 +148,7 @@ class StackImageItem extends StackItem<ImageItemContent> {
       offset:
           data['offset'] == null ? null : jsonToOffset(asMap(data['offset'])),
       status: StackItemStatus.values[data['status'] as int],
+      lockZOrder: asNullT<bool>(data['lockZOrder']) ?? false,
       content: ImageItemContent.fromJson(asMap(data['content'])),
     );
   }
@@ -164,6 +167,7 @@ class StackImageItem extends StackItem<ImageItemContent> {
     Offset? offset,
     double? angle,
     StackItemStatus? status,
+    bool? lockZOrder,
     ImageItemContent? content,
   }) {
     return StackImageItem(
@@ -172,6 +176,7 @@ class StackImageItem extends StackItem<ImageItemContent> {
       offset: offset ?? this.offset,
       angle: angle ?? this.angle,
       status: status ?? this.status,
+      lockZOrder: lockZOrder ?? this.lockZOrder,
       content: content ?? this.content,
     );
   }
