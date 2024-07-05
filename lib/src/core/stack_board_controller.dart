@@ -178,9 +178,10 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
     for (int i = 0; i < data.length; i++) {
       final StackItem<StackItemContent> item = data[i];
       final bool selectedOne = item.id == id;
-      data[i] = item.copyWith(
-          status:
-              selectedOne ? StackItemStatus.selected : StackItemStatus.idle);
+      // Update the status only if the item is not locked
+      if (item.status != StackItemStatus.locked || selectedOne) {
+        data[i] = item.copyWith(status: selectedOne ? StackItemStatus.selected : StackItemStatus.idle);
+      }
     }
 
     if (_indexMap.containsKey(id)) {
@@ -204,14 +205,10 @@ class StackBoardController extends SafeValueNotifier<StackConfig> {
 
     final StackItem<StackItemContent> item = innerData[index];
 
-    if (index == innerData.length - 1 && item.status != StackItemStatus.idle) {
-      return;
-    }
-
     final List<StackItem<StackItemContent>> data =
         List<StackItem<StackItemContent>>.from(innerData);
 
-    innerData[index] = item.copyWith(status: status);
+    data[index] = item.copyWith(status: status);
 
     value = value.copyWith(data: data);
   }
