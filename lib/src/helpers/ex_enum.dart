@@ -10,6 +10,7 @@ class ExEnum {
 
   static T? tryParse<T extends Object>(List<T> values, String? item) {
     if (item == null) return null;
+        if(item.isEmpty) return null;
     if (!_isEnum<T>(item)) throw Exception('Item $item is not ${T.toString()}');
 
     for (final T value in values) {
