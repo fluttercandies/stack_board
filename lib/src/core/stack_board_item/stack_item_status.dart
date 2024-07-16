@@ -33,4 +33,8 @@ enum StackItemStatus {
   /// * 常规状态
   /// * Idle
   idle,
+
+  /// * 锁定
+  /// * Locked
+  locked,
 }
