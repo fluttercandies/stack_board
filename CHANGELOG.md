@@ -1,3 +1,7 @@
+## 0.2.6+1
+
+* Fix syntax issues
+
 ## 0.2.6
 
 * Merged #15 #13
