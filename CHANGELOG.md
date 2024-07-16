@@ -1,3 +1,7 @@
+## 0.2.6
+
+* Merged #15 #13
+
 ## 0.2.5
 
 * Merged #12, add lock z order
