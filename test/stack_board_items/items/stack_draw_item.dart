@@ -6,9 +6,11 @@ import 'package:stack_board/stack_items.dart';
 void main() {
   test('Stack Draw Item should save lockZorder to json', () {
     final StackDrawItem item = StackDrawItem(
-        content: DrawItemContent(size: 100, paintContents: <PaintContent>[]),
-        size: const Size(100, 100),
-        lockZOrder: true);
+      content: DrawItemContent(size: 100, paintContents: <PaintContent>[]),
+      size: const Size(100, 100),
+      lockZOrder: true,
+      isHardLocked: false,
+    );
     expect(item.toJson()['lockZOrder'], true);
   });
 

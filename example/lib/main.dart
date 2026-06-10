@@ -16,7 +16,7 @@ class ColorContent extends StackItemContent {
   @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'color': color.value,
+      'color': color.toARGB32(),
     };
   }
 }
@@ -29,6 +29,8 @@ class ColorStackItem extends StackItem<ColorContent> {
     double? angle,
     StackItemStatus? status,
     ColorContent? content,
+    bool? allowChildReciveGuestured,
+    bool? tightContent,
   }) : super(
           id: id,
           size: size,
@@ -37,6 +39,8 @@ class ColorStackItem extends StackItem<ColorContent> {
           status: status,
           content: content,
           lockZOrder: true,
+          allowChildReciveGestures: allowChildReciveGuestured,
+          tightContent: tightContent,
         );
 
   @override
@@ -47,6 +51,8 @@ class ColorStackItem extends StackItem<ColorContent> {
     StackItemStatus? status,
     bool? lockZOrder,
     ColorContent? content,
+    bool? allowChildReciveGestures,
+    bool? tightContent,
   }) {
     return ColorStackItem(
       id: id, // <= must !!
@@ -55,6 +61,9 @@ class ColorStackItem extends StackItem<ColorContent> {
       angle: angle ?? this.angle,
       status: status ?? this.status,
       content: content ?? this.content,
+      allowChildReciveGuestured:
+          allowChildReciveGestures ?? this.allowChildReciveGestures,
+      tightContent: tightContent ?? this.tightContent,
     );
   }
 }
@@ -160,7 +169,8 @@ class _HomePageState extends State<HomePage> {
 
   /// Add draw item
   void _addDrawItem() {
-    _boardController.addItem(StackDrawItem(size: const Size.square(300)));
+    _boardController.addItem(
+        StackDrawItem(size: const Size.square(300), isHardLocked: false));
   }
 
   /// Add custom item
@@ -274,9 +284,11 @@ class _HomePageState extends State<HomePage> {
         customBuilder: (StackItem<StackItemContent> item) {
           if (item is StackTextItem) {
             return StackTextCase(item: item);
-          } else if (item is StackDrawItem) {
-            return StackDrawCase(item: item);
-          } else if (item is StackImageItem) {
+          }
+          // else if (item is StackDrawItem) {
+          //   return StackDrawCase(item: item);
+          // }
+          else if (item is StackImageItem) {
             return StackImageCase(item: item);
           } else if (item is ColorStackItem) {
             return Container(

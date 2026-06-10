@@ -157,6 +157,7 @@ class StackBoard extends StatelessWidget {
           onStatusChanged?.call(item, operatState) ?? true,
       actionsBuilder: actionsBuilder,
       borderBuilder: borderBuilder,
+      
     );
   }
 }

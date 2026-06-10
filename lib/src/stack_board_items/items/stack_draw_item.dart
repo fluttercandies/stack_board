@@ -71,6 +71,9 @@ class StackDrawItem extends StackItem<DrawItemContent> {
     Offset? offset,
     bool? lockZOrder,
     StackItemStatus? status,
+    bool? allowChildReciveGestures,
+    bool? tightContent,
+    required this.isHardLocked,
   }) : super(
             id: id,
             size: size,
@@ -78,6 +81,8 @@ class StackDrawItem extends StackItem<DrawItemContent> {
             angle: angle,
             status: status,
             lockZOrder: lockZOrder,
+            allowChildReciveGestures: allowChildReciveGestures,
+            tightContent: tightContent,
             content: content ??
                 DrawItemContent(
                     size: size.shortestSide, paintContents: <PaintContent>[]));
@@ -90,9 +95,22 @@ class StackDrawItem extends StackItem<DrawItemContent> {
       offset: jsonToOffset(data['offset'] as Map<String, dynamic>),
       status: StackItemStatus.values[data['status'] as int],
       lockZOrder: asNullT<bool>(data['lockZOrder']) ?? false,
+      allowChildReciveGestures: asNullT<bool>(data['allowChildReciveGestures']),
+      tightContent: asNullT<bool>(data['tightContent']),
       content:
           DrawItemContent.fromJson(data['content'] as Map<String, dynamic>),
+      isHardLocked: asNullT<bool>(data['isHardLocked']) ?? false,
     );
+  }
+
+  ///Decide Weather allowed tro move , delete or rezize or select the item
+  final bool isHardLocked;
+
+  @override
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> json = super.toJson();
+    json['isHardLocked'] = isHardLocked;
+    return json;
   }
 
   /// * 覆盖绘制内容
@@ -109,15 +127,20 @@ class StackDrawItem extends StackItem<DrawItemContent> {
     StackItemStatus? status,
     bool? lockZOrder,
     DrawItemContent? content,
+    bool? allowChildReciveGestures,
+    bool? tightContent,
   }) {
     return StackDrawItem(
-      id: id,
-      size: size ?? this.size,
-      offset: offset ?? this.offset,
-      angle: angle ?? this.angle,
-      status: status ?? this.status,
-      lockZOrder: lockZOrder ?? this.lockZOrder,
-      content: content ?? this.content,
-    );
+        id: id,
+        size: size ?? this.size,
+        offset: offset ?? this.offset,
+        angle: angle ?? this.angle,
+        status: status ?? this.status,
+        lockZOrder: lockZOrder ?? this.lockZOrder,
+        content: content ?? this.content,
+        allowChildReciveGestures:
+            allowChildReciveGestures ?? this.allowChildReciveGestures,
+        tightContent: tightContent ?? this.tightContent,
+        isHardLocked: isHardLocked);
   }
 }

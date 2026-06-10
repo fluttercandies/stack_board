@@ -8,6 +8,7 @@ import 'package:stack_board/src/core/stack_board_item/stack_item_content.dart';
 import 'package:stack_board/src/core/stack_board_item/stack_item_status.dart';
 import 'package:stack_board/src/stack_board.dart';
 import 'package:stack_board/src/stack_item_case/config_builder.dart';
+import 'package:stack_board/stack_items.dart';
 
 /// * Operate box
 /// * Used to wrap child widgets to provide functions of operate box
@@ -121,7 +122,6 @@ class _StackItemCaseState extends State<StackItemCase> {
     } else if (status == StackItemStatus.editing) {
       return SystemMouseCursors.click;
     }
-
     return SystemMouseCursors.grab;
   }
 
@@ -345,8 +345,12 @@ class _StackItemCaseState extends State<StackItemCase> {
             (StackItem<StackItemContent> p, StackItem<StackItemContent> n) =>
                 p.status != n.status,
         childBuilder: (StackItem<StackItemContent> item, Widget c) {
-          if (item.status == StackItemStatus.locked) {
-            return IgnorePointer(child: _content(context, item));
+          final bool isHardLocked = item is StackDrawItem && item.isHardLocked;
+          if (item.status == StackItemStatus.locked || isHardLocked) {
+            return IgnorePointer(
+              ignoring: !item.allowChildReciveGestures,
+              child: _content(context, item),
+            );
           }
           return MouseRegion(
             cursor: _cursor(item.status),
@@ -455,15 +459,19 @@ class _StackItemCaseState extends State<StackItemCase> {
           (StackItem<StackItemContent> p, StackItem<StackItemContent> n) =>
               p.size != n.size || p.status != n.status,
       childBuilder: (StackItem<StackItemContent> item, Widget c) {
+        final BoxConstraints constr = item.tightContent
+            ? BoxConstraints.tight(item.size)
+            : BoxConstraints.loose(item.size);
         return Padding(
-            padding: item.status == StackItemStatus.idle
-                ? EdgeInsets.zero
-                : EdgeInsets.fromLTRB(
-                    style.buttonSize / 2,
-                    style.buttonSize * 1.5,
-                    style.buttonSize / 2,
-                    style.buttonSize * 1.5),
-            child: SizedBox.fromSize(size: item.size, child: c));
+          padding: item.status == StackItemStatus.idle
+              ? EdgeInsets.zero
+              : EdgeInsets.fromLTRB(
+                  style.buttonSize / 2,
+                  style.buttonSize * 1.5,
+                  style.buttonSize / 2,
+                  style.buttonSize * 1.5),
+          child: ConstrainedBox(constraints: constr, child: c),
+        );
       },
       child: content,
     );
